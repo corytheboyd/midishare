@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -euo pipefail
+
+docker-compose \
+  -f docker-compose.base.yml \
+  -f docker-compose."$DOCKER_ENV".yml \
+  "$@"

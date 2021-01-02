@@ -1,0 +1,60 @@
+# Midishare
+
+https://midishare.app
+
+Peer-to-peer MIDI keyboard input streaming service connecting music teachers and students in near real-time.
+
+# Inspiration
+
+I was inspired to pursue learning a musical instrument during the great lockdown of 2020. It didn't take long to choose the piano, having always been fascinated by its range and sound.
+
+Learning music is much more than knowing where to put your fingers on an instrument, I found a local music school offering remote lessons and signed up after an intro with the owner of the school.
+
+Being the computer geek that I am, and having worked in professional software development for nearly a decade, I immediately began thinking through ways of using tech to assist in the remote learning of music. Not wanting to jump the gun too early, I worked through lessons for about four months before touching any code, to build up more of a foundation.
+
+Honestly, private lessons work fairly well over traditional teleconferencing software like Zoom, but they aren't perfect. The main pain points I picked up on thus far were:
+1. It is hard work to get a camera positioned just right to see the full range of what the other person is doing
+1. Zoom audio is heavily optimized for humans talking to humans, not background piano noise
+
+After sleeping on it, I came up with the idea for Midishare. What if instead of trying to capture what I am doing as audio/video I instead captured the MIDI data and forwarded it to a client run by my teacher for realtime playback? The remote peer's client could animate a keyboard and play audio instead, which is many orders of magnitude less data sent over the wire.
+
+Put together a prototype and tested it with my teacher, and it worked!
+
+# Development
+
+1. Install Docker Engine and Docker Compose.
+1. Install dependencies:
+    ```
+    bin/setup
+    ```
+   * Note: Assumes you have [`mkcert`](https://mkcert.org/) installed
+    
+From here, it's a very simple `docker-compose` work flow.
+
+Access the running application in your browser at `https://localhost:3000`.
+
+## bin/dcp
+
+This project makes use of config file composition for shared configuration between development and production tasks. To make working with this a bit easier, I added the `bin/dcp` (Docker ComPose) script to clean up interactions.
+
+Usage:
+```
+DOCKER_ENV=<dev, prod> bin/dcp <docker-compose commands>
+```
+
+For convenience, `bin/dcp-dev` and `bin/dcp-prod` are available as well.
+
+### Examples
+
+All knowledge of the canonical `docker-compose` applies here, so consult the official documentation if needed. However, I'll highlight some common examples here! 
+
+Start the development server:
+```
+DOCKER_ENV=dev bin/dcp up --detach
+```
+
+Build and push the production images:
+```
+DOCKER_ENV=prod bin/dcp build
+DOCKER_ENV=prod bin/dcp push
+```

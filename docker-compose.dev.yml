@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  client:
+    build:
+      target: development
+    environment:
+      NODE_ENV: development
+      DEBUG: express:*
+      # https://create-react-app.dev/docs/advanced-configuration
+      BROWSER: none
+      HOST: client
+      PUBLIC_URL: https://localhost:3000/app/
+    volumes:
+      - "./projects/common:/code/common"
+      - "./projects/client/src:/code/app/src"
+
+  nginx:
+    environment:
+      SERVER_NAME: localhost
+      SSL_CERT_PATH: /usr/share/nginx/ssl/localhost.pem
+      SSL_KEY_PATH: /usr/share/nginx/ssl/localhost-key.pem
+    ports:
+      - "3000:443"
+    volumes:
+      - "./projects/nginx/templates:/etc/nginx/templates:ro"
+      - "./projects/common/ssh:/usr/share/nginx/ssl:ro"
+
+  server:
