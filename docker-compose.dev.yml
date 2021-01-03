@@ -1,11 +1,14 @@
 version: "3.8"
+
+volumes:
+  midishare_keyboard-build:
+
 services:
   client:
     build:
       target: development
     environment:
       NODE_ENV: development
-      DEBUG: express:*
       # https://create-react-app.dev/docs/advanced-configuration
       BROWSER: none
       HOST: client
