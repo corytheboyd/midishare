@@ -2,6 +2,8 @@ version: "3.8"
 
 volumes:
   midishare_keyboard-build:
+  midishare_keyboard-parcel-cache:
+  midishare_keyboard-parcel-build:
 
 services:
   client:
@@ -29,3 +31,18 @@ services:
       - "./projects/common/ssh:/usr/share/nginx/ssl:ro"
 
   server:
+
+  midishare_keyboard:
+    volumes:
+      - type: volume
+        source: midishare_keyboard-parcel-cache
+        target: /parcel-cache
+      - type: volume
+        source: midishare_keyboard-parcel-build
+        target: /parcel-build
+    command:
+      - "--cache-dir=/parcel-cache"
+      - "--out-dir=/parcel-build"
+      - "--port=3000"
+    ports:
+      - "3100:3000"
