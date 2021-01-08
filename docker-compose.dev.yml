@@ -8,6 +8,20 @@ volumes:
   midishare_keyboard-parcel-build:
 
 services:
+  cdn:
+    container_name: cdn
+    image: nginx:1.19.6
+    ports:
+      - "9000:443"
+    environment:
+      SSL_CERT_PATH: /usr/share/nginx/ssl/localhost.pem
+      SSL_KEY_PATH: /usr/share/nginx/ssl/localhost-key.pem
+      PUBLIC_PATH: /usr/share/nginx/html
+    volumes:
+      - "./projects/common/ssl:/usr/share/nginx/ssl:ro"
+      - "./projects/common/assets:/usr/share/nginx/html:ro"
+      - "./projects/cdn/templates:/etc/nginx/templates:ro"
+
   client:
     container_name: client
     build:
@@ -20,6 +34,7 @@ services:
       HOST: client
       PORT: 3000
       HMR_PORT: 3001
+      CDN_HOST: https://localhost:9000
       CACHE_DIR: /parcel-cache
       OUT_DIR: /parcel-build
     volumes:
@@ -51,6 +66,8 @@ services:
       context: .
       target: development
       dockerfile: projects/@midishare/keyboard/Dockerfile
+    environment:
+      CDN_URL: https://localhost:9000
     volumes:
       - "./projects/@midishare/keyboard/src:/code/src"
       - "./projects/@midishare/keyboard/devapp/src:/code/devapp/src"
