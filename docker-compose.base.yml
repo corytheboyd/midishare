@@ -13,19 +13,6 @@ services:
       ADDRESS: client
       PUBLIC_PATH: /app/
       SERVER_URL: http://server:3000
-    expose:
-      - 3000
-
-  nginx:
-    container_name: nginx
-    init: true
-    image: nginx:1.19
-    environment:
-      SERVER_NAME:
-      SSL_CERT_PATH:
-      SSL_KEY_PATH:
-      CLIENT_URL: http://client:3000
-      SERVER_URL: http://server:3000
 
   server:
     container_name: server
@@ -33,5 +20,3 @@ services:
     build:
       context: .
       dockerfile: projects/server/Dockerfile
-    expose:
-      - 3000

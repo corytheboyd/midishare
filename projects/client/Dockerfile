@@ -1,28 +1,17 @@
 FROM node:14.15.3 AS node-base
 
-RUN mkdir -p /code/app && \
-    mkdir -p /code/common && \
-    chown -R node /code
-USER node
+FROM node-base AS development
 
-WORKDIR /code/common
-COPY --chown=node projects/common .
+WORKDIR /code/@midishare/keyboard
+COPY projects/@midishare/keyboard/package.json .
+COPY projects/@midishare/keyboard/package-lock.json .
+RUN npm ci
+COPY projects/@midishare/keyboard .
 
 WORKDIR /code/app
-COPY --chown=node projects/client/package-lock.json .
-COPY --chown=node projects/client/package.json .
+COPY projects/client/package.json .
+COPY projects/client/package-lock.json .
 RUN npm ci
-COPY --chown=node projects/client .
+COPY projects/client .
 
-FROM node-base AS development
-CMD npm start
-
-FROM node-base AS production-build
-RUN npm build
-
-FROM node:14.15.3-alpine AS production
-WORKDIR /code/build
-COPY --from=production-build /code/app/build .
-
-RUN npm ci --production && npm cache clear --force
-CMD ./node_modules/.bin/http-server .
+ENTRYPOINT ["./node_modules/.bin/parcel", "serve", "src/index.html"]

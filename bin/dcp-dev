@@ -2,6 +2,4 @@
 
 set -euo pipefail
 
-DOCKER_ENV=dev bin/dcp \
-  -f projects/@midishare/keyboard/docker-compose.yml \
-  "$@"
+DOCKER_ENV=dev bin/dcp "$@"

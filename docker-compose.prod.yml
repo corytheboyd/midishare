@@ -11,9 +11,6 @@ services:
         ADDRESS:
         # https://create-react-app.dev/docs/advanced-configuration/
         PUBLIC_URL: https://midishare.app/app/
-  nginx:
-    ports:
-      - "443:443"
 
   server:
     image: midishare/server:release
