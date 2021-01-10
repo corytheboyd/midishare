@@ -8,6 +8,7 @@ import { Chrome } from "./chrome";
 const App: React.FC = () => {
   const addInput = useStore((state) => state.addInput);
   const removeInput = useStore((state) => state.removeInput);
+  const inputs = useStore((state) => state.inputs);
 
   return (
     <Chrome>
@@ -20,12 +21,6 @@ const App: React.FC = () => {
               console.error("MIDI not acquired", error);
               return;
             }
-
-            // Sync MIDI devices to state
-            WebMidi.inputs.forEach((input) => {
-              addInput(input);
-              createInputWatchers(input);
-            });
 
             WebMidi.addListener("connected", (event) => {
               if (event.port.type === "input") {
@@ -43,6 +38,19 @@ const App: React.FC = () => {
       >
         Get Started
       </button>
+
+      {inputs.length > 0 && (
+        <section>
+          <h2>MIDI Devices</h2>
+          <select name="activeInputId" id="activeInputId">
+            {inputs.map((input) => (
+              <option key={input.id} value={input.id}>
+                {input.name}
+              </option>
+            ))}
+          </select>
+        </section>
+      )}
     </Chrome>
   );
 };

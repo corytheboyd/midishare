@@ -14,7 +14,7 @@ type InspectorState = {
   /**
    * MIDI input devices are synced to this state
    * */
-  inputs: Record<string, Input>;
+  inputs: Input[];
 
   addInput: (input: Input) => void;
 
@@ -30,39 +30,32 @@ type InspectorState = {
 
 export const store = create<InspectorState>((set, get) => {
   return {
+    inputs: [],
     messages: {},
-    inputs: {},
 
-    addInput: (input) => {
-      console.log("addInput()");
-      return produce(get(), (state) => {
-        console.log("addInput() IMMER");
-        state.inputs[input.id] = input;
+    addInput: (input) =>
+      set(
+        produce(get(), (state) => {
+          state.inputs.push(input);
+          if (!state.messages[input.id]) {
+            state.messages[input.id] = [];
+          }
+        })
+      ),
 
-        if (!state.messages[input.id]) {
-          console.log("addInput() INIT MESSAGES");
-          state.messages[input.id] = [];
-        } else {
-          console.log("addInput() NO INIT");
-        }
-      });
-    },
+    removeInput: (id) =>
+      set(
+        produce(get(), (state) => {
+          state.inputs = state.inputs.filter((input) => input.id !== id);
+        })
+      ),
 
-    removeInput: (id) => {
-      console.log("removeInput()");
-      return produce(get(), (state) => {
-        console.log("removeInput() IMMER");
-        delete state.inputs[id];
-      });
-    },
-
-    addMessage: (deviceId, message) => {
-      console.log("addMessage()");
-      return produce(get(), (state) => {
-        console.log("addMessage() IMMERS");
-        state.messages[deviceId].push(message);
-      });
-    },
+    addMessage: (deviceId, message) =>
+      set(
+        produce(get(), (state) => {
+          state.messages[deviceId].push(message);
+        })
+      ),
   };
 });
 
