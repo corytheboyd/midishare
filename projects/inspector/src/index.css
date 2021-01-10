@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    @apply h-screen;
+}
+
+div#root {
+    @apply h-full;
+}
