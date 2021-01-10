@@ -6,6 +6,8 @@ volumes:
   midishare_keyboard-build:
   midishare_keyboard-parcel-cache:
   midishare_keyboard-parcel-build:
+  midishare_inspector-parcel-cache:
+  midishare_inspector-parcel-build:
 
 services:
   cdn:
@@ -81,6 +83,33 @@ services:
     ports:
       - "3100:3000" # HTTPS
       - "3101:3001" # WS
+    command:
+      - "--cache-dir=/parcel-cache"
+      - "--out-dir=/parcel-build"
+      - "--port=3000"
+      - "--hmr-port=3001"
+      - "--cert=/code/ssl/localhost.pem"
+      - "--key=/code/ssl/localhost-key.pem"
+
+  midishare_inspector:
+    container_name: midishare_inspector
+    init: true
+    build:
+      context: .
+      target: development
+      dockerfile: projects/inspector/Dockerfile
+    volumes:
+      - "./projects/inspector/src:/code/src"
+      - "./projects/common/ssl:/code/ssl:ro"
+      - type: volume
+        source: midishare_inspector-parcel-cache
+        target: /parcel-cache
+      - type: volume
+        source: midishare_inspector-parcel-build
+        target: /parcel-build
+    ports:
+      - "3200:3000" # HTTPS
+      - "3201:3001" # WS
     command:
       - "--cache-dir=/parcel-cache"
       - "--out-dir=/parcel-build"
