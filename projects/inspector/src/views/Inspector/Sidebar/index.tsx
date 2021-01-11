@@ -1,33 +1,21 @@
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Icon } from "../../common/Icon";
 import { CollapsedContent } from "./CollapsedContent";
 import { ExpandedContent } from "./ExpandedContent";
 
 export const Sidebar: React.FC = () => {
-  const rootEl = useRef<HTMLElement>();
   const [expanded, setExpanded] = useState(true);
 
   // See: https://tailwindcss.com/docs/width
   const widthClassName = "w-64";
 
-  useEffect(() => {
-    if (!rootEl.current) {
-      console.error("Ref not initialized");
-      return;
-    }
-    if (expanded) {
-      rootEl.current.classList.add(widthClassName);
-    } else {
-      rootEl.current.classList.remove(widthClassName);
-    }
-  }, [expanded]);
-
   return (
     <section
       id="sidebar"
-      ref={rootEl}
-      className="h-full bg-gray-600 text-gray-200 transition-all w-64"
+      className={`h-full bg-gray-600 text-gray-200 transition-all ${
+        expanded ? widthClassName : ""
+      }`}
     >
       <section
         id="sidebar-header"
