@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Page } from "./common/Page";
 import { getMidiAccess } from "../lib/getMidiAccess";
-import { registerDeviceConnectionListeners } from "../lib/registerDeviceConnectionListeners";
+import { createDeviceListeners } from "../lib/createDeviceListeners";
+import { addAllInputsToState } from "../lib/addAllInputsToState";
 
 export const GetStarted: React.FC = () => {
   return (
@@ -11,7 +12,8 @@ export const GetStarted: React.FC = () => {
           className="bg-blue-500 py-1.5 px-3 text-lg text-white rounded-md"
           onClick={async () => {
             await getMidiAccess();
-            await registerDeviceConnectionListeners();
+            await addAllInputsToState();
+            await createDeviceListeners();
           }}
         >
           Get Started

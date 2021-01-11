@@ -19,9 +19,11 @@ export const Sidebar: React.FC = () => {
           <Icon name="chevron-double-left" size="sm" />
         </button>
       </section>
-      <section id="sidebar-content">
-        <label htmlFor="inputId"></label>
-        <InputSelect name="inputId" id="inputId" />
+      <section id="sidebar-content" className="px-2 py-2">
+        <label htmlFor="inputId">
+          <div className="text-sm font-bold">MIDI Input:</div>
+          <InputSelect name="inputId" id="inputId" />
+        </label>
       </section>
     </section>
   );
