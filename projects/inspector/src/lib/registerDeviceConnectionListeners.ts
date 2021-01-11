@@ -2,7 +2,7 @@ import { store } from "../store";
 import WebMidi from "webmidi";
 import { deviceLogger } from "./debug";
 
-export function registerMidiDeviceListeners(): void {
+export async function registerDeviceConnectionListeners(): Promise<void> {
   const addInput = store.getState().addInput;
   const removeInput = store.getState().removeInput;
 

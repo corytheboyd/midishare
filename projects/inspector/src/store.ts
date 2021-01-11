@@ -12,6 +12,12 @@ type MidiMessage = {
 
 type InspectorState = {
   /**
+   * Set to true after successfully getting MIDI device access
+   * */
+  ready: boolean;
+  makeReady: () => void;
+
+  /**
    * MIDI input devices are synced to this state
    * */
   inputs: Input[];
@@ -30,8 +36,16 @@ type InspectorState = {
 
 export const store = create<InspectorState>((set, get) => {
   return {
+    ready: false,
     inputs: [],
     messages: {},
+
+    makeReady: () =>
+      set(
+        produce(get(), (state) => {
+          state.ready = true;
+        })
+      ),
 
     addInput: (input) =>
       set(
