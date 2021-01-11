@@ -11,7 +11,7 @@ type IconProps = {
   /**
    * Canonical icon name
    * */
-  name: "x" | "chevron-double-left";
+  name: "x" | "chevron-double-left" | "chevron-double-right";
 };
 
 const MissingIcon: React.FC<{ name: string }> = ({ name }) => (
