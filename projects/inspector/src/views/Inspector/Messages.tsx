@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useStore } from "../../store";
-import { Message } from "./Message";
 
 export const Messages: React.FC = () => {
   const activeInputId = useStore((state) => state.activeInputId);
