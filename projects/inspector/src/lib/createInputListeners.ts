@@ -1,12 +1,16 @@
 import { Input } from "webmidi";
-import { store } from "../store";
+import { MessageType, store } from "../store";
+import { createMessage } from "./createMessage";
 
 export function createInputListeners(input: Input): void {
   input.addListener("noteon", "all", (event) => {
     const deviceId = event.target.id;
-    const data = event.data;
-    const timestamp = event.timestamp;
 
-    store.getState().addMessage(deviceId, { data, timestamp });
+    const message = createMessage(MessageType.MidiData, {
+      midiData: event.data,
+      timestamp: event.timestamp,
+    });
+
+    store.getState().addMessage(deviceId, message);
   });
 }

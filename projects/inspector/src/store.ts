@@ -5,10 +5,23 @@ import produce from "immer";
 
 export type DeviceId = string;
 
-type MidiMessage = {
-  data: Uint8Array;
+export enum MessageType {
+  Connection,
+  MidiData,
+}
+
+export enum ConnectionState {
+  Connected,
+  Disconnected,
+}
+
+export interface Message {
+  type: MessageType;
+  uuid: string;
   timestamp: number;
-};
+  midiData?: Uint8Array;
+  connectionState?: Uint8Array;
+}
 
 type InspectorState = {
   /**
@@ -36,9 +49,9 @@ type InspectorState = {
   /**
    * Events received from input devices, by device ID
    * */
-  messages: Record<DeviceId, MidiMessage[]>;
+  messages: Record<DeviceId, Message[]>;
 
-  addMessage: (deviceId: DeviceId, message: MidiMessage) => void;
+  addMessage: (deviceId: DeviceId, message: Message) => void;
 };
 
 export const store = create<InspectorState>((set, get) => {
