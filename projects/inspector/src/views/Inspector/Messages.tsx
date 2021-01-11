@@ -1,9 +1,9 @@
 import * as React from "react";
+import { useStore } from "../../store";
 
 export const Messages: React.FC = () => {
-  return (
-    <section id="logs" className="h-full">
-      <span>messages</span>
-    </section>
-  );
+  const activeInputId = useStore((state) => state.activeInputId);
+  const input = useStore((state) => state.inputs[activeInputId]);
+
+  return <section id="logs" className="h-full"></section>;
 };

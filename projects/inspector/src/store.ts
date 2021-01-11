@@ -3,7 +3,7 @@ import createReactHook from "zustand";
 import { Input } from "webmidi";
 import produce from "immer";
 
-type DeviceId = string;
+export type DeviceId = string;
 
 type MidiMessage = {
   data: Uint8Array;
@@ -20,11 +20,18 @@ type InspectorState = {
   /**
    * MIDI input devices are synced to this state
    * */
-  inputs: Input[];
+  inputs: Record<DeviceId, Input>;
+
+  /**
+   * The currently selected MIDI input device.
+   * */
+  activeInputId?: DeviceId;
 
   addInput: (input: Input) => void;
 
   removeInput: (id: DeviceId) => void;
+
+  setActiveInput: (id: DeviceId) => void;
 
   /**
    * Events received from input devices, by device ID
@@ -37,7 +44,8 @@ type InspectorState = {
 export const store = create<InspectorState>((set, get) => {
   return {
     ready: false,
-    inputs: [],
+    inputs: {},
+    activeInputId: undefined,
     messages: {},
 
     makeReady: () =>
@@ -50,7 +58,8 @@ export const store = create<InspectorState>((set, get) => {
     addInput: (input) =>
       set(
         produce(get(), (state) => {
-          state.inputs.push(input);
+          state.inputs[input.id] = input;
+
           if (!state.messages[input.id]) {
             state.messages[input.id] = [];
           }
@@ -60,7 +69,14 @@ export const store = create<InspectorState>((set, get) => {
     removeInput: (id) =>
       set(
         produce(get(), (state) => {
-          state.inputs = state.inputs.filter((input) => input.id !== id);
+          delete state.inputs[id];
+        })
+      ),
+
+    setActiveInput: (id) =>
+      set(
+        produce(get(), (state) => {
+          state.activeInputId = id;
         })
       ),
 
@@ -72,10 +88,5 @@ export const store = create<InspectorState>((set, get) => {
       ),
   };
 });
-
-store.subscribe(
-  (inputs) => console.log("inputs", inputs),
-  (state) => state.inputs
-);
 
 export const useStore = createReactHook(store);
