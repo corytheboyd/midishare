@@ -10,7 +10,7 @@ export const InputSelect: React.FC<InputSelectProps> = ({ name, id }) => {
   const inputs = useStore((state) => state.inputs);
 
   return (
-    <select name={name} id={id} className="text-gray-800">
+    <select name={name} id={id} className="text-gray-800 w-full">
       {inputs.map((input) => (
         <option key={input.id} value={input.id}>
           {input.name}
