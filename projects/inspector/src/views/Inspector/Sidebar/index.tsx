@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
-import { Icon } from "../common/Icon";
+import { Icon } from "../../common/Icon";
+import { InputSelect } from "./InputSelect";
 
 export const Sidebar: React.FC = () => {
   const [expanded, setExpanded] = useState(true);
@@ -18,7 +19,10 @@ export const Sidebar: React.FC = () => {
           <Icon name="chevron-double-left" size="sm" />
         </button>
       </section>
-      <section id="sidebar-content"></section>
+      <section id="sidebar-content">
+        <label htmlFor="inputId"></label>
+        <InputSelect name="inputId" id="inputId" />
+      </section>
     </section>
   );
 };
