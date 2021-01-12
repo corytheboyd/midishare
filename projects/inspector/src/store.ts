@@ -5,6 +5,14 @@ import produce from "immer";
 
 export type DeviceId = string;
 
+export type FilterState = {
+  /**
+   * Mapping of WebMidi event types to boolean, for showing/hiding events of
+   * given types.
+   * */
+  eventType: { [T in keyof InputEvents]: boolean };
+};
+
 type InspectorState = {
   /**
    * Set to true after successfully getting MIDI device access
@@ -37,6 +45,14 @@ type InspectorState = {
     deviceId: DeviceId,
     event: InputEventBase<keyof InputEvents>
   ) => void;
+
+  /**
+   * The filters applied to the events in view. Filters are unique to the
+   * device to allow inspection for more than one MIDI device at a time.
+   * */
+  filter: Record<DeviceId, FilterState>;
+
+  updateFilter: (deviceId: DeviceId, partial: Partial<FilterState>) => void;
 };
 
 export const store = create<InspectorState>((set, get) => {
@@ -45,6 +61,7 @@ export const store = create<InspectorState>((set, get) => {
     inputs: {},
     activeInputId: undefined,
     events: {},
+    filter: {},
 
     makeReady: () =>
       set(
@@ -61,6 +78,8 @@ export const store = create<InspectorState>((set, get) => {
           if (!state.events[input.id]) {
             state.events[input.id] = [];
           }
+
+          // if (!state.filter)
         })
       ),
 
@@ -82,6 +101,13 @@ export const store = create<InspectorState>((set, get) => {
       set(
         produce(get(), (state) => {
           state.events[deviceId].push(event);
+        })
+      ),
+
+    updateFilter: (deviceId, partial) =>
+      set(
+        produce(get(), (state) => {
+          state.filter[deviceId] = { ...state.filter[deviceId], ...partial };
         })
       ),
   };
