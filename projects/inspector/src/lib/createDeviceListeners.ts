@@ -1,11 +1,9 @@
-import { store } from "../store";
 import WebMidi from "webmidi";
 import { deviceLogger } from "./debug";
+import { removeInput } from "./removeInput";
+import { addInput } from "./addInput";
 
-export async function createDeviceListeners(): Promise<void> {
-  const addInput = store.getState().addInput;
-  const removeInput = store.getState().removeInput;
-
+export function createDeviceListeners(): void {
   WebMidi.addListener("connected", (event) => {
     if (event.port.type === "input") {
       deviceLogger(

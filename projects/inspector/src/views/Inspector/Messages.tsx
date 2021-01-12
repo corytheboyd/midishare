@@ -1,31 +1,45 @@
 import * as React from "react";
 import { useStore } from "../../store";
+import { relativeTimestampToAbsolute } from "../../lib/relativeTimestampToAbsolute";
 
 export const Messages: React.FC = () => {
   const activeInputId = useStore((state) => state.activeInputId);
-  const messages = useStore((state) => state.messages[activeInputId]);
+  const events = useStore((state) => state.events[activeInputId]);
 
   return (
     <section id="logs" className="h-full flex-grow">
-      {messages == null && (
+      {events == null && (
         <div className="flex items-center justify-center h-full w-full">
           <span className="text-sm text-gray-500">
-            Select a device on the left to inspect MIDI messages
+            Select a device on the left to inspect MIDI events
           </span>
         </div>
       )}
 
-      {messages != null && (
+      {events != null && (
         <>
-          {messages.length === 0 && (
+          {events.length === 0 && (
             <div className="flex items-center justify-center h-full w-full">
               <span className="text-sm text-gray-500">
-                No messages received from this device yet
+                No events received from this device yet
               </span>
             </div>
           )}
 
-          {messages.length > 0 && <span>has messages</span>}
+          {events.length > 0 && (
+            <div className="h-full flex flex-col-reverse">
+              {events.slice(-100).map((event) => (
+                <div
+                  key={`${event.type}:${event.timestamp}:${event.data}`}
+                  className="font-mono font-light text-xs space-x-2"
+                >
+                  <span>{relativeTimestampToAbsolute(event.timestamp)}</span>
+                  <span>{event.type}</span>
+                  <span>{event.data}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </>
       )}
     </section>

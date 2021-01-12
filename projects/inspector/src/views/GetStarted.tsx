@@ -13,7 +13,7 @@ export const GetStarted: React.FC = () => {
           onClick={async () => {
             await getMidiAccess();
             await addAllInputsToState();
-            await createDeviceListeners();
+            createDeviceListeners();
           }}
         >
           Get Started

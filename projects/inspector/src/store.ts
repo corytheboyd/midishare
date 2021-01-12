@@ -1,27 +1,9 @@
 import create from "zustand/vanilla";
 import createReactHook from "zustand";
-import { Input } from "webmidi";
+import { Input, InputEventBase, InputEvents } from "webmidi";
 import produce from "immer";
 
 export type DeviceId = string;
-
-export enum MessageType {
-  Connection,
-  MidiData,
-}
-
-export enum ConnectionState {
-  Connected,
-  Disconnected,
-}
-
-export interface Message {
-  type: MessageType;
-  uuid: string;
-  timestamp: number;
-  midiData?: Uint8Array;
-  connectionState?: Uint8Array;
-}
 
 type InspectorState = {
   /**
@@ -49,9 +31,12 @@ type InspectorState = {
   /**
    * Events received from input devices, by device ID
    * */
-  messages: Record<DeviceId, Message[]>;
+  events: Record<DeviceId, InputEventBase<keyof InputEvents>[]>;
 
-  addMessage: (deviceId: DeviceId, message: Message) => void;
+  addEvent: (
+    deviceId: DeviceId,
+    event: InputEventBase<keyof InputEvents>
+  ) => void;
 };
 
 export const store = create<InspectorState>((set, get) => {
@@ -59,7 +44,7 @@ export const store = create<InspectorState>((set, get) => {
     ready: false,
     inputs: {},
     activeInputId: undefined,
-    messages: {},
+    events: {},
 
     makeReady: () =>
       set(
@@ -73,8 +58,8 @@ export const store = create<InspectorState>((set, get) => {
         produce(get(), (state) => {
           state.inputs[input.id] = input;
 
-          if (!state.messages[input.id]) {
-            state.messages[input.id] = [];
+          if (!state.events[input.id]) {
+            state.events[input.id] = [];
           }
         })
       ),
@@ -93,10 +78,10 @@ export const store = create<InspectorState>((set, get) => {
         })
       ),
 
-    addMessage: (deviceId, message) =>
+    addEvent: (deviceId, event) =>
       set(
         produce(get(), (state) => {
-          state.messages[deviceId].push(message);
+          state.events[deviceId].push(event);
         })
       ),
   };
