@@ -1,6 +1,13 @@
 import * as React from "react";
 import { InputSelect } from "./InputSelect";
-import { Icon } from "../../common/Icon";
+
+const CountBadge: React.FC<{ value: number }> = ({ value }) => {
+  return (
+    <span className="bg-gray-800 text-gray-200 text-xs font-bold px-1 py-0.5 rounded">
+      {value <= 999 ? value : "999+"}
+    </span>
+  );
+};
 
 export const ExpandedContent: React.FC = () => {
   return (
@@ -28,8 +35,8 @@ export const ExpandedContent: React.FC = () => {
           <label htmlFor="activeSensingEventFilter">
             <div className="flex items-center space-x-1">
               <input type="checkbox" id="activeSensingEventFilter" />
-              <span className="text-sm">Active Sensing</span>
-              <Icon name="question-mark-circle" size="xs" />
+              <span className="text-sm">Active sensing</span>
+              <CountBadge value={420} />
             </div>
           </label>
         </label>
