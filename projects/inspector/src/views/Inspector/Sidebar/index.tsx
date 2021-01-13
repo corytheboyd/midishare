@@ -8,7 +8,7 @@ export const Sidebar: React.FC = () => {
   const [expanded, setExpanded] = useState(true);
 
   // See: https://tailwindcss.com/docs/width
-  const widthClassName = "w-64";
+  const widthClassName = "w-80";
 
   return (
     <section

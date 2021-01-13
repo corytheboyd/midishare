@@ -1,10 +1,13 @@
 import * as React from "react";
 import { useStore } from "../../store";
 import { relativeTimestampToAbsolute } from "../../lib/relativeTimestampToAbsolute";
+import { useCallback } from "react";
 
 export const Messages: React.FC = () => {
   const activeInputId = useStore((state) => state.activeInputId);
-  const events = useStore((state) => state.events[activeInputId]);
+  const events = useStore(
+    useCallback((state) => state.events[activeInputId], [activeInputId])
+  );
 
   return (
     <section id="logs" className="h-full flex-grow">

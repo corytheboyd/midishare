@@ -18,6 +18,7 @@ type InspectorState = {
    * Set to true after successfully getting MIDI device access
    * */
   ready: boolean;
+
   makeReady: () => void;
 
   /**
@@ -41,6 +42,11 @@ type InspectorState = {
    * */
   events: Record<DeviceId, InputEventBase<keyof InputEvents>[]>;
 
+  /**
+   * Tracks count of events by type and input device
+   * */
+  eventsCount: Record<DeviceId, Partial<Record<keyof InputEvents, number>>>;
+
   addEvent: (
     deviceId: DeviceId,
     event: InputEventBase<keyof InputEvents>
@@ -61,6 +67,7 @@ export const store = create<InspectorState>((set, get) => {
     inputs: {},
     activeInputId: undefined,
     events: {},
+    eventsCount: {},
     filter: {},
 
     makeReady: () =>
@@ -79,7 +86,9 @@ export const store = create<InspectorState>((set, get) => {
             state.events[input.id] = [];
           }
 
-          // if (!state.filter)
+          if (!state.eventsCount[input.id]) {
+            state.eventsCount[input.id] = {};
+          }
         })
       ),
 
@@ -101,6 +110,11 @@ export const store = create<InspectorState>((set, get) => {
       set(
         produce(get(), (state) => {
           state.events[deviceId].push(event);
+          if (!state.eventsCount[deviceId][event.type]) {
+            state.eventsCount[deviceId][event.type] = 1;
+          } else {
+            state.eventsCount[deviceId][event.type] += 1;
+          }
         })
       ),
 
