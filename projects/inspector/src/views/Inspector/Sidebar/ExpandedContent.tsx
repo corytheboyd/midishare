@@ -1,11 +1,20 @@
 import * as React from "react";
 import { InputSelect } from "./InputSelect";
-import { useStore } from "../../../store";
+import { DeviceId, useStore } from "../../../store";
 import { InputEvents } from "webmidi";
 
-const CountBadge: React.FC<{ value: number }> = ({ value }) => {
+const EventTypeCount: React.FC<{
+  activeInputId: DeviceId;
+  eventType: keyof InputEvents;
+}> = ({ activeInputId, eventType }) => {
+  const count = useStore(
+    (state) => state.eventsCount[activeInputId][eventType]
+  );
+
   return (
-    <span className="bg-gray-700 text-gray-200 text-xs px-0.5">{value}</span>
+    <span className="bg-gray-700 text-gray-200 text-xs px-0.5">
+      {count || 0}
+    </span>
   );
 };
 
@@ -101,7 +110,6 @@ const eventTypesRenderData: {
 
 export const ExpandedContent: React.FC = () => {
   const activeInputId = useStore((state) => state.activeInputId);
-  const eventsCount = useStore((state) => state.eventsCount[activeInputId]);
 
   return (
     <div className="space-y-3">
@@ -153,7 +161,10 @@ export const ExpandedContent: React.FC = () => {
                   <div className="flex items-center space-x-1 ml-1">
                     <input type="checkbox" id={id} />
                     <span className="text-sm">{data.label}</span>
-                    <CountBadge value={eventsCount[data.type] || 0} />
+                    <EventTypeCount
+                      activeInputId={activeInputId}
+                      eventType={data.type}
+                    />
                   </div>
                 </label>
               );

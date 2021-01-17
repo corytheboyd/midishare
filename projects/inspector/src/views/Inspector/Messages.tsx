@@ -3,6 +3,8 @@ import { useStore } from "../../store";
 import { relativeTimestampToAbsolute } from "../../lib/relativeTimestampToAbsolute";
 import { useCallback } from "react";
 
+const MESSAGE_BUFFER_SIZE = 1000;
+
 export const Messages: React.FC = () => {
   const activeInputId = useStore((state) => state.activeInputId);
   const events = useStore(
@@ -31,7 +33,7 @@ export const Messages: React.FC = () => {
 
           {events.length > 0 && (
             <div className="h-full flex flex-col-reverse">
-              {events.slice(-100).map((event, index) => (
+              {events.slice(-1 * MESSAGE_BUFFER_SIZE).map((event, index) => (
                 <div
                   key={index}
                   className="font-mono font-light text-xs space-x-2"
