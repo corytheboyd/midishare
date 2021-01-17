@@ -1,15 +1,14 @@
 import WebMidi from "webmidi";
-import { store } from "../store";
+import { baseLogger } from "./debug";
 
 export async function getMidiAccess(): Promise<void> {
-  const makeReady = store.getState().makeReady;
-
   return new Promise((resolve, reject) => {
     WebMidi.enable((error) => {
       if (error) {
+        baseLogger(`MIDI not accessible! Error: ${error}`);
         return reject(error);
       }
-      makeReady();
+      baseLogger("MIDI access granted");
       resolve();
     }, true);
   });
