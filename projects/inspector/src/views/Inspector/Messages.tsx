@@ -10,7 +10,7 @@ export const Messages: React.FC = () => {
   );
 
   return (
-    <section id="logs" className="h-full flex-grow">
+    <section id="logs" className="max-h-full flex-grow overflow-y-auto">
       {events == null && (
         <div className="flex items-center justify-center h-full w-full">
           <span className="text-sm text-gray-500">
@@ -31,9 +31,9 @@ export const Messages: React.FC = () => {
 
           {events.length > 0 && (
             <div className="h-full flex flex-col-reverse">
-              {events.slice(-100).map((event) => (
+              {events.slice(-100).map((event, index) => (
                 <div
-                  key={`${event.type}:${event.timestamp}:${event.data}`}
+                  key={index}
                   className="font-mono font-light text-xs space-x-2"
                 >
                   <span>{relativeTimestampToAbsolute(event.timestamp)}</span>

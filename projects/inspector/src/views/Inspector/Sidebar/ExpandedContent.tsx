@@ -82,10 +82,6 @@ const eventTypesRenderData: {
     label: "System Real-Time Messages",
   },
   {
-    type: "clock",
-    label: "Timing Clock",
-  },
-  {
     type: "start",
     label: "Start",
   },
@@ -96,10 +92,6 @@ const eventTypesRenderData: {
   {
     type: "stop",
     label: "Stop",
-  },
-  {
-    type: "activesensing",
-    label: "Active Sensing",
   },
   {
     type: "reset",
@@ -131,7 +123,17 @@ export const ExpandedContent: React.FC = () => {
             <div className="mb-1">
               <div className="text-sm font-bold">Events</div>
               <div className="ml-1 text-gray-400 text-xs font-thin">
-                Filter displayed events by type
+                <span>
+                  Filter displayed events by type. For explanations, consult the
+                </span>{" "}
+                <a
+                  href="https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline hover:text-gray-300"
+                >
+                  official MIDI message summary.
+                </a>
               </div>
             </div>
 

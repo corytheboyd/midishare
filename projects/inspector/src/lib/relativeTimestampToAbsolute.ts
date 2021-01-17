@@ -1,4 +1,4 @@
-import formatISO from "date-fns/formatISO";
+import format from "date-fns/format";
 
 let baseTime: number;
 
@@ -9,5 +9,5 @@ export function relativeTimestampToAbsolute(timestamp: number): string {
   if (!baseTime) {
     baseTime = new Date().getTime() - performance.now();
   }
-  return formatISO(new Date(baseTime + timestamp));
+  return format(new Date(baseTime + timestamp), "yyyy-MM-dd HH:mm:ss.SSSS");
 }
