@@ -9,7 +9,15 @@ import { MessageStream } from "./views/Inspector/MessageStream";
 const App: React.FC = () => {
   const ready = useStore((state) => state.ready);
 
-  return <MessageStream />;
+  return (
+    <MessageStream
+      renderRow={(data: { message: string; timestamp: number }) => (
+        <span>
+          `${data.timestamp}: ${data.message}`
+        </span>
+      )}
+    />
+  );
 
   return <Chrome>{ready ? <Inspector /> : <GetStarted />}</Chrome>;
 };

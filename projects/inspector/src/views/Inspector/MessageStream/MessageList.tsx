@@ -3,6 +3,7 @@ import { useStore } from "./store";
 import { FixedSizeList } from "react-window";
 import { MessageRow } from "./MessageRow";
 import { forwardRef, MutableRefObject } from "react";
+import { RenderRow } from "./index";
 
 type MessageListProps = {
   /**
@@ -12,6 +13,8 @@ type MessageListProps = {
    * @see https://react-window.now.sh/#/examples/list/scroll-to-item
    * */
   listRef?: MutableRefObject<FixedSizeList>;
+
+  renderRow: RenderRow;
 };
 
 export const MessageList = forwardRef<FixedSizeList, MessageListProps>(
@@ -38,7 +41,9 @@ export const MessageList = forwardRef<FixedSizeList, MessageListProps>(
           }
         }}
       >
-        {MessageRow}
+        {(renderFnProps) => {
+          return <MessageRow {...renderFnProps} renderRow={props.renderRow} />;
+        }}
       </FixedSizeList>
     );
   }

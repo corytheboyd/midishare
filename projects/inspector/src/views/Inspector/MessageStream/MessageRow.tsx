@@ -1,10 +1,16 @@
 import * as React from "react";
 import { ListChildComponentProps } from "react-window";
 import { useStore } from "./store";
+import { RenderRow } from "./index";
 
-export const MessageRow: React.FC<ListChildComponentProps> = ({
+interface MessageRowProps extends ListChildComponentProps {
+  renderRow: RenderRow;
+}
+
+export const MessageRow: React.FC<MessageRowProps> = ({
   index,
   style,
+  renderRow,
 }) => {
   const [message] = useStore(
     // Note: inverts the index to select from the end of the messages list.
@@ -24,7 +30,7 @@ export const MessageRow: React.FC<ListChildComponentProps> = ({
       style={style}
       className={`h-full pl-1.5 ${backgroundColorClass} text-gray-300 flex items-center justify-start`}
     >
-      {message}
+      {renderRow(message)}
     </div>
   );
 };
