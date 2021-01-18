@@ -1,11 +1,10 @@
 import * as React from "react";
-import { useStore } from "./store";
 import { FixedSizeList } from "react-window";
 import { MessageRow } from "./MessageRow";
 import { forwardRef, MutableRefObject } from "react";
-import { RenderRow } from "./index";
+import { MessageStreamSharedProps, RenderRow } from "./index";
 
-type MessageListProps = {
+interface MessageListProps extends MessageStreamSharedProps {
   /**
    * Optional mutable reference to control the underlying react-window List
    * component.
@@ -15,12 +14,12 @@ type MessageListProps = {
   listRef?: MutableRefObject<FixedSizeList>;
 
   renderRow: RenderRow;
-};
+}
 
 export const MessageList = forwardRef<FixedSizeList, MessageListProps>(
   (props, ref) => {
-    const setLive = useStore((state) => state.setLive);
-    const messageCount = useStore((state) => state.messages.length);
+    const setLive = props.useStore((state) => state.setLive);
+    const messageCount = props.useStore((state) => state.messages.length);
     const rowHeight = 25;
     const numRows = 25;
 
@@ -42,7 +41,13 @@ export const MessageList = forwardRef<FixedSizeList, MessageListProps>(
         }}
       >
         {(renderFnProps) => {
-          return <MessageRow {...renderFnProps} renderRow={props.renderRow} />;
+          return (
+            <MessageRow
+              {...renderFnProps}
+              renderRow={props.renderRow}
+              useStore={props.useStore}
+            />
+          );
         }}
       </FixedSizeList>
     );
