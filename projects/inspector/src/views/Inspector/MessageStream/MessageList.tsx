@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useStore } from "./store";
-import { FixedSizeList, FixedSizeListProps, ListProps } from "react-window";
+import { FixedSizeList } from "react-window";
 import { MessageRow } from "./MessageRow";
-import { Component, forwardRef, MutableRefObject } from "react";
+import { forwardRef, MutableRefObject } from "react";
 
 type MessageListProps = {
   /**

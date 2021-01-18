@@ -13,6 +13,8 @@ type IconProps = {
    * */
   name:
     | "x"
+    | "pause"
+    | "play"
     | "chevron-double-left"
     | "chevron-double-right"
     | "question-mark-circle";

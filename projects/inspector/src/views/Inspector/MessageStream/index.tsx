@@ -1,36 +1,23 @@
 import * as React from "react";
-import { Component, createRef, useEffect } from "react";
+import { createRef, useEffect } from "react";
 import { useStore } from "./store";
 import { MessageList } from "./MessageList";
 import { FixedSizeList } from "react-window";
+import { ControlBar } from "./ControlBar";
 
 export const MessageStream: React.FC = () => {
   const listRef = createRef<FixedSizeList>();
 
+  // TODO lol remove, duh. this is just here to contrive lots of messages
+  //  being sent to test all of the pause/scroll/magic.
   const addMessage = useStore((state) => state.addMessage);
-  const live = useStore((state) => state.live);
-  const setLive = useStore((state) => state.setLive);
-
   useEffect(() => {
     setInterval(() => addMessage(), 100);
   }, [addMessage]);
 
-  const handlePauseClick = () => {
-    if (live) {
-      setLive(false);
-    } else {
-      if (listRef.current) {
-        listRef.current.scrollToItem(0);
-      }
-      setLive(true);
-    }
-  };
-
   return (
     <div className="flex flex-col">
-      <div className="bg-gray-300 h-10 p-1">
-        <button onClick={handlePauseClick}>{live ? "pause" : "live"}</button>
-      </div>
+      <ControlBar listRef={listRef} />
       <MessageList ref={listRef} />
     </div>
   );
