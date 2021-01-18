@@ -12,7 +12,7 @@ export const Messages: React.FC = () => {
   );
 
   return (
-    <section id="logs" className="max-h-full flex-grow overflow-y-auto">
+    <section id="logs" className="flex-grow overflow-y-auto">
       {events == null && (
         <div className="flex items-center justify-center h-full w-full">
           <span className="text-sm text-gray-500">
@@ -32,7 +32,7 @@ export const Messages: React.FC = () => {
           )}
 
           {events.length > 0 && (
-            <div className="h-full flex flex-col-reverse">
+            <div className="flex flex-col-reverse">
               {events.slice(-1 * MESSAGE_BUFFER_SIZE).map((event, index) => (
                 <div
                   key={index}
