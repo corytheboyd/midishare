@@ -27,7 +27,7 @@ export const ControlBar: React.FC<ControlBarProps> = (props) => {
     <div className="bg-gray-300 flex p-1.5 items-center justify-start">
       <button
         onClick={handlePauseClick}
-        className="flex justify-center items-center space-x-1 px-1 py-0.5 text-sm"
+        className="flex justify-center items-center space-x-1 px-1 py-0.5 text-sm bg-blue-500 text-white rounded"
       >
         <Icon name={live ? "pause" : "play"} size="sm" />
         <span>{live ? "Pause" : "Play"}</span>

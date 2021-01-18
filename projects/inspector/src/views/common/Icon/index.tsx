@@ -3,6 +3,8 @@ import * as SmIcons from "./sm";
 import * as MdIcons from "./md";
 
 type IconProps = {
+  className?: string;
+
   /**
    * Canonical icon size
    * */
@@ -43,7 +45,10 @@ export const Icon: React.FC<IconProps> = (props) => {
     );
   }
   return (
-    <div style={{ width: boxSizePx, height: boxSizePx }}>
+    <div
+      style={{ width: boxSizePx, height: boxSizePx }}
+      className={props.className || ""}
+    >
       {icon || <MissingIcon name={props.name} />}
     </div>
   );
