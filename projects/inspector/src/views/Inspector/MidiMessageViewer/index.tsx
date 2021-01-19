@@ -1,16 +1,13 @@
 import * as React from "react";
 import { MessageStream } from "../../common/MessageStream";
-import { useStore } from "../../../lib/store";
+import { store, useStore } from "../../../lib/store";
 import { createRef, useCallback, useEffect } from "react";
 import { MessageStreamStore } from "../../common/MessageStream/lib/createStore";
 import { InputEventBase, InputEvents } from "webmidi";
-import { baseLogger } from "../../../lib/debug";
+import { midiMessageViewerLogger } from "../../../lib/debug";
 
 export const MidiMessageViewer: React.FC = () => {
   const activeInputId = useStore((state) => state.activeInputId);
-  const eventsForActiveInput = useStore(
-    useCallback((state) => state.events[activeInputId], [activeInputId])
-  );
 
   const messageStreamStoreRef = createRef<
     MessageStreamStore<InputEventBase<keyof InputEvents> | string>
@@ -20,7 +17,7 @@ export const MidiMessageViewer: React.FC = () => {
   // device to the MessageStream store.
   useEffect(() => {
     if (!messageStreamStoreRef.current) {
-      baseLogger("MessageStream store ref not initialized!");
+      midiMessageViewerLogger("MessageStream store ref not initialized!");
       return;
     }
 
@@ -31,42 +28,33 @@ export const MidiMessageViewer: React.FC = () => {
       return;
     }
 
-    if (eventsForActiveInput.length === 0) {
+    const initialEvents = store.getState().events[activeInputId];
+    if (initialEvents.length === 0) {
+      midiMessageViewerLogger(
+        "Replace MessageStream content with zero state message"
+      );
       messageStreamStoreRef.current
         .getState()
         .replaceMessages([
           "Waiting to receive MIDI messages for selected device",
         ]);
-      return;
+    } else {
+      midiMessageViewerLogger(
+        "Replace MessageStream content with events for new input device"
+      );
+      messageStreamStoreRef.current.getState().replaceMessages(initialEvents);
     }
 
-    baseLogger(
-      "Replace MessageStream content with events for new input device"
+    midiMessageViewerLogger(
+      "Register events listener to update MessageStream state"
     );
-    messageStreamStoreRef.current
-      .getState()
-      .replaceMessages(eventsForActiveInput);
+    return store.subscribe(
+      (newEvents: InputEventBase<keyof InputEvents>[]) => {
+        messageStreamStoreRef.current.getState().replaceMessages(newEvents);
+      },
+      (state) => state.events[activeInputId]
+    );
   }, [activeInputId]);
-
-  // When new events are recorded for the active input device, add them to the MessageStream store
-  useEffect(() => {
-    if (!messageStreamStoreRef.current) {
-      baseLogger("MessageStream store ref not initialized!");
-      return;
-    }
-
-    if (!activeInputId) {
-      return;
-    }
-
-    if (eventsForActiveInput.length === 0) {
-      return;
-    }
-
-    messageStreamStoreRef.current
-      .getState()
-      .replaceMessages(eventsForActiveInput);
-  }, [eventsForActiveInput]);
 
   return (
     <MessageStream
