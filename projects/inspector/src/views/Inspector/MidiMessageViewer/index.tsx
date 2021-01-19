@@ -11,7 +11,7 @@ function applyFilters(
   events: InputEventBase<keyof InputEvents>[],
   filters: FilterState
 ): InputEventBase<keyof InputEvents>[] {
-  return events.filter((event) => filters.eventType[event.type]);
+  return events.filter((event) => !!filters.eventType[event.type]);
 }
 
 export const MidiMessageViewer: React.FC = () => {
@@ -65,32 +65,55 @@ export const MidiMessageViewer: React.FC = () => {
     midiMessageViewerLogger(
       "Register events listener to update MessageStream state"
     );
-    return store.subscribe(
-      (events: InputEventBase<keyof InputEvents>[]) => {
-        // When it's the first event, replace so that we discard the zero state
-        // message.
-        if (lastPushedIndex.current === 0) {
-          midiMessageViewerLogger(
-            "Replacing events messages on first real event"
-          );
-          messageStreamStoreRef.current.getState().replaceMessages(events);
-          lastPushedIndex.current += events.length;
-        } else {
-          const newEvents = events.slice(
-            lastPushedIndex.current || lastPushedIndex.current + 1
-          );
 
-          for (const event of newEvents) {
-            messageStreamStoreRef.current.getState().addMessage(event);
-          }
+    const unsubscribeFunctions = [];
 
-          // Update cursor to end of current events list with the information
-          // we have.
-          lastPushedIndex.current += newEvents.length;
-        }
-      },
-      (state) => state.events[activeInputId]
+    unsubscribeFunctions.push(
+      store.subscribe(
+        () => {
+          // When filters change, we have to reset all of our index based
+          // optimizations as well... hrm maybe this is the wrong way to do
+          // filters.
+          lastPushedIndex.current = 0;
+        },
+        (state) => state.filter[activeInputId]
+      )
     );
+
+    unsubscribeFunctions.push(
+      store.subscribe(
+        (events: InputEventBase<keyof InputEvents>[]) => {
+          const filteredEvents = applyFilters(events, filters);
+
+          // When it's the first event, replace so that we discard the zero state
+          // message.
+          if (lastPushedIndex.current === 0) {
+            midiMessageViewerLogger(
+              "Replacing events messages on first real event"
+            );
+            messageStreamStoreRef.current
+              .getState()
+              .replaceMessages(filteredEvents);
+            lastPushedIndex.current += filteredEvents.length;
+          } else {
+            const newEvents = filteredEvents.slice(
+              lastPushedIndex.current || lastPushedIndex.current + 1
+            );
+
+            for (const event of newEvents) {
+              messageStreamStoreRef.current.getState().addMessage(event);
+            }
+
+            // Update cursor to end of current events list with the information
+            // we have.
+            lastPushedIndex.current += newEvents.length;
+          }
+        },
+        (state) => state.events[activeInputId]
+      )
+    );
+
+    return () => unsubscribeFunctions.forEach((fn) => fn());
   }, [activeInputId, filters]);
 
   const startTime = useRef<number>();
