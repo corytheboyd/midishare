@@ -1,12 +1,5 @@
-import {
-  Input,
-  InputEventActivesensing,
-  InputEventBase,
-  InputEventClock,
-  InputEvents,
-} from "webmidi";
+import { Input, InputEventBase, InputEvents } from "webmidi";
 import { DeviceId, store } from "./store";
-import { deviceLogger } from "./debug";
 
 export function createInputListeners(input: Input): void {
   // TODO not on ALL midi channels?
@@ -28,14 +21,8 @@ export function createInputListeners(input: Input): void {
   input.addListener("timecode", "all", inputEventHandler);
   input.addListener("tuningrequest", "all", inputEventHandler);
   input.addListener("unknownsystemmessage", "all", inputEventHandler);
-
   input.addListener("activesensing", "all", inputEventHandler);
   input.addListener("clock", "all", inputEventHandler);
-
-  // TODO Figure out the final strategy for these very rapid-fire events. For
-  //  now, just lumping them into separate event handlers.
-  // input.addListener("activesensing", "all", activeSensingEventHandler);
-  // input.addListener("clock", "all", inputClockEventHandler);
 }
 
 function inputEventHandler(event: InputEventBase<keyof InputEvents>): void {
@@ -56,10 +43,10 @@ function inputEventHandler(event: InputEventBase<keyof InputEvents>): void {
 
   // Otherwise, poke the flush timer for the device
   if (inputEventTimeoutIdMap[deviceId]) {
-    deviceLogger("Poking input events buffer flush timeout");
+    // deviceLogger("Poking input events buffer flush timeout");
     clearFlushTimeout(deviceId);
   } else {
-    deviceLogger("Start events buffer flush timeout");
+    // deviceLogger("Start events buffer flush timeout");
   }
   inputEventTimeoutIdMap[deviceId] = setTimeout(
     () => flushBufferedEvents(deviceId),
@@ -76,34 +63,14 @@ const BUFFER_SIZE = 10;
 const BUFFER_FLUSH_TIMEOUT_MS = 50;
 
 function flushBufferedEvents(deviceId: DeviceId): void {
-  deviceLogger("Flushing buffered input events to store");
+  // deviceLogger("Flushing buffered input events to store");
+
   store.getState().addEvents(deviceId, inputEventBufferMap[deviceId]);
 
   // Reset buffer by mutating the length property of the Array
   inputEventBufferMap[deviceId].length = 0;
 
   clearFlushTimeout(deviceId);
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function activeSensingEventHandler(_event: InputEventActivesensing) {
-  // TODO this one isn't really that useful in the web, where we have a higher
-  //  level API for device connection management, but that won't be the case in
-  //  other environments.
-}
-
-const midiClockRef: Record<DeviceId, number> = {};
-function inputClockEventHandler(event: InputEventClock) {
-  if (!midiClockRef[event.target.id]) {
-    midiClockRef[event.target.id] = 0;
-  }
-
-  midiClockRef[event.target.id] += 1;
-
-  if (midiClockRef[event.target.id] === 24) {
-    midiClockRef[event.target.id] = 0;
-    console.debug("QUARTER NOTE", event.target.name);
-  }
 }
 
 function clearFlushTimeout(deviceId: DeviceId): void {
