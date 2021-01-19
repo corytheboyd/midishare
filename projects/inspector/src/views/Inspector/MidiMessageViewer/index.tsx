@@ -16,6 +16,8 @@ export const MidiMessageViewer: React.FC = () => {
     MessageStreamStore<InputEventBase<keyof InputEvents> | string>
   >();
 
+  // When the active input device changes, copy the recorded events for that
+  // device to the MessageStream store.
   useEffect(() => {
     if (!messageStreamStoreRef.current) {
       baseLogger("MessageStream store ref not initialized!");
@@ -46,5 +48,39 @@ export const MidiMessageViewer: React.FC = () => {
       .replaceMessages(eventsForActiveInput);
   }, [activeInputId]);
 
-  return <MessageStream storeRef={messageStreamStoreRef} />;
+  // When new events are recorded for the active input device, add them to the MessageStream store
+  useEffect(() => {
+    if (!messageStreamStoreRef.current) {
+      baseLogger("MessageStream store ref not initialized!");
+      return;
+    }
+
+    if (!activeInputId) {
+      return;
+    }
+
+    if (eventsForActiveInput.length === 0) {
+      return;
+    }
+
+    messageStreamStoreRef.current
+      .getState()
+      .replaceMessages(eventsForActiveInput);
+  }, [eventsForActiveInput]);
+
+  return (
+    <MessageStream
+      storeRef={messageStreamStoreRef}
+      renderRow={(event: InputEventBase<keyof InputEvents> | string) => {
+        if (typeof event === "string") {
+          return <span>{event}</span>;
+        }
+        return (
+          <span>
+            {event.type} - {event.data}
+          </span>
+        );
+      }}
+    />
+  );
 };
