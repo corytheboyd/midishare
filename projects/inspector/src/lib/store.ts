@@ -63,7 +63,14 @@ type InspectorState = {
    * */
   filter: Record<DeviceId, FilterState>;
 
-  updateFilter: (deviceId: DeviceId, partial: Partial<FilterState>) => void;
+  /**
+   * Update the value of an eventType filter.
+   * */
+  setEventTypeFilter: (
+    deviceId: DeviceId,
+    eventType: keyof InputEvents,
+    value: boolean
+  ) => void;
 };
 
 export const store = create<InspectorState>((set, get) => {
@@ -97,12 +104,14 @@ export const store = create<InspectorState>((set, get) => {
 
           if (!state.filter[input.id]) {
             state.filter[input.id] = {
-              eventType: {
-                noteon: true,
-                noteoff: true,
-                controlchange: true,
-              },
+              eventType: {},
             };
+
+            // Set sensible filter defaults. This might be a roundabout place to
+            // do it, but we can revisit later.
+            state.filter[input.id].eventType["noteon"] = true;
+            state.filter[input.id].eventType["noteoff"] = true;
+            state.filter[input.id].eventType["controlchange"] = true;
           }
         })
       ),
@@ -139,10 +148,10 @@ export const store = create<InspectorState>((set, get) => {
         })
       ),
 
-    updateFilter: (deviceId, partial) =>
+    setEventTypeFilter: (deviceId, eventType, value) =>
       set(
         produce(get(), (state) => {
-          state.filter[deviceId] = { ...state.filter[deviceId], ...partial };
+          state.filter[deviceId].eventType[eventType] = value;
         })
       ),
   };

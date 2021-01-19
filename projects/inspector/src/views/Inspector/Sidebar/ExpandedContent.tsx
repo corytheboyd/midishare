@@ -1,6 +1,6 @@
 import * as React from "react";
 import { InputSelect } from "./InputSelect";
-import { DeviceId, useStore } from "../../../lib/store";
+import { useStore } from "../../../lib/store";
 import { InputEvents } from "webmidi";
 
 const EventTypeCount: React.FC<{
@@ -25,15 +25,13 @@ const EventTypeFilterCheckbox: React.FC<{
   const checked = useStore(
     (state) => state.filter[activeInputId].eventType[eventType]
   );
-  const updateFilter = useStore((state) => state.updateFilter);
+  const setEventTypeFilter = useStore((state) => state.setEventTypeFilter);
   return (
     <input
       type="checkbox"
       checked={checked || false}
       onChange={(event) => {
-        updateFilter(activeInputId, {
-          eventType: { [eventType]: event.target.checked },
-        });
+        setEventTypeFilter(activeInputId, eventType, event.target.checked);
       }}
     />
   );
