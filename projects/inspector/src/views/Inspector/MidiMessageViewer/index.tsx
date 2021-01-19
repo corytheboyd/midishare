@@ -55,12 +55,12 @@ export const MidiMessageViewer: React.FC = () => {
       (events: InputEventBase<keyof InputEvents>[]) => {
         // When it's the first event, replace so that we discard the zero state
         // message.
-        if (events.length === 1) {
+        if (lastPushedIndex.current === 0) {
           midiMessageViewerLogger(
             "Replacing events messages on first real event"
           );
           messageStreamStoreRef.current.getState().replaceMessages(events);
-          lastPushedIndex.current += 1;
+          lastPushedIndex.current += events.length;
         } else {
           const newEvents = events.slice(
             lastPushedIndex.current || lastPushedIndex.current + 1
@@ -95,7 +95,7 @@ export const MidiMessageViewer: React.FC = () => {
           <span>
             {format(
               new Date(startTime.current + event.timestamp),
-              "HH:mm:ss.SSSS"
+              "HH:mm:ss.SSS"
             )}{" "}
             {event.type} - {event.data}
           </span>

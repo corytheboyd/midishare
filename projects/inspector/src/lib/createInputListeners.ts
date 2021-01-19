@@ -73,7 +73,7 @@ const inputEventBufferMap: Record<
 > = {};
 const inputEventTimeoutIdMap: Record<DeviceId, NodeJS.Timeout> = {};
 const BUFFER_SIZE = 10;
-const BUFFER_FLUSH_TIMEOUT_MS = 100;
+const BUFFER_FLUSH_TIMEOUT_MS = 50;
 
 function flushBufferedEvents(deviceId: DeviceId): void {
   deviceLogger("Flushing buffered input events to store");
