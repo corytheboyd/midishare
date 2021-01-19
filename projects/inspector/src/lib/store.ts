@@ -47,9 +47,14 @@ type InspectorState = {
    * */
   eventsCount: Record<DeviceId, Partial<Record<keyof InputEvents, number>>>;
 
-  addEvent: (
+  incrementEventsCount: (
     deviceId: DeviceId,
-    event: InputEventBase<keyof InputEvents>
+    eventType: keyof InputEvents
+  ) => void;
+
+  addEvents: (
+    deviceId: DeviceId,
+    events: InputEventBase<keyof InputEvents>[]
   ) => void;
 
   /**
@@ -106,15 +111,21 @@ export const store = create<InspectorState>((set, get) => {
         })
       ),
 
-    addEvent: (deviceId, event) =>
+    incrementEventsCount: (deviceId, eventType) =>
       set(
         produce(get(), (state) => {
-          state.events[deviceId].push(event);
-          if (!state.eventsCount[deviceId][event.type]) {
-            state.eventsCount[deviceId][event.type] = 1;
+          if (!state.eventsCount[deviceId][eventType]) {
+            state.eventsCount[deviceId][eventType] = 1;
           } else {
-            state.eventsCount[deviceId][event.type] += 1;
+            state.eventsCount[deviceId][eventType] += 1;
           }
+        })
+      ),
+
+    addEvents: (deviceId, events) =>
+      set(
+        produce(get(), (state) => {
+          state.events[deviceId] = state.events[deviceId].concat(events);
         })
       ),
 

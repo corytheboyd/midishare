@@ -1,12 +1,15 @@
 import * as React from "react";
 import { MessageStream } from "../../common/MessageStream";
 import { store, useStore } from "../../../lib/store";
-import { createRef, useEffect } from "react";
+import { createRef, useEffect, useRef } from "react";
 import { MessageStreamStore } from "../../common/MessageStream/lib/createStore";
 import { InputEventBase, InputEvents } from "webmidi";
 import { midiMessageViewerLogger } from "../../../lib/debug";
+import { start } from "repl";
 
 export const MidiMessageViewer: React.FC = () => {
+  const lastPushedIndex = useRef(0);
+
   const activeInputId = useStore((state) => state.activeInputId);
 
   const messageStreamStoreRef = createRef<
@@ -49,16 +52,27 @@ export const MidiMessageViewer: React.FC = () => {
       "Register events listener to update MessageStream state"
     );
     return store.subscribe(
-      (newEvents: InputEventBase<keyof InputEvents>[]) => {
+      (events: InputEventBase<keyof InputEvents>[]) => {
         // When it's the first event, replace so that we discard the zero state
         // message.
-        if (newEvents.length === 1) {
-          messageStreamStoreRef.current.getState().replaceMessages(newEvents);
+        if (events.length === 1) {
+          midiMessageViewerLogger(
+            "Replacing events messages on first real event"
+          );
+          messageStreamStoreRef.current.getState().replaceMessages(events);
+          lastPushedIndex.current += 1;
         } else {
-          // Otherwise, add the new event with the addMessage function.
-          messageStreamStoreRef.current
-            .getState()
-            .addMessage(newEvents[newEvents.length - 1]);
+          const newEvents = events.slice(
+            lastPushedIndex.current || lastPushedIndex.current + 1
+          );
+
+          for (const event of newEvents) {
+            messageStreamStoreRef.current.getState().addMessage(event);
+          }
+
+          // Update cursor to end of current events list with the information
+          // we have.
+          lastPushedIndex.current += newEvents.length;
         }
       },
       (state) => state.events[activeInputId]
