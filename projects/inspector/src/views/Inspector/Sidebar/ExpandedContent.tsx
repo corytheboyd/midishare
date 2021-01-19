@@ -1,6 +1,6 @@
 import * as React from "react";
 import { InputSelect } from "./InputSelect";
-import { useStore } from "../../../lib/store";
+import { MidiDataNumericalFormat, useStore } from "../../../lib/store";
 import { InputEvents } from "webmidi";
 
 const EventTypeCount: React.FC<{
@@ -139,6 +139,7 @@ const eventTypesRenderData: {
 
 export const ExpandedContent: React.FC = () => {
   const activeInputId = useStore((state) => state.activeInputId);
+  const setNumericalFormat = useStore((state) => state.setNumericalFormat);
 
   return (
     <div className="space-y-3">
@@ -153,47 +154,71 @@ export const ExpandedContent: React.FC = () => {
       </section>
 
       {activeInputId && (
-        <section>
-          <div className="mb-1">
-            <div className="text-sm font-bold">Events</div>
-            <div className="ml-1 text-gray-400 text-xs font-thin">
-              <span>
-                Filter displayed events by type. For explanations, consult the
-              </span>{" "}
-              <a
-                href="https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message"
-                target="_blank"
-                rel="noreferrer"
-                className="underline hover:text-gray-300"
-              >
-                official MIDI message summary.
-              </a>
+        <>
+          <section>
+            <div className="mb-1">
+              <div className="text-sm font-bold">Numerical Format</div>
+              <div className="ml-1 text-gray-400 text-xs font-thin">
+                Change the format of MIDI message data.
+              </div>
             </div>
-          </div>
+            <select
+              name="midiDataRepresentation"
+              id="midiDataRepresentation"
+              className="text-gray-800 w-full"
+              onChange={(event) => {
+                setNumericalFormat(
+                  event.target.value as MidiDataNumericalFormat
+                );
+              }}
+            >
+              <option value="binary">Binary</option>
+              <option value="decimal">Decimal</option>
+            </select>
+          </section>
 
-          {eventTypesRenderData.map((data) => {
-            const id = `${data.type}_EventFilter`;
+          <section>
+            <div className="mb-1">
+              <div className="text-sm font-bold">Events</div>
+              <div className="ml-1 text-gray-400 text-xs font-thin">
+                <span>
+                  Filter displayed events by type. For explanations, consult the
+                </span>{" "}
+                <a
+                  href="https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline hover:text-gray-300"
+                >
+                  official MIDI message summary.
+                </a>
+              </div>
+            </div>
 
-            if (data.type === "__SEPARATOR__") {
+            {eventTypesRenderData.map((data) => {
+              const id = `${data.type}_EventFilter`;
+
+              if (data.type === "__SEPARATOR__") {
+                return (
+                  <div key={data.label} className="text-xs font-bold mb-1 mt-1">
+                    <span>{data.label}</span>
+                  </div>
+                );
+              }
+
               return (
-                <div key={data.label} className="text-xs font-bold mb-1 mt-1">
-                  <span>{data.label}</span>
-                </div>
+                <label
+                  key={id}
+                  className="flex items-center ml-1.5 space-x-1 hover:text-gray-400 hover:underline"
+                >
+                  <EventTypeFilterCheckbox eventType={data.type} />
+                  <span className="text-sm">{data.label}</span>
+                  <EventTypeCount eventType={data.type} />
+                </label>
               );
-            }
-
-            return (
-              <label
-                key={id}
-                className="flex items-center ml-1.5 space-x-1 hover:text-gray-400 hover:underline"
-              >
-                <EventTypeFilterCheckbox eventType={data.type} />
-                <span className="text-sm">{data.label}</span>
-                <EventTypeCount eventType={data.type} />
-              </label>
-            );
-          })}
-        </section>
+            })}
+          </section>
+        </>
       )}
     </div>
   );

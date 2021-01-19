@@ -13,6 +13,8 @@ export type FilterState = {
   eventType: Partial<{ [T in keyof InputEvents]: boolean }>;
 };
 
+export type MidiDataNumericalFormat = "decimal" | "binary";
+
 type InspectorState = {
   /**
    * Set to true after successfully getting MIDI device access
@@ -71,6 +73,13 @@ type InspectorState = {
     eventType: keyof InputEvents,
     value: boolean
   ) => void;
+
+  /**
+   * Format in which to display MIDI message data.
+   * */
+  numericalFormat: MidiDataNumericalFormat;
+
+  setNumericalFormat: (format: MidiDataNumericalFormat) => void;
 };
 
 export const store = create<InspectorState>((set, get) => {
@@ -81,6 +90,7 @@ export const store = create<InspectorState>((set, get) => {
     events: {},
     eventsCount: {},
     filter: {},
+    numericalFormat: "binary",
 
     makeReady: () =>
       set(
@@ -152,6 +162,13 @@ export const store = create<InspectorState>((set, get) => {
       set(
         produce(get(), (state) => {
           state.filter[deviceId].eventType[eventType] = value;
+        })
+      ),
+
+    setNumericalFormat: (format) =>
+      set(
+        produce(get(), (state) => {
+          state.numericalFormat = format;
         })
       ),
   };

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { MessageStream } from "../../common/MessageStream";
 import { FilterState, store, useStore } from "../../../lib/store";
-import { createRef, useCallback, useEffect, useRef } from "react";
+import { createRef, useCallback, useEffect } from "react";
 import { MessageStreamStore } from "../../common/MessageStream/lib/createStore";
 import { InputEventBase, InputEvents } from "webmidi";
 import { midiMessageViewerLogger } from "../../../lib/debug";
@@ -14,18 +14,25 @@ function applyFilters(
 }
 
 const MidiDataView: React.FC<{ data: Uint8Array }> = ({ data }) => {
-  const binaryParts = [];
+  const numericalFormat = useStore((state) => state.numericalFormat);
+
+  const renderParts = [];
   for (const decimalPart of Array.from(data.values())) {
-    binaryParts.push(decimalPart.toString(2));
+    if (numericalFormat === "binary") {
+      renderParts.push(decimalPart.toString(2));
+    } else if (numericalFormat === "decimal") {
+      renderParts.push(decimalPart.toString(10));
+    }
   }
+
   return (
     <span className="text-gray-400 text-xs space-x-1">
       <span>{"{"}</span>
       <span>status:</span>
-      <span className="text-gray-300 text-sm">{binaryParts[0]}</span>
+      <span className="text-gray-300 text-sm">{renderParts[0]}</span>
       <span>data:</span>
       <span className="text-gray-300 text-sm">
-        {binaryParts.slice(1).join(", ")}
+        {renderParts.slice(1).join(", ")}
       </span>
       <span>{"}"}</span>
     </span>
