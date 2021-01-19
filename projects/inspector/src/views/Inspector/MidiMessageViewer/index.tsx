@@ -1,16 +1,26 @@
 import * as React from "react";
 import { MessageStream } from "../../common/MessageStream";
-import { store, useStore } from "../../../lib/store";
-import { createRef, useEffect, useRef } from "react";
+import { FilterState, store, useStore } from "../../../lib/store";
+import { createRef, useCallback, useEffect, useRef } from "react";
 import { MessageStreamStore } from "../../common/MessageStream/lib/createStore";
 import { InputEventBase, InputEvents } from "webmidi";
 import { midiMessageViewerLogger } from "../../../lib/debug";
 import format from "date-fns/format";
 
+function applyFilters(
+  events: InputEventBase<keyof InputEvents>[],
+  filters: FilterState
+): InputEventBase<keyof InputEvents>[] {
+  return events.filter((event) => filters.eventType[event.type]);
+}
+
 export const MidiMessageViewer: React.FC = () => {
   const lastPushedIndex = useRef(0);
 
   const activeInputId = useStore((state) => state.activeInputId);
+  const filters = useStore(
+    useCallback((state) => state.filter[activeInputId], [activeInputId])
+  );
 
   const messageStreamStoreRef = createRef<
     MessageStreamStore<InputEventBase<keyof InputEvents> | string>
@@ -31,7 +41,11 @@ export const MidiMessageViewer: React.FC = () => {
       return;
     }
 
-    const initialEvents = store.getState().events[activeInputId];
+    const initialEvents = applyFilters(
+      store.getState().events[activeInputId],
+      store.getState().filter[activeInputId]
+    );
+
     if (initialEvents.length === 0) {
       midiMessageViewerLogger(
         "Replace MessageStream content with zero state message"
@@ -77,7 +91,7 @@ export const MidiMessageViewer: React.FC = () => {
       },
       (state) => state.events[activeInputId]
     );
-  }, [activeInputId]);
+  }, [activeInputId, filters]);
 
   const startTime = useRef<number>();
 
@@ -88,9 +102,11 @@ export const MidiMessageViewer: React.FC = () => {
         if (typeof event === "string") {
           return <span>{event}</span>;
         }
+
         if (!startTime.current) {
           startTime.current = new Date().getTime() - event.timestamp;
         }
+
         return (
           <span>
             {format(
