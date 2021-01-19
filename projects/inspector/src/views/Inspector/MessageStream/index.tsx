@@ -26,24 +26,24 @@ export type MessageStreamSharedProps = {
 
 type MessageStreamProps = {
   /**
+   * Allows controller to mutate the state of the underlying MessageStream.
+   * Required, because otherwise there is no point in creating a MessageStream.
+   * */
+  storeRef: MutableRefObject<MessageStreamStore<unknown>>;
+
+  /**
    * Override the default rendered for messages. Defaults to `data => data`,
    * which for example would just render messages verbatim (perfect for
    * strings, but need to override for objects).
    * */
   renderRow?: RenderRow;
-
-  /**
-   * Allows controller to mutate the state of the underlying MessageStream.
-   * */
-  storeRef?: MutableRefObject<MessageStreamStore<unknown>>;
 };
 
 const defaultRenderRow = (data) => data;
 
-export const MessageStream: React.FC<MessageStreamProps> = ({
-  renderRow = defaultRenderRow,
-  storeRef,
-} = {}) => {
+export const MessageStream: React.FC<MessageStreamProps> = (props) => {
+  const { renderRow = defaultRenderRow, storeRef } = props;
+
   const store = useMemo(() => createStore(), []);
   storeRef.current = store;
 

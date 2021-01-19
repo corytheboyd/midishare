@@ -1,7 +1,7 @@
 import create, { StoreApi } from "zustand/vanilla";
 import produce from "immer";
 
-export type MessageStreamState<T = never> = {
+export type MessageStreamState<T = unknown> = {
   live: boolean;
   setLive: (value: boolean) => void;
 
@@ -10,10 +10,14 @@ export type MessageStreamState<T = never> = {
   addMessage: (message: T) => void;
 };
 
+/**
+ * This type is generic to allow consumers to create type safe store refs.
+ * Internally, all of the typing remains unknown to keep it simple.
+ * */
 export type MessageStreamStore<T = never> = StoreApi<MessageStreamState<T>>;
 
-export function createStore<T>(): MessageStreamStore<T> {
-  return create<MessageStreamState<T>>((set, get) => ({
+export function createStore(): MessageStreamStore<unknown> {
+  return create<MessageStreamState<unknown>>((set, get) => ({
     live: true,
     messages: [],
     bufferedMessages: [],
