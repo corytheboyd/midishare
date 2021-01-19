@@ -10,7 +10,7 @@ export type FilterState = {
    * Mapping of WebMidi event types to boolean, for showing/hiding events of
    * given types.
    * */
-  eventType: { [T in keyof InputEvents]: boolean };
+  eventType: Partial<{ [T in keyof InputEvents]: boolean }>;
 };
 
 type InspectorState = {
@@ -93,6 +93,16 @@ export const store = create<InspectorState>((set, get) => {
 
           if (!state.eventsCount[input.id]) {
             state.eventsCount[input.id] = {};
+          }
+
+          if (!state.filter[input.id]) {
+            state.filter[input.id] = {
+              eventType: {
+                noteon: true,
+                noteoff: true,
+                controlchange: true,
+              },
+            };
           }
         })
       ),

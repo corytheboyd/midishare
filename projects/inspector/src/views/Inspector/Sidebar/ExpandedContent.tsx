@@ -4,9 +4,9 @@ import { DeviceId, useStore } from "../../../lib/store";
 import { InputEvents } from "webmidi";
 
 const EventTypeCount: React.FC<{
-  activeInputId: DeviceId;
   eventType: keyof InputEvents;
-}> = ({ activeInputId, eventType }) => {
+}> = ({ eventType }) => {
+  const activeInputId = useStore((state) => state.activeInputId);
   const count = useStore(
     (state) => state.eventsCount[activeInputId][eventType]
   );
@@ -18,17 +18,40 @@ const EventTypeCount: React.FC<{
   );
 };
 
+const EventTypeFilterCheckbox: React.FC<{
+  eventType: keyof InputEvents;
+}> = ({ eventType }) => {
+  const activeInputId = useStore((state) => state.activeInputId);
+  const checked = useStore(
+    (state) => state.filter[activeInputId].eventType[eventType]
+  );
+  const updateFilter = useStore((state) => state.updateFilter);
+  return (
+    <input
+      type="checkbox"
+      checked={checked || false}
+      onChange={(event) => {
+        updateFilter(activeInputId, {
+          eventType: { [eventType]: event.target.checked },
+        });
+      }}
+    />
+  );
+};
+
 const eventTypesRenderData: {
-  type: keyof InputEvents | null;
+  type: keyof InputEvents | "__SEPARATOR__";
   label: string;
+  defaultEnabled?: boolean;
 }[] = [
   {
-    type: null,
+    type: "__SEPARATOR__",
     label: "Channel Voice Messages",
   },
   {
     type: "noteoff",
     label: "Note Off",
+    defaultEnabled: true,
   },
   {
     type: "noteon",
@@ -55,7 +78,7 @@ const eventTypesRenderData: {
     label: "Pitch Bend Change",
   },
   {
-    type: null,
+    type: "__SEPARATOR__",
     label: "Channel Mode Messages",
   },
   {
@@ -63,7 +86,7 @@ const eventTypesRenderData: {
     label: "Channel Mode",
   },
   {
-    type: null,
+    type: "__SEPARATOR__",
     label: "System Common Messages",
   },
   {
@@ -87,7 +110,7 @@ const eventTypesRenderData: {
     label: "Tune Request",
   },
   {
-    type: null,
+    type: "__SEPARATOR__",
     label: "System Real-Time Messages",
   },
   {
@@ -121,64 +144,58 @@ export const ExpandedContent: React.FC = () => {
 
   return (
     <div className="space-y-3">
-      <div>
-        <label htmlFor="activeInputId">
-          <div className="mb-1">
-            <div className="text-sm font-bold">Device</div>
-            <div className="ml-1 text-gray-400 text-xs font-thin">
-              Filter messages to those received from this MIDI device.
-            </div>
+      <section>
+        <div className="mb-1">
+          <div className="text-sm font-bold">Device</div>
+          <div className="ml-1 text-gray-400 text-xs font-thin">
+            Filter messages to those received from this MIDI device.
           </div>
-          <InputSelect name="activeInputId" id="activeInputId" />
-        </label>
-      </div>
+        </div>
+        <InputSelect name="activeInputId" id="activeInputId" />
+      </section>
 
       {activeInputId && (
-        <div>
-          <label>
-            <div className="mb-1">
-              <div className="text-sm font-bold">Events</div>
-              <div className="ml-1 text-gray-400 text-xs font-thin">
-                <span>
-                  Filter displayed events by type. For explanations, consult the
-                </span>{" "}
-                <a
-                  href="https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="underline hover:text-gray-300"
-                >
-                  official MIDI message summary.
-                </a>
-              </div>
+        <section>
+          <div className="mb-1">
+            <div className="text-sm font-bold">Events</div>
+            <div className="ml-1 text-gray-400 text-xs font-thin">
+              <span>
+                Filter displayed events by type. For explanations, consult the
+              </span>{" "}
+              <a
+                href="https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message"
+                target="_blank"
+                rel="noreferrer"
+                className="underline hover:text-gray-300"
+              >
+                official MIDI message summary.
+              </a>
             </div>
+          </div>
 
-            {eventTypesRenderData.map((data) => {
-              const id = `${data.type}_EventFilter`;
+          {eventTypesRenderData.map((data) => {
+            const id = `${data.type}_EventFilter`;
 
-              if (data.type === null) {
-                return (
-                  <div key={data.label} className="text-xs font-bold mb-1 mt-1">
-                    <span>{data.label}</span>
-                  </div>
-                );
-              }
-
+            if (data.type === "__SEPARATOR__") {
               return (
-                <label key={id} htmlFor={id}>
-                  <div className="flex items-center space-x-1 ml-1">
-                    <input type="checkbox" id={id} />
-                    <span className="text-sm">{data.label}</span>
-                    <EventTypeCount
-                      activeInputId={activeInputId}
-                      eventType={data.type}
-                    />
-                  </div>
-                </label>
+                <div key={data.label} className="text-xs font-bold mb-1 mt-1">
+                  <span>{data.label}</span>
+                </div>
               );
-            })}
-          </label>
-        </div>
+            }
+
+            return (
+              <label
+                key={id}
+                className="flex items-center ml-1.5 space-x-1 hover:text-gray-400 hover:underline"
+              >
+                <EventTypeFilterCheckbox eventType={data.type} />
+                <span className="text-sm">{data.label}</span>
+                <EventTypeCount eventType={data.type} />
+              </label>
+            );
+          })}
+        </section>
       )}
     </div>
   );
