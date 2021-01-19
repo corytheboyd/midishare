@@ -38,9 +38,13 @@ export function createStore(): MessageStreamStore<unknown> {
     replaceMessages: (messages) =>
       set(
         produce(get(), (state) => {
-          state.messages = messages;
-          state.bufferedMessages = [];
-          state.live = true;
+          if (state.live) {
+            state.messages = messages;
+            state.bufferedMessages = [];
+          } else {
+            state.messages = [];
+            state.bufferedMessages = messages;
+          }
         })
       ),
 
