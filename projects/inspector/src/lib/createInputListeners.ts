@@ -29,10 +29,13 @@ export function createInputListeners(input: Input): void {
   input.addListener("tuningrequest", "all", inputEventHandler);
   input.addListener("unknownsystemmessage", "all", inputEventHandler);
 
+  input.addListener("activesensing", "all", inputEventHandler);
+  input.addListener("clock", "all", inputEventHandler);
+
   // TODO Figure out the final strategy for these very rapid-fire events. For
   //  now, just lumping them into separate event handlers.
-  input.addListener("activesensing", "all", activeSensingEventHandler);
-  input.addListener("clock", "all", inputClockEventHandler);
+  // input.addListener("activesensing", "all", activeSensingEventHandler);
+  // input.addListener("clock", "all", inputClockEventHandler);
 }
 
 function inputEventHandler(event: InputEventBase<keyof InputEvents>): void {

@@ -91,6 +91,14 @@ const eventTypesRenderData: {
     label: "System Real-Time Messages",
   },
   {
+    type: "activesensing",
+    label: "Active Sensing",
+  },
+  {
+    type: "clock",
+    label: "Timing Clock",
+  },
+  {
     type: "start",
     label: "Start",
   },
