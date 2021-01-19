@@ -3,6 +3,7 @@ import { FixedSizeList } from "react-window";
 import { MessageRow } from "./MessageRow";
 import { forwardRef, MutableRefObject } from "react";
 import { MessageStreamSharedProps, RenderRow } from "./index";
+import { messageStreamLogger } from "../../../lib/debug";
 
 interface MessageListProps extends MessageStreamSharedProps {
   /**
@@ -18,6 +19,7 @@ interface MessageListProps extends MessageStreamSharedProps {
 
 export const MessageList = forwardRef<FixedSizeList, MessageListProps>(
   (props, ref) => {
+    const live = props.useStore((state) => state.live);
     const setLive = props.useStore((state) => state.setLive);
     const messageCount = props.useStore((state) => state.messages.length);
     const rowHeight = 25;
@@ -34,9 +36,17 @@ export const MessageList = forwardRef<FixedSizeList, MessageListProps>(
         itemSize={rowHeight}
         onScroll={(props) => {
           if (props.scrollOffset === 0) {
-            setLive(true);
+            if (!live) {
+              messageStreamLogger("Scrolled to top, resume real-time messages");
+              setLive(true);
+            }
           } else {
-            setLive(false);
+            if (live) {
+              messageStreamLogger(
+                "Scrolled away from top, pause real-time messages"
+              );
+              setLive(false);
+            }
           }
         }}
       >

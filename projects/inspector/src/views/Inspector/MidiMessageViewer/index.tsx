@@ -50,13 +50,16 @@ export const MidiMessageViewer: React.FC = () => {
     );
     return store.subscribe(
       (newEvents: InputEventBase<keyof InputEvents>[]) => {
-        // Replacing the entire message state instead of just adding messages
-        // as they are received... actually doesn't seem to completely kill
-        // performance. It's possible that this is completely false when the
-        // number of messages gets huge, but that would be an issue for many
-        // reasons.
-        // TODO Revisit this if performance goes to shit after messages pile up
-        messageStreamStoreRef.current.getState().replaceMessages(newEvents);
+        // When it's the first event, replace so that we discard the zero state
+        // message.
+        if (newEvents.length === 1) {
+          messageStreamStoreRef.current.getState().replaceMessages(newEvents);
+        } else {
+          // Otherwise, add the new event with the addMessage function.
+          messageStreamStoreRef.current
+            .getState()
+            .addMessage(newEvents[newEvents.length - 1]);
+        }
       },
       (state) => state.events[activeInputId]
     );

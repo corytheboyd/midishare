@@ -3,6 +3,7 @@ import { MutableRefObject } from "react";
 import { FixedSizeList } from "react-window";
 import { Icon } from "../Icon";
 import { MessageStreamSharedProps } from "./index";
+import { messageStreamLogger } from "../../../lib/debug";
 
 interface ControlBarProps extends MessageStreamSharedProps {
   listRef: MutableRefObject<FixedSizeList>;
@@ -14,8 +15,12 @@ export const ControlBar: React.FC<ControlBarProps> = (props) => {
 
   const handlePauseClick = () => {
     if (live) {
+      messageStreamLogger("Clicked pause button, pause real-time messages");
       setLive(false);
     } else {
+      messageStreamLogger(
+        "Clicked resume button, resume real-time messages (and scroll to top)"
+      );
       if (props.listRef.current) {
         props.listRef.current.scrollToItem(0);
       }

@@ -1,5 +1,6 @@
 import create, { StoreApi } from "zustand/vanilla";
 import produce from "immer";
+import { messageStreamLogger } from "../../../../lib/debug";
 
 export type MessageStreamState<T = unknown> = {
   live: boolean;
