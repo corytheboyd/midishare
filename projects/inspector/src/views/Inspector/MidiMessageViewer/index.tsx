@@ -91,6 +91,15 @@ export const MidiMessageViewer: React.FC = () => {
     return store.subscribe(
       (events: InputEventBase<keyof InputEvents>[]) => {
         const filteredEvents = applyFilters(events, filters);
+
+        if (filteredEvents.length === 0) {
+          return messageStreamStoreRef.current
+            .getState()
+            .replaceMessages([
+              `${events.length} message(s) captured, but none are visible. Try adjusting the Event filters!`,
+            ]);
+        }
+
         messageStreamStoreRef.current
           .getState()
           .replaceMessages(filteredEvents);
