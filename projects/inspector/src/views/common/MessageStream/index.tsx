@@ -10,7 +10,7 @@ import {
 } from "./lib/createStore";
 import create, { UseStore } from "zustand";
 
-export type RenderRow = (data: unknown) => JSX.Element;
+export type RenderRow = (data: unknown, index: number) => JSX.Element;
 
 export type MessageStreamSharedProps = {
   /**

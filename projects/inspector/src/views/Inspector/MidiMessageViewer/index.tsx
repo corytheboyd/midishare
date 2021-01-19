@@ -5,7 +5,6 @@ import { createRef, useCallback, useEffect, useRef } from "react";
 import { MessageStreamStore } from "../../common/MessageStream/lib/createStore";
 import { InputEventBase, InputEvents } from "webmidi";
 import { midiMessageViewerLogger } from "../../../lib/debug";
-import format from "date-fns/format";
 
 function applyFilters(
   events: InputEventBase<keyof InputEvents>[],
@@ -14,9 +13,26 @@ function applyFilters(
   return events.filter((event) => !!filters.eventType[event.type]);
 }
 
-export const MidiMessageViewer: React.FC = () => {
-  const lastPushedIndex = useRef(0);
+const MidiDataView: React.FC<{ data: Uint8Array }> = ({ data }) => {
+  const binaryParts = [];
+  for (const decimalPart of Array.from(data.values())) {
+    binaryParts.push(decimalPart.toString(2));
+  }
+  return (
+    <span className="text-gray-400 text-xs space-x-1">
+      <span>{"{"}</span>
+      <span>status:</span>
+      <span className="text-gray-300 text-sm">{binaryParts[0]}</span>
+      <span>data:</span>
+      <span className="text-gray-300 text-sm">
+        {binaryParts.slice(1).join(", ")}
+      </span>
+      <span>{"}"}</span>
+    </span>
+  );
+};
 
+export const MidiMessageViewer: React.FC = () => {
   const activeInputId = useStore((state) => state.activeInputId);
   const filters = useStore(
     useCallback((state) => state.filter[activeInputId], [activeInputId])
@@ -65,78 +81,33 @@ export const MidiMessageViewer: React.FC = () => {
     midiMessageViewerLogger(
       "Register events listener to update MessageStream state"
     );
-
-    const unsubscribeFunctions = [];
-
-    unsubscribeFunctions.push(
-      store.subscribe(
-        () => {
-          // When filters change, we have to reset all of our index based
-          // optimizations as well... hrm maybe this is the wrong way to do
-          // filters.
-          lastPushedIndex.current = 0;
-        },
-        (state) => state.filter[activeInputId]
-      )
+    return store.subscribe(
+      (events: InputEventBase<keyof InputEvents>[]) => {
+        const filteredEvents = applyFilters(events, filters);
+        messageStreamStoreRef.current
+          .getState()
+          .replaceMessages(filteredEvents);
+      },
+      (state) => state.events[activeInputId]
     );
-
-    unsubscribeFunctions.push(
-      store.subscribe(
-        (events: InputEventBase<keyof InputEvents>[]) => {
-          const filteredEvents = applyFilters(events, filters);
-
-          // When it's the first event, replace so that we discard the zero state
-          // message.
-          if (lastPushedIndex.current === 0) {
-            midiMessageViewerLogger(
-              "Replacing events messages on first real event"
-            );
-            messageStreamStoreRef.current
-              .getState()
-              .replaceMessages(filteredEvents);
-            lastPushedIndex.current += filteredEvents.length;
-          } else {
-            const newEvents = filteredEvents.slice(
-              lastPushedIndex.current || lastPushedIndex.current + 1
-            );
-
-            for (const event of newEvents) {
-              messageStreamStoreRef.current.getState().addMessage(event);
-            }
-
-            // Update cursor to end of current events list with the information
-            // we have.
-            lastPushedIndex.current += newEvents.length;
-          }
-        },
-        (state) => state.events[activeInputId]
-      )
-    );
-
-    return () => unsubscribeFunctions.forEach((fn) => fn());
   }, [activeInputId, filters]);
-
-  const startTime = useRef<number>();
 
   return (
     <MessageStream
       storeRef={messageStreamStoreRef}
-      renderRow={(event: InputEventBase<keyof InputEvents> | string) => {
+      renderRow={(event: InputEventBase<keyof InputEvents> | string, index) => {
         if (typeof event === "string") {
           return <span>{event}</span>;
         }
 
-        if (!startTime.current) {
-          startTime.current = new Date().getTime() - event.timestamp;
-        }
-
         return (
           <span>
-            {format(
-              new Date(startTime.current + event.timestamp),
-              "HH:mm:ss.SSS"
-            )}{" "}
-            {event.type} - {event.data}
+            <div className="flex items-center space-x-2">
+              <span className="text-gray-400 text-xs">[{index}]</span>
+              <span>{event.timestamp.toFixed(3)}</span>
+              <span>{event.type}</span>
+              <MidiDataView data={event.data} />
+            </div>
           </span>
         );
       }}

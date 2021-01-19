@@ -32,7 +32,7 @@ export const MessageRow: React.FC<MessageRowProps> = ({
       style={style}
       className={`h-full pl-1.5 ${backgroundColorClass} text-gray-300 flex items-center justify-start`}
     >
-      {renderRow(message)}
+      {renderRow(message, index)}
     </div>
   );
 };
