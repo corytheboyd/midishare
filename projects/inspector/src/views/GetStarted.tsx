@@ -3,7 +3,7 @@ import { Page } from "./common/Page";
 import { getMidiAccess } from "../lib/getMidiAccess";
 import { createDeviceListeners } from "../lib/createDeviceListeners";
 import { addAllInputsToState } from "../lib/addAllInputsToState";
-import { useStore } from "../store";
+import { useStore } from "../lib/store";
 
 export const GetStarted: React.FC = () => {
   const makeReady = useStore((state) => state.makeReady);

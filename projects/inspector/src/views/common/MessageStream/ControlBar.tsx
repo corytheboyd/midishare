@@ -1,7 +1,7 @@
 import * as React from "react";
 import { MutableRefObject } from "react";
 import { FixedSizeList } from "react-window";
-import { Icon } from "../../common/Icon";
+import { Icon } from "../Icon";
 import { MessageStreamSharedProps } from "./index";
 
 interface ControlBarProps extends MessageStreamSharedProps {

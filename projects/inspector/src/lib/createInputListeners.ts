@@ -6,7 +6,7 @@ import {
   InputEvents,
 } from "webmidi";
 import { addEventForInput } from "./addEventForInput";
-import { DeviceId } from "../store";
+import { DeviceId } from "./store";
 
 export function createInputListeners(input: Input): void {
   // TODO not on ALL midi channels?

@@ -1,4 +1,4 @@
-import { DeviceId, store } from "../store";
+import { DeviceId, store } from "./store";
 import { InputEventBase, InputEvents } from "webmidi";
 
 export function addEventForInput(

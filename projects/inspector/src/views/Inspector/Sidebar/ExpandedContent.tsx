@@ -1,6 +1,6 @@
 import * as React from "react";
 import { InputSelect } from "./InputSelect";
-import { DeviceId, useStore } from "../../../store";
+import { DeviceId, useStore } from "../../../lib/store";
 import { InputEvents } from "webmidi";
 
 const EventTypeCount: React.FC<{

@@ -1,4 +1,4 @@
-import { DeviceId, store } from "../store";
+import { DeviceId, store } from "./store";
 
 export function setActiveInput(id: DeviceId): void {
   const setActiveInput = store.getState().setActiveInput;

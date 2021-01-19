@@ -8,6 +8,8 @@ export type MessageStreamState<T = unknown> = {
   messages: T[];
   bufferedMessages: T[];
   addMessage: (message: T) => void;
+
+  replaceMessages: (messages: T[]) => void;
 };
 
 /**
@@ -30,6 +32,15 @@ export function createStore(): MessageStreamStore<unknown> {
           } else {
             state.bufferedMessages.push(message);
           }
+        })
+      ),
+
+    replaceMessages: (messages) =>
+      set(
+        produce(get(), (state) => {
+          state.messages = messages;
+          state.bufferedMessages = [];
+          state.live = true;
         })
       ),
 

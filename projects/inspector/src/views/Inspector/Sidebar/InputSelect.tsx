@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useStore } from "../../../store";
+import { useStore } from "../../../lib/store";
 import { setActiveInput } from "../../../lib/setActiveInput";
 
 type InputSelectProps = {

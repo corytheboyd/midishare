@@ -1,4 +1,4 @@
-import { store } from "../store";
+import { store } from "./store";
 import { Input } from "webmidi";
 import { createInputListeners } from "./createInputListeners";
 
