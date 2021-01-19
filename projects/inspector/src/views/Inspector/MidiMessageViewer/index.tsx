@@ -5,7 +5,7 @@ import { createRef, useEffect, useRef } from "react";
 import { MessageStreamStore } from "../../common/MessageStream/lib/createStore";
 import { InputEventBase, InputEvents } from "webmidi";
 import { midiMessageViewerLogger } from "../../../lib/debug";
-import { start } from "repl";
+import format from "date-fns/format";
 
 export const MidiMessageViewer: React.FC = () => {
   const lastPushedIndex = useRef(0);
@@ -79,6 +79,8 @@ export const MidiMessageViewer: React.FC = () => {
     );
   }, [activeInputId]);
 
+  const startTime = useRef<number>();
+
   return (
     <MessageStream
       storeRef={messageStreamStoreRef}
@@ -86,8 +88,15 @@ export const MidiMessageViewer: React.FC = () => {
         if (typeof event === "string") {
           return <span>{event}</span>;
         }
+        if (!startTime.current) {
+          startTime.current = new Date().getTime() - event.timestamp;
+        }
         return (
           <span>
+            {format(
+              new Date(startTime.current + event.timestamp),
+              "HH:mm:ss.SSSS"
+            )}{" "}
             {event.type} - {event.data}
           </span>
         );
