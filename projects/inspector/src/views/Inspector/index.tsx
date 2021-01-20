@@ -2,20 +2,28 @@ import { Page } from "../common/Page";
 import * as React from "react";
 import { Sidebar } from "./Sidebar";
 import { MidiMessageViewer } from "./MidiMessageViewer";
+import { TimingClockViewer } from "../common/TimingClockViewer";
 
 export const Inspector: React.FC = () => {
   return (
     <Page>
-      <div className="flex flex-row h-full">
+      <div className="bg-gray-700 flex flex-row h-full">
         <Sidebar />
-        <div className="w-full h-full flex flex-col">
-          <div className="flex-grow">
-            <span>shit on the floor</span>
-          </div>
-          <div className="flex-grow-0">
+
+        <section className="w-full h-full flex flex-col">
+          <section className="flex-grow flex p-1 space-x-1">
+            <div className="">
+              <TimingClockViewer />
+            </div>
+            <div className="">
+              <TimingClockViewer />
+            </div>
+          </section>
+
+          <section className="flex-grow-0">
             <MidiMessageViewer />
-          </div>
-        </div>
+          </section>
+        </section>
       </div>
     </Page>
   );

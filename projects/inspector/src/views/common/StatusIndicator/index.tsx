@@ -1,17 +1,22 @@
 import * as React from "react";
 
 type StatusIndicatorProps = {
-  active: boolean;
-  color: "red";
+  active?: boolean;
+  color: "red" | "green";
   size: "xs";
 };
 
 export const StatusIndicator: React.FC<StatusIndicatorProps> = (props) => {
   const circleStyles = ["rounded-full"];
+  const active = props.active || true;
 
   switch (props.color) {
     case "red": {
-      circleStyles.push(`bg-red-${props.active ? 500 : 800}`);
+      circleStyles.push(`bg-red-${active ? 500 : 800}`);
+      break;
+    }
+    case "green": {
+      circleStyles.push(`bg-green-${active ? 500 : 800}`);
       break;
     }
   }
@@ -21,10 +26,6 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = (props) => {
       circleStyles.push("h-2", "w-2");
       break;
     }
-  }
-
-  if (props.active) {
-    circleStyles.push("animate-pulse");
   }
 
   return <div className={circleStyles.join(" ")} />;

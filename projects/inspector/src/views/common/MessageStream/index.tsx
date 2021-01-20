@@ -72,7 +72,7 @@ export const MessageStream: React.FC<MessageStreamProps> = (props) => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex p-1.5 bg-gray-300 text-gray-500 font-mono text-xs font-light">
+      <div className="flex p-1.5 bg-gray-300 text-gray-500 font-mono text-xs font-light rounded-t">
         <div className="flex items-baseline space-x-1 flex-grow-0">
           <StatusIndicator active={live} color="red" size="xs" />
           <div className="">{live ? "live" : "paused"}</div>
