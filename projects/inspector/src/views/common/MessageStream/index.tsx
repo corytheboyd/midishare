@@ -40,6 +40,21 @@ type MessageStreamProps = {
   renderRow: RenderRow;
 };
 
+const ResumeButton: React.FC<
+  MessageStreamSharedProps & { onClick: () => void }
+> = ({ useStore, onClick }) => {
+  const bufferedMessages = useStore((state) => state.bufferedMessages);
+
+  return (
+    <button
+      className="underline text-blue-500 hover:text-blue-600 focus:ring-0"
+      onClick={onClick}
+    >
+      Resume to see the {bufferedMessages.length} new messages
+    </button>
+  );
+};
+
 export const MessageStream: React.FC<MessageStreamProps> = (props) => {
   const { renderRow, storeRef } = props;
 
@@ -50,7 +65,10 @@ export const MessageStream: React.FC<MessageStreamProps> = (props) => {
   const listRef = useRef<FixedSizeList>();
 
   const live = useStore((state) => state.live);
-  const bufferedMessages = useStore((state) => state.bufferedMessages);
+  const shiftBufferedMessages = useStore(
+    (state) => state.shiftBufferedMessages
+  );
+  const setLive = useStore((state) => state.setLive);
 
   return (
     <div className="flex flex-col">
@@ -64,15 +82,14 @@ export const MessageStream: React.FC<MessageStreamProps> = (props) => {
           <div className="text-center w-full flex-grow">
             <div className="space-x-1">
               <span>Real-time messages paused.</span>
-              <button
-                className="underline text-blue-500 hover:text-blue-600 focus:ring-0"
+              <ResumeButton
+                useStore={useStore}
                 onClick={() => {
-                  store.getState().setLive(true);
+                  shiftBufferedMessages();
+                  setLive(true);
                   listRef.current.scrollTo(0);
                 }}
-              >
-                Resume to see the {bufferedMessages.length} new messages
-              </button>
+              />
             </div>
           </div>
         )}
