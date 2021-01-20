@@ -1,14 +1,15 @@
 import * as React from "react";
-import { createRef, MutableRefObject, useMemo } from "react";
+import { createRef, MutableRefObject, useMemo, useRef } from "react";
 import { MessageList } from "./MessageList";
 import { FixedSizeList } from "react-window";
-import { ControlBar } from "./ControlBar";
 import {
   createStore,
   MessageStreamState,
   MessageStreamStore,
 } from "./lib/createStore";
 import create, { UseStore } from "zustand";
+import { messageStreamLogger } from "../../../lib/debug";
+import { StatusIndicator } from "../StatusIndicator";
 
 export type RenderRow = (data: unknown, index: number) => JSX.Element;
 
@@ -36,24 +37,64 @@ type MessageStreamProps = {
    * which for example would just render messages verbatim (perfect for
    * strings, but need to override for objects).
    * */
-  renderRow?: RenderRow;
+  renderRow: RenderRow;
 };
 
-const defaultRenderRow = (data) => data;
-
 export const MessageStream: React.FC<MessageStreamProps> = (props) => {
-  const { renderRow = defaultRenderRow, storeRef } = props;
+  const { renderRow, storeRef } = props;
 
   const store = useMemo(() => createStore(), []);
   storeRef.current = store;
 
   const useStore = useMemo(() => create(store), []);
-  const listRef = createRef<FixedSizeList>();
+  const listRef = useRef<FixedSizeList>();
+
+  const live = useStore((state) => state.live);
+  const bufferedMessages = useStore((state) => state.bufferedMessages);
 
   return (
     <div className="flex flex-col">
-      <ControlBar listRef={listRef} useStore={useStore} />
-      <MessageList ref={listRef} renderRow={renderRow} useStore={useStore} />
+      <div className="flex p-1.5 bg-gray-300 text-gray-500 font-mono text-xs font-light">
+        <div className="flex items-baseline space-x-1 flex-grow-0">
+          <StatusIndicator active={live} color="red" size="xs" />
+          <div className="">{live ? "live" : "paused"}</div>
+        </div>
+
+        {!live && (
+          <div className="text-center w-full flex-grow">
+            <div className="space-x-1">
+              <span>Real-time messages paused.</span>
+              <button
+                className="underline text-blue-500 hover:text-blue-600 focus:ring-0"
+                onClick={() => {
+                  store.getState().setLive(true);
+                  listRef.current.scrollTo(0);
+                }}
+              >
+                Resume to see the {bufferedMessages.length} new messages
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+      <MessageList
+        ref={listRef}
+        onScroll={(scrollProps) => {
+          if (!listRef.current || store.getState().messages.length === 0) {
+            return;
+          }
+
+          if (
+            scrollProps.scrollDirection == "forward" &&
+            store.getState().live
+          ) {
+            messageStreamLogger("Scrolled down, pause real-time messages");
+            store.getState().setLive(false);
+          }
+        }}
+        renderRow={renderRow}
+        useStore={useStore}
+      />
     </div>
   );
 };

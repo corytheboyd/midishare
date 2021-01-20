@@ -116,10 +116,17 @@ export const MidiMessageViewer: React.FC = () => {
           return <span>{event}</span>;
         }
 
+        if (!messageStreamStoreRef.current) {
+          return <span>Something is wrong...</span>;
+        }
+
+        const messageNumber =
+          messageStreamStoreRef.current.getState().messages.length - index;
+
         return (
           <span>
             <div className="flex items-center space-x-2">
-              <span className="text-gray-400 text-xs">[{index}]</span>
+              <span className="text-gray-400 text-xs">[{messageNumber}]</span>
               <span>{event.timestamp.toFixed(3)}</span>
               <span>{event.type}</span>
               <MidiDataView data={event.data} />

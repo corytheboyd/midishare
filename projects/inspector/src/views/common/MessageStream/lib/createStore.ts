@@ -11,6 +11,18 @@ export type MessageStreamState<T = unknown> = {
   addMessage: (message: T) => void;
 
   replaceMessages: (messages: T[]) => void;
+
+  /**
+   * Moves the specified number of messages off of the buffer onto the
+   * messages list.
+   *
+   * If numMessages is 'all', the entire buffer will be shifted.
+   *
+   * Used in the scrollTo callback of MessageList to shift messages off of the
+   * buffer when scrolled to the top, so that it doesn't resume real-time
+   * playback until the buffer is emptied.
+   * */
+  shiftBufferedMessages: (numMessages: number | "all") => void;
 };
 
 /**
@@ -24,6 +36,20 @@ export function createStore(): MessageStreamStore<unknown> {
     live: true,
     messages: [],
     bufferedMessages: [],
+
+    shiftBufferedMessages: (numMessages) =>
+      set(
+        produce(get(), (state) => {
+          if (numMessages === "all") {
+            numMessages = state.bufferedMessages.length;
+          } else if (numMessages > state.bufferedMessages.length) {
+            numMessages = state.bufferedMessages.length;
+          }
+          for (let i = 0; i < numMessages; i++) {
+            state.messages.push(state.bufferedMessages.shift());
+          }
+        })
+      ),
 
     addMessage: (message) =>
       set(
@@ -51,15 +77,6 @@ export function createStore(): MessageStreamStore<unknown> {
       set(
         produce(get(), (state) => {
           state.live = value;
-
-          // If setting back to live, merge buffered messages into canonical
-          // messages list.
-          if (state.live && state.bufferedMessages.length > 0) {
-            for (const bufferedMessage of state.bufferedMessages) {
-              state.messages.push(bufferedMessage);
-            }
-            state.bufferedMessages = [];
-          }
         })
       ),
   }));
