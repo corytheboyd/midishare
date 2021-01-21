@@ -13,6 +13,28 @@ export type FilterState = {
   eventType: Partial<{ [T in keyof InputEvents]: boolean }>;
 };
 
+export type TimingClockState = {
+  /**
+   * Raw events, which are timestamps of the incoming clock MIDI messages.
+   * */
+  events: number[];
+
+  /**
+   * Initially undefined. For MIDI controllers that do not emit timing clock
+   * events, this will remain undefined. For controllers that do emit timing
+   * clock events, this will be set to true while events are being received,
+   * and set to false if events stop being sent.
+   * */
+  active?: boolean;
+
+  /**
+   * Calculated BPM value based off of incoming clock events. This value is
+   * not updated in real-time to avoid unnecessary computation, but it's close
+   * enough so that you won't notice.
+   * */
+  bpm?: number;
+};
+
 export type MidiDataNumericalFormat = "decimal" | "binary";
 
 type InspectorState = {
@@ -80,7 +102,26 @@ type InspectorState = {
   numericalFormat: MidiDataNumericalFormat;
 
   setNumericalFormat: (format: MidiDataNumericalFormat) => void;
+
+  /**
+   * For devices that implement timing clock emission, this state captures the
+   * raw input and turns it into useful information for this application.
+   *
+   * Unique to each device.
+   *
+   * The values stored in this typed array are high resolution timestamps, not
+   * absolute times. These values are sourced from the timestamp value on the
+   * underlying clock sync MIDI messages.
+   * */
+  timingClock: Record<DeviceId, TimingClockState>;
+
+  addTimingClockEvent: (deviceId, event: number) => void;
 };
+
+// Keep it at power of 2 so that we don't waste any space. We are taking the
+// diff of each pair of elements in this array to determine the time
+// difference between events.
+const TIMING_CLOCK_EVENTS_BUFFER_SIZE = 2 ** 5;
 
 export const store = create<InspectorState>((set, get) => {
   return {
@@ -91,6 +132,7 @@ export const store = create<InspectorState>((set, get) => {
     eventsCount: {},
     filter: {},
     numericalFormat: "binary",
+    timingClock: {},
 
     makeReady: () =>
       set(
@@ -110,6 +152,12 @@ export const store = create<InspectorState>((set, get) => {
 
           if (!state.eventsCount[input.id]) {
             state.eventsCount[input.id] = {};
+          }
+
+          if (!state.timingClock[input.id]) {
+            state.timingClock[input.id] = {
+              events: [],
+            };
           }
 
           if (!state.filter[input.id]) {
@@ -169,6 +217,19 @@ export const store = create<InspectorState>((set, get) => {
       set(
         produce(get(), (state) => {
           state.numericalFormat = format;
+        })
+      ),
+
+    addTimingClockEvent: (deviceId, event) =>
+      set(
+        produce(get(), (state) => {
+          if (
+            state.timingClock[deviceId].events.length >=
+            TIMING_CLOCK_EVENTS_BUFFER_SIZE
+          ) {
+            state.timingClock[deviceId].events.shift();
+          }
+          state.timingClock[deviceId].events.push(event);
         })
       ),
   };
