@@ -15,11 +15,6 @@ export type FilterState = {
 
 export type TimingClockState = {
   /**
-   * Raw events, which are timestamps of the incoming clock MIDI messages.
-   * */
-  events: number[];
-
-  /**
    * Initially undefined. For MIDI controllers that do not emit timing clock
    * events, this will remain undefined. For controllers that do emit timing
    * clock events, this will be set to true while events are being received,
@@ -115,13 +110,12 @@ type InspectorState = {
    * */
   timingClock: Record<DeviceId, TimingClockState>;
 
-  addTimingClockEvent: (deviceId, event: number) => void;
+  updateTimingClockState: (
+    deviceId: DeviceId,
+    state: Partial<TimingClockState>
+  ) => void;
+  resetTimingClockState: (deviceId: DeviceId) => void;
 };
-
-// Keep it at power of 2 so that we don't waste any space. We are taking the
-// diff of each pair of elements in this array to determine the time
-// difference between events.
-const TIMING_CLOCK_EVENTS_BUFFER_SIZE = 2 ** 5;
 
 export const store = create<InspectorState>((set, get) => {
   return {
@@ -155,9 +149,7 @@ export const store = create<InspectorState>((set, get) => {
           }
 
           if (!state.timingClock[input.id]) {
-            state.timingClock[input.id] = {
-              events: [],
-            };
+            state.timingClock[input.id] = {};
           }
 
           if (!state.filter[input.id]) {
@@ -220,16 +212,20 @@ export const store = create<InspectorState>((set, get) => {
         })
       ),
 
-    addTimingClockEvent: (deviceId, event) =>
+    updateTimingClockState: (deviceId, partial) =>
       set(
         produce(get(), (state) => {
-          if (
-            state.timingClock[deviceId].events.length >=
-            TIMING_CLOCK_EVENTS_BUFFER_SIZE
-          ) {
-            state.timingClock[deviceId].events.shift();
-          }
-          state.timingClock[deviceId].events.push(event);
+          state.timingClock[deviceId] = {
+            ...state.timingClock[deviceId],
+            ...partial,
+          };
+        })
+      ),
+
+    resetTimingClockState: (deviceId) =>
+      set(
+        produce(get(), (state) => {
+          state.timingClock[deviceId] = {};
         })
       ),
   };

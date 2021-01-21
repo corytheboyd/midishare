@@ -1,13 +1,15 @@
 import * as React from "react";
 
+export type StatusIndicatorColor = "red" | "green" | "gray";
+
 type StatusIndicatorProps = {
   active?: boolean;
-  color: "red" | "green";
+  color: StatusIndicatorColor;
   size: "xs";
 };
 
 export const StatusIndicator: React.FC<StatusIndicatorProps> = (props) => {
-  const circleStyles = ["rounded-full"];
+  const circleStyles = ["rounded-full", "shadow"];
   const active = props.active || true;
 
   switch (props.color) {
@@ -18,6 +20,9 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = (props) => {
     case "green": {
       circleStyles.push(`bg-green-${active ? 500 : 800}`);
       break;
+    }
+    case "gray": {
+      circleStyles.push("bg-gray-500");
     }
   }
 

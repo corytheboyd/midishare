@@ -1,8 +1,12 @@
-import { Input, InputEventBase, InputEvents } from "webmidi";
+import { Input, InputEventBase, InputEventClock, InputEvents } from "webmidi";
 import { DeviceId, store } from "./store";
+import { deviceLogger } from "./debug";
 
 const EVENTS_BUFFER_SIZE = 10;
 const EVENTS_BUFFER_FLUSH_TIMEOUT_MS = 50;
+const TIMING_CLOCK_BUFFER_SIZE = 150;
+const TIMING_CLOCK_TIMEOUT_DURATION_MS = 500;
+const TIMING_CLOCK_BPM_UPDATE_RATE_PULSES = 5;
 
 export function createInputListeners(input: Input): void {
   input.addListener("channelaftertouch", "all", inputEventHandler);
@@ -29,7 +33,11 @@ export function createInputListeners(input: Input): void {
 
 const timingClockStateMap: Record<
   DeviceId,
-  { eventCount: number; lastQuarterNoteAt?: number }
+  {
+    pulseCount: number;
+    lastPulseAt?: number;
+    pulseTimeDiffs?: number[];
+  }
 > = {};
 
 function inputEventHandler(event: InputEventBase<keyof InputEvents>): void {
@@ -38,31 +46,7 @@ function inputEventHandler(event: InputEventBase<keyof InputEvents>): void {
   store.getState().incrementEventsCount(deviceId, event.type);
 
   if (event.type === "clock") {
-    store.getState().addTimingClockEvent(deviceId, event.timestamp);
-
-    // Initialize at 0 on the first message being received, though it's not
-    // guarantee that our counting will be lined up with the internal clock.
-    // In that, our concept of the quarter note starting count at zero won't
-    // line up with the device's metronome "clicks". We can solve that later,
-    // it would need some sort of interaction from the user to adjust an
-    // offset.
-    if (!timingClockStateMap[deviceId]) {
-      timingClockStateMap[deviceId] = { eventCount: 1 };
-    } else {
-      timingClockStateMap[deviceId].eventCount += 1;
-    }
-
-    if (timingClockStateMap[deviceId].eventCount === 24) {
-      if (timingClockStateMap[deviceId].lastQuarterNoteAt) {
-        const diff =
-          event.timestamp - timingClockStateMap[deviceId].lastQuarterNoteAt;
-        const bpm = Math.round((1000 * 60) / diff);
-        console.debug("QUARTER NOTE, TIME DIFF, BPM", diff, bpm);
-      }
-
-      timingClockStateMap[deviceId].eventCount = 0;
-      timingClockStateMap[deviceId].lastQuarterNoteAt = event.timestamp;
-    }
+    processTimingClockEvent(event as InputEventClock);
   }
 
   if (!inputEventBufferMap[deviceId]) {
@@ -105,4 +89,63 @@ function clearFlushTimeout(deviceId: DeviceId): void {
     clearTimeout(inputEventTimeoutIdMap[deviceId]);
     delete inputEventTimeoutIdMap[deviceId];
   }
+}
+
+const timingClockAliveTimeoutMap: Record<DeviceId, NodeJS.Timeout> = {};
+
+function processTimingClockEvent(event: InputEventClock): void {
+  const deviceId = event.target.id;
+
+  if (store.getState().timingClock[deviceId].active === undefined) {
+    deviceLogger(`Timing clock detected for device: ${deviceId}`);
+    store.getState().updateTimingClockState(deviceId, { active: true });
+  } else if (timingClockAliveTimeoutMap[deviceId]) {
+    clearTimeout(timingClockAliveTimeoutMap[deviceId]);
+    timingClockAliveTimeoutMap[deviceId] = setTimeout(() => {
+      store.getState().updateTimingClockState(deviceId, { active: false });
+    }, TIMING_CLOCK_TIMEOUT_DURATION_MS);
+  }
+
+  if (!timingClockStateMap[deviceId]) {
+    timingClockStateMap[deviceId] = {
+      pulseCount: 0,
+      lastPulseAt: event.timestamp,
+      pulseTimeDiffs: [],
+    };
+    return;
+  }
+
+  if (
+    timingClockStateMap[deviceId].pulseTimeDiffs.length ===
+    TIMING_CLOCK_BUFFER_SIZE
+  ) {
+    timingClockStateMap[deviceId].pulseTimeDiffs.shift();
+  }
+
+  const timeDiff = event.timestamp - timingClockStateMap[deviceId].lastPulseAt;
+  timingClockStateMap[deviceId].lastPulseAt = event.timestamp;
+  timingClockStateMap[deviceId].pulseTimeDiffs.push(timeDiff);
+
+  if (
+    timingClockStateMap[deviceId].pulseTimeDiffs.length ===
+    TIMING_CLOCK_BUFFER_SIZE
+  ) {
+    const numerator = timingClockStateMap[deviceId].pulseTimeDiffs.reduce(
+      (x, r) => (r += x),
+      0
+    );
+    const average = numerator / TIMING_CLOCK_BUFFER_SIZE;
+    const bpm = Math.ceil((1000 * 60) / (average * 24));
+
+    if (
+      timingClockStateMap[deviceId].pulseCount === 0 ||
+      timingClockStateMap[deviceId].pulseCount %
+        TIMING_CLOCK_BPM_UPDATE_RATE_PULSES ===
+        0
+    ) {
+      store.getState().updateTimingClockState(deviceId, { bpm: bpm });
+    }
+  }
+
+  timingClockStateMap[deviceId].pulseCount += 1;
 }
