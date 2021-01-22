@@ -135,7 +135,9 @@ function processTimingClockEvent(event: InputEventClock): void {
     TIMING_CLOCK_BUFFER_SIZE
   ) {
     const numerator = timingClockStateMap[deviceId].pulseTimeDiffs.reduce(
-      (x, r) => (r += x),
+      (x, r) => {
+        return r + x;
+      },
       0
     );
     const average = numerator / TIMING_CLOCK_BUFFER_SIZE;
