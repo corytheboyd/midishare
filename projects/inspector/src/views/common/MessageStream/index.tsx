@@ -40,17 +40,13 @@ type MessageStreamProps = {
   renderRow: RenderRow;
 };
 
-const ResumeButton: React.FC<
-  MessageStreamSharedProps & { onClick: () => void }
-> = ({ useStore, onClick }) => {
-  const bufferedMessages = useStore((state) => state.bufferedMessages);
-
+const ResumeButton: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
     <button
       className="underline text-blue-500 hover:text-blue-600 focus:ring-0"
       onClick={onClick}
     >
-      Resume to see the {bufferedMessages.length} new messages
+      Resume to see the new messages
     </button>
   );
 };
@@ -83,7 +79,6 @@ export const MessageStream: React.FC<MessageStreamProps> = (props) => {
             <div className="space-x-1">
               <span>Real-time messages paused.</span>
               <ResumeButton
-                useStore={useStore}
                 onClick={() => {
                   shiftBufferedMessages();
                   setLive(true);

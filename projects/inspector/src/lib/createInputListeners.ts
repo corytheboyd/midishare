@@ -7,7 +7,7 @@ import {
   MidiMessageType,
 } from "./createMidiMessageFromEvent";
 
-const EVENTS_BUFFER_SIZE = 100;
+const EVENTS_BUFFER_SIZE = 50;
 const EVENTS_BUFFER_FLUSH_TIMEOUT_MS = 50;
 const TIMING_CLOCK_BUFFER_SIZE = 150;
 const TIMING_CLOCK_TIMEOUT_DURATION_MS = 500;

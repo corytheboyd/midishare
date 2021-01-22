@@ -24,7 +24,7 @@ export type MessageStreamState<T = unknown> = {
 export type MessageStreamStore<T = never> = StoreApi<MessageStreamState<T>>;
 
 export function createStore(): MessageStreamStore<unknown> {
-  const store = create<MessageStreamState<unknown>>((set, get) => ({
+  return create<MessageStreamState<unknown>>((set, get) => ({
     live: true,
     messages: [],
     bufferedMessages: [],
@@ -32,9 +32,8 @@ export function createStore(): MessageStreamStore<unknown> {
     shiftBufferedMessages: () =>
       set(
         produce(get(), (state) => {
-          while (state.bufferedMessages.length > 0) {
-            state.messages.push(state.bufferedMessages.shift());
-          }
+          state.messages = state.messages.concat(state.bufferedMessages);
+          state.bufferedMessages.length = 0;
         })
       ),
 
@@ -67,6 +66,4 @@ export function createStore(): MessageStreamStore<unknown> {
         })
       ),
   }));
-
-  return store;
 }
