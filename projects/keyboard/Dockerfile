@@ -2,16 +2,16 @@ FROM node:14.15.3 AS node-base
 
 FROM node-base AS development
 
-WORKDIR /code/keyboard
+WORKDIR /code
 COPY projects/keyboard/package.json .
 COPY projects/keyboard/package-lock.json .
-RUN npm ci
-COPY projects/keyboard .
+RUN npm install
 
-WORKDIR /code/app
-COPY projects/client/package.json .
-COPY projects/client/package-lock.json .
-RUN npm ci
-COPY projects/client .
+WORKDIR /code/devapp
+COPY projects/keyboard/devapp/package.json .
+COPY projects/keyboard/devapp/package-lock.json .
+RUN npm install
+
+COPY projects/keyboard .
 
 ENTRYPOINT ["./node_modules/.bin/parcel", "serve", "src/index.html"]

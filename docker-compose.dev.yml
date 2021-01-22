@@ -42,7 +42,7 @@ services:
     volumes:
       - "./projects/client/src:/code/app/src"
       - "./projects/common:/code/common:ro"
-      - "./projects/@midishare/keyboard/src:/code/@midishare/keyboard/src"
+      - "./projects/keyboard/src:/code/@midishare/keyboard/src"
       - "./projects/common/ssl:/code/ssl:ro"
       - type: volume
         source: client_parce-cache
@@ -61,18 +61,18 @@ services:
   server:
     container_name: server
 
-  midishare_keyboard:
-    container_name: midishare_keyboard
+  keyboard:
+    container_name: keyboard
     init: true
     build:
       context: .
       target: development
-      dockerfile: projects/@midishare/keyboard/Dockerfile
+      dockerfile: projects/keyboard/Dockerfile
     environment:
       CDN_URL: https://localhost:9000
     volumes:
-      - "./projects/@midishare/keyboard/src:/code/src"
-      - "./projects/@midishare/keyboard/devapp/src:/code/devapp/src"
+      - "./projects/keyboard/src:/code/src"
+      - "./projects/keyboard/devapp/src:/code/devapp/src"
       - "./projects/common/ssl:/code/ssl:ro"
       - type: volume
         source: midishare_keyboard-parcel-cache
@@ -91,8 +91,8 @@ services:
       - "--cert=/code/ssl/localhost.pem"
       - "--key=/code/ssl/localhost-key.pem"
 
-  midishare_inspector:
-    container_name: midishare_inspector
+  inspector:
+    container_name: inspector
     init: true
     build:
       context: .

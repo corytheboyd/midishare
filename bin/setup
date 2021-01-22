@@ -26,7 +26,7 @@ echo "Installing project dependencies"
 npm ci
 (cd projects/client; npm ci)
 (cd projects/server; npm ci)
-(cd projects/@midishare/keyboard; npm ci)
+(cd projects/keyboard; npm ci)
 
 echo "Building development images"
 DOCKER_ENV=dev bin/dcp build \

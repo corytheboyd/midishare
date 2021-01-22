@@ -1,0 +1,8 @@
+{
+  "name": "@midishare/keyboard-devapp",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}
