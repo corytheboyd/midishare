@@ -12,6 +12,6 @@ COPY projects/keyboard/devapp/package.json .
 COPY projects/keyboard/devapp/package-lock.json .
 RUN npm install
 
-COPY projects/keyboard .
+COPY projects/keyboard/ /code
 
 ENTRYPOINT ["./node_modules/.bin/parcel", "serve", "src/index.html"]
