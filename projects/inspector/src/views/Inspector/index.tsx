@@ -12,10 +12,7 @@ export const Inspector: React.FC = () => {
 
         <section className="w-full h-full flex flex-col">
           <section className="flex-grow flex p-1 space-x-1">
-            <div className="">
-              <TimingClockViewer />
-            </div>
-            <div className="">
+            <div>
               <TimingClockViewer />
             </div>
           </section>

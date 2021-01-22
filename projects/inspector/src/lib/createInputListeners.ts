@@ -1,8 +1,13 @@
 import { Input, InputEventBase, InputEventClock, InputEvents } from "webmidi";
 import { DeviceId, store } from "./store";
 import { deviceLogger } from "./debug";
+import {
+  createMidiMessageFromEvent,
+  MidiMessage,
+  MidiMessageType,
+} from "./createMidiMessageFromEvent";
 
-const EVENTS_BUFFER_SIZE = 10;
+const EVENTS_BUFFER_SIZE = 100;
 const EVENTS_BUFFER_FLUSH_TIMEOUT_MS = 50;
 const TIMING_CLOCK_BUFFER_SIZE = 150;
 const TIMING_CLOCK_TIMEOUT_DURATION_MS = 500;
@@ -41,21 +46,21 @@ const timingClockStateMap: Record<
 > = {};
 
 function inputEventHandler(event: InputEventBase<keyof InputEvents>): void {
-  const deviceId = event.target.id;
-
-  store.getState().incrementEventsCount(deviceId, event.type);
-
   if (event.type === "clock") {
     processTimingClockEvent(event as InputEventClock);
   }
 
-  if (!inputEventBufferMap[deviceId]) {
-    inputEventBufferMap[deviceId] = [];
-  }
-  inputEventBufferMap[deviceId].push(event);
+  const deviceId = event.target.id;
 
-  if (inputEventBufferMap[deviceId].length === EVENTS_BUFFER_SIZE) {
-    flushBufferedEvents(deviceId);
+  store.getState().incrementEventsCount(deviceId, MidiMessageType[event.type]);
+
+  if (!midiMessageBufferMap[deviceId]) {
+    midiMessageBufferMap[deviceId] = [];
+  }
+  midiMessageBufferMap[deviceId].push(createMidiMessageFromEvent(event));
+
+  if (midiMessageBufferMap[deviceId].length === EVENTS_BUFFER_SIZE) {
+    flushBufferedMessages(deviceId);
     return;
   }
 
@@ -64,22 +69,19 @@ function inputEventHandler(event: InputEventBase<keyof InputEvents>): void {
   }
 
   inputEventTimeoutIdMap[deviceId] = setTimeout(
-    () => flushBufferedEvents(deviceId),
+    () => flushBufferedMessages(deviceId),
     EVENTS_BUFFER_FLUSH_TIMEOUT_MS
   );
 }
 
-const inputEventBufferMap: Record<
-  DeviceId,
-  InputEventBase<keyof InputEvents>[]
-> = {};
+const midiMessageBufferMap: Record<DeviceId, MidiMessage[]> = {};
 const inputEventTimeoutIdMap: Record<DeviceId, NodeJS.Timeout> = {};
 
-function flushBufferedEvents(deviceId: DeviceId): void {
-  store.getState().addEvents(deviceId, inputEventBufferMap[deviceId]);
+function flushBufferedMessages(deviceId: DeviceId): void {
+  store.getState().addEvents(deviceId, midiMessageBufferMap[deviceId]);
 
   // Reset buffer by mutating the length property of the Array
-  inputEventBufferMap[deviceId].length = 0;
+  midiMessageBufferMap[deviceId].length = 0;
 
   clearFlushTimeout(deviceId);
 }

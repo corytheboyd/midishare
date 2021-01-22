@@ -1,10 +1,10 @@
 import * as React from "react";
 import { InputSelect } from "./InputSelect";
 import { MidiDataNumericalFormat, useStore } from "../../../lib/store";
-import { InputEvents } from "webmidi";
+import { MidiMessageType } from "../../../lib/createMidiMessageFromEvent";
 
 const EventTypeCount: React.FC<{
-  eventType: keyof InputEvents;
+  eventType: MidiMessageType;
 }> = ({ eventType }) => {
   const activeInputId = useStore((state) => state.activeInputId);
   const count = useStore(
@@ -19,7 +19,7 @@ const EventTypeCount: React.FC<{
 };
 
 const EventTypeFilterCheckbox: React.FC<{
-  eventType: keyof InputEvents;
+  eventType: MidiMessageType;
 }> = ({ eventType }) => {
   const activeInputId = useStore((state) => state.activeInputId);
   const checked = useStore(
@@ -38,7 +38,7 @@ const EventTypeFilterCheckbox: React.FC<{
 };
 
 const eventTypesRenderData: {
-  type: keyof InputEvents | "__SEPARATOR__";
+  type: MidiMessageType | "__SEPARATOR__";
   label: string;
   defaultEnabled?: boolean;
 }[] = [
@@ -47,32 +47,32 @@ const eventTypesRenderData: {
     label: "Channel Voice Messages",
   },
   {
-    type: "noteoff",
+    type: MidiMessageType.noteoff,
     label: "Note Off",
     defaultEnabled: true,
   },
   {
-    type: "noteon",
+    type: MidiMessageType.noteon,
     label: "Note On",
   },
   {
-    type: "channelaftertouch",
+    type: MidiMessageType.channelaftertouch,
     label: "Polyphonic Key Pressure",
   },
   {
-    type: "controlchange",
+    type: MidiMessageType.controlchange,
     label: "Control Change",
   },
   {
-    type: "programchange",
+    type: MidiMessageType.programchange,
     label: "Program Change",
   },
   {
-    type: "keyaftertouch",
+    type: MidiMessageType.keyaftertouch,
     label: "Channel Pressure",
   },
   {
-    type: "pitchbend",
+    type: MidiMessageType.pitchbend,
     label: "Pitch Bend Change",
   },
   {
@@ -80,7 +80,7 @@ const eventTypesRenderData: {
     label: "Channel Mode Messages",
   },
   {
-    type: "channelmode",
+    type: MidiMessageType.channelmode,
     label: "Channel Mode",
   },
   {
@@ -88,23 +88,23 @@ const eventTypesRenderData: {
     label: "System Common Messages",
   },
   {
-    type: "sysex",
+    type: MidiMessageType.sysex,
     label: "System Exclusive",
   },
   {
-    type: "timecode",
+    type: MidiMessageType.timecode,
     label: "Time Code Quarter Frame",
   },
   {
-    type: "songposition",
+    type: MidiMessageType.songposition,
     label: "Song Position Pointer",
   },
   {
-    type: "songselect",
+    type: MidiMessageType.songselect,
     label: "Song Select",
   },
   {
-    type: "tuningrequest",
+    type: MidiMessageType.tuningrequest,
     label: "Tune Request",
   },
   {
@@ -112,27 +112,27 @@ const eventTypesRenderData: {
     label: "System Real-Time Messages",
   },
   {
-    type: "activesensing",
+    type: MidiMessageType.activesensing,
     label: "Active Sensing",
   },
   {
-    type: "clock",
+    type: MidiMessageType.clock,
     label: "Timing Clock",
   },
   {
-    type: "start",
+    type: MidiMessageType.start,
     label: "Start",
   },
   {
-    type: "continue",
+    type: MidiMessageType.continue,
     label: "Continue",
   },
   {
-    type: "stop",
+    type: MidiMessageType.stop,
     label: "Stop",
   },
   {
-    type: "reset",
+    type: MidiMessageType.reset,
     label: "Reset",
   },
 ];

@@ -5,12 +5,14 @@ import { createRef, useCallback, useEffect } from "react";
 import { MessageStreamStore } from "../../common/MessageStream/lib/createStore";
 import { InputEventBase, InputEvents } from "webmidi";
 import { midiMessageViewerLogger } from "../../../lib/debug";
+import { MidiMessage } from "../../../lib/createMidiMessageFromEvent";
+import { eventNameFromMidiMessage } from "./eventNameFromMidiMessage";
 
 function applyFilters(
-  events: InputEventBase<keyof InputEvents>[],
+  messages: MidiMessage[],
   filters: FilterState
-): InputEventBase<keyof InputEvents>[] {
-  return events.filter((event) => !!filters.eventType[event.type]);
+): MidiMessage[] {
+  return messages.filter((message) => !!filters.eventType[message[0]]);
 }
 
 const MidiDataView: React.FC<{ data: Uint8Array }> = ({ data }) => {
@@ -46,7 +48,7 @@ export const MidiMessageViewer: React.FC = () => {
   );
 
   const messageStreamStoreRef = createRef<
-    MessageStreamStore<InputEventBase<keyof InputEvents> | string>
+    MessageStreamStore<MidiMessage | string>
   >();
 
   // When the active input device changes, copy the recorded events for that
@@ -89,7 +91,7 @@ export const MidiMessageViewer: React.FC = () => {
       "Register events listener to update MessageStream state"
     );
     return store.subscribe(
-      (events: InputEventBase<keyof InputEvents>[]) => {
+      (events: MidiMessage[]) => {
         const filteredEvents = applyFilters(events, filters);
 
         if (filteredEvents.length === 0) {
@@ -116,10 +118,6 @@ export const MidiMessageViewer: React.FC = () => {
           return <span>{event}</span>;
         }
 
-        if (!messageStreamStoreRef.current) {
-          return <span>Something is wrong...</span>;
-        }
-
         const messageNumber =
           messageStreamStoreRef.current.getState().messages.length - index;
 
@@ -127,9 +125,9 @@ export const MidiMessageViewer: React.FC = () => {
           <span>
             <div className="flex items-center space-x-2">
               <span className="text-gray-400 text-xs">[{messageNumber}]</span>
-              <span>{event.timestamp.toFixed(3)}</span>
-              <span>{event.type}</span>
-              <MidiDataView data={event.data} />
+              <span>{event[1].toFixed(3)}</span>
+              <span>{eventNameFromMidiMessage(event[0])}</span>
+              <MidiDataView data={event[2]} />
             </div>
           </span>
         );

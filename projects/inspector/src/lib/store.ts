@@ -2,6 +2,11 @@ import create from "zustand/vanilla";
 import createReactHook from "zustand";
 import { Input, InputEventBase, InputEvents } from "webmidi";
 import produce from "immer";
+import {
+  createMidiMessageFromEvent,
+  MidiMessage,
+  MidiMessageType,
+} from "./createMidiMessageFromEvent";
 
 export type DeviceId = string;
 
@@ -10,7 +15,7 @@ export type FilterState = {
    * Mapping of WebMidi event types to boolean, for showing/hiding events of
    * given types.
    * */
-  eventType: Partial<{ [T in keyof InputEvents]: boolean }>;
+  eventType: Partial<Record<MidiMessageType, boolean>>;
 };
 
 export type TimingClockState = {
@@ -59,7 +64,7 @@ type InspectorState = {
   /**
    * Events received from input devices, by device ID
    * */
-  events: Record<DeviceId, InputEventBase<keyof InputEvents>[]>;
+  events: Record<DeviceId, MidiMessage[]>;
 
   /**
    * Tracks count of events by type and input device
@@ -68,13 +73,10 @@ type InspectorState = {
 
   incrementEventsCount: (
     deviceId: DeviceId,
-    eventType: keyof InputEvents
+    eventType: MidiMessageType
   ) => void;
 
-  addEvents: (
-    deviceId: DeviceId,
-    events: InputEventBase<keyof InputEvents>[]
-  ) => void;
+  addEvents: (deviceId: DeviceId, events: MidiMessage[]) => void;
 
   /**
    * The filters applied to the events in view. Filters are unique to the
@@ -87,7 +89,7 @@ type InspectorState = {
    * */
   setEventTypeFilter: (
     deviceId: DeviceId,
-    eventType: keyof InputEvents,
+    eventType: MidiMessageType,
     value: boolean
   ) => void;
 
@@ -159,9 +161,11 @@ export const store = create<InspectorState>((set, get) => {
 
             // Set sensible filter defaults. This might be a roundabout place to
             // do it, but we can revisit later.
-            state.filter[input.id].eventType["noteon"] = true;
-            state.filter[input.id].eventType["noteoff"] = true;
-            state.filter[input.id].eventType["controlchange"] = true;
+            state.filter[input.id].eventType[MidiMessageType.noteon] = true;
+            state.filter[input.id].eventType[MidiMessageType.noteoff] = true;
+            state.filter[input.id].eventType[
+              MidiMessageType.controlchange
+            ] = true;
           }
         })
       ),
