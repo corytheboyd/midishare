@@ -14,6 +14,8 @@ const TIMING_CLOCK_TIMEOUT_DURATION_MS = 500;
 const TIMING_CLOCK_BPM_UPDATE_RATE_PULSES = 5;
 
 export function createInputListeners(input: Input): void {
+  deviceLogger(`Register listeners for device: ${input.name} (${input.id})`);
+
   input.addListener("channelaftertouch", "all", inputEventHandler);
   input.addListener("channelmode", "all", inputEventHandler);
   input.addListener("continue", "all", inputEventHandler);
