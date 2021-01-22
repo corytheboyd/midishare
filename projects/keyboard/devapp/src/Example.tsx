@@ -17,10 +17,10 @@ export const Example: React.FC<ExampleProps> = (props) => {
     <article className="w-full">
       <section className="mb-5 space-y-3">
         <h2 className="font-bold font-sans text-xl">{props.title}</h2>
-        <div>{props.description || null}</div>
+        <div className="text-gray-500 text-sm">{props.description || null}</div>
       </section>
 
-      <div className="bg-gray-300 rounded-xl">
+      <div className="bg-purple-200 rounded-xl shadow-inner">
         <section className="px-5 py-3">{props.example}</section>
         <section className="bg-gray-800 rounded-b-xl font-mono text-xs">
           <Prism language="typescript" style={style} className="rounded-b-xl">

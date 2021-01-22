@@ -4,7 +4,7 @@ import { createRuntime, Keyboard } from "../../../src";
 import { Example } from "../Example";
 import { InlineCode } from "../lib/InlineCode";
 
-export const HelloKeyboard: React.FC = () => {
+const BasicExample: React.FC = () => {
   const runtime = useRef(createRuntime());
 
   return <Keyboard runtime={runtime.current} />;
@@ -29,7 +29,7 @@ export const HelloKeyboard: React.FC = () => {
 export const Basic: React.FC = () => (
   <Example
     title="Hello, Keyboard!"
-    example={<HelloKeyboard />}
+    example={<BasicExample />}
     code={code}
     description={
       <>
