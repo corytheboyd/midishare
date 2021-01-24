@@ -1,5 +1,5 @@
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { BufferGeometry } from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 let keyboardGeometryPromise: Promise<BufferGeometry>;
 let keyboardGeometry: BufferGeometry;
@@ -12,25 +12,24 @@ export async function preloadAssets(): Promise<void> {
     return;
   }
 
-  const loader = new DRACOLoader();
-  loader.setDecoderPath(
-    "https://www.gstatic.com/draco/versioned/decoders/1.4.1/"
-  );
+  const loader = new GLTFLoader();
 
   keyboardGeometryPromise = new Promise((resolve, reject) => {
     const assetUrl = new URL(process.env.CDN_URL);
-    assetUrl.pathname = "keyboard.drc";
-    loader.load(assetUrl.toString(), resolve, null, reject);
+    assetUrl.pathname = "keyboard.gltf";
+
+    loader.load(
+      assetUrl.toString(),
+      (result) => {
+        console.debug("result GLTF", result);
+      },
+      null,
+      reject
+    );
   });
 
-  loader.preload();
-
-  try {
-    keyboardGeometry = await keyboardGeometryPromise;
-    console.debug("WE HAVE LOADED", keyboardGeometry);
-  } finally {
-    loader.dispose();
-  }
+  keyboardGeometry = await keyboardGeometryPromise;
+  console.debug("WE HAVE LOADED", keyboardGeometry);
 }
 
 export function getKeyboardGeometry(): BufferGeometry {
@@ -41,7 +40,9 @@ export function getKeyboardGeometry(): BufferGeometry {
   // TODO perhaps errors look different, i.e. it resolves to an object with
   //  no data or something.
   if (!keyboardGeometry) {
-    // console.warn("Keyboard geometry not yet loaded, this should not happen!");
+    throw new Error(
+      "Keyboard geometry not yet loaded, this should not happen!"
+    );
   }
 
   return keyboardGeometry;

@@ -6,6 +6,7 @@ import { KeyboardObject } from "./KeyboardObject";
 import { Runtime } from "./lib/Runtime";
 import { memo, useRef } from "react";
 import { onlyRenderOnceLogger } from "./lib/debug";
+import Model from "./gen/Keyboard";
 
 interface KeyboardProps {
   /**
@@ -29,7 +30,10 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
     <Container runtimeRef={runtimeRef}>
       <KeyboardCanvas runtimeRef={runtimeRef}>
         <KeyboardScene runtimeRef={runtimeRef}>
-          <KeyboardObject runtimeRef={runtimeRef} />
+          <React.Suspense fallback={null}>
+            <Model />
+          </React.Suspense>
+          {/*<KeyboardObject runtimeRef={runtimeRef} />*/}
         </KeyboardScene>
       </KeyboardCanvas>
     </Container>

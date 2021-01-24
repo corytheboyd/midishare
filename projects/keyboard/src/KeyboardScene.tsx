@@ -60,8 +60,8 @@ export const KeyboardScene: React.FC<KeyboardRuntimeProps> = (props) => {
     <>
       <pointLight
         color={"#FFFAD6"}
-        // position={[30, 100, 10]}
-        position={[0, 0, 100]}
+        position={[30, 100, 10]}
+        // position={[0, 0, 100]}
         power={10}
         intensity={1}
       />

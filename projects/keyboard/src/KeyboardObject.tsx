@@ -24,14 +24,11 @@ export const KeyboardObject: React.FC<KeyboardRuntimeProps> = (props) => {
 
   const geometry = getKeyboardGeometry();
   console.debug("geometry", geometry);
-  return null;
-  const mesh = (
-    <mesh>
+  return (
+    <mesh geometry={geometry}>
       <meshStandardMaterial />
-      <primitive object={geometry} />
     </mesh>
   );
-  return <primitive object={mesh} />;
 
   // TODO make this hashed. I think parcel has a way of doing it
   const url = new URL(process.env.CDN_URL);

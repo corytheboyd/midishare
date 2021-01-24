@@ -1,5 +1,5 @@
 import debug from "debug";
-import React from "react";
+import * as React from "react";
 
 const baseLogger = debug("@midishare/keyboard");
 
