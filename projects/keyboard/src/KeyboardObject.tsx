@@ -8,6 +8,7 @@ import { KEY_ROTATION_OFFSET_CONSTANT } from "./KeyboardScene";
 import { lerp } from "./lib/lerp";
 import { getIndexFromKeyName } from "./lib/convert/getIndexFromKeyName";
 import { onlyRenderOnceLogger, rafLogger } from "./lib/debug";
+import { getKeyboardGeometry } from "./lib/assets";
 
 type KeyMesh = Mesh<BufferGeometry, MeshPhongMaterial>;
 
@@ -21,9 +22,21 @@ export const KeyboardObject: React.FC<KeyboardRuntimeProps> = (props) => {
   // Restart the animation loop when the runtime requests animation
   runtime.onNeedRender(() => invalidate());
 
+  const geometry = getKeyboardGeometry();
+  console.debug("geometry", geometry);
+  return null;
+  const mesh = (
+    <mesh>
+      <meshStandardMaterial />
+      <primitive object={geometry} />
+    </mesh>
+  );
+  return <primitive object={mesh} />;
+
   // TODO make this hashed. I think parcel has a way of doing it
   const url = new URL(process.env.CDN_URL);
   url.pathname = "/keyboard.obj";
+  url.searchParams.append("lol", runtime.id);
   const object = useLoader(OBJLoader, url.toString());
   const { nodes, materials } = useGraph(object);
 
@@ -46,7 +59,7 @@ export const KeyboardObject: React.FC<KeyboardRuntimeProps> = (props) => {
   }, [object]);
 
   useFrame(() => {
-    rafLogger(`run - needRender: ${runtime.needRender}`);
+    rafLogger(`${runtime.id}: run - needRender: ${runtime.needRender}`);
 
     if (runtime.needRender) {
       invalidate();
@@ -75,6 +88,8 @@ export const KeyboardObject: React.FC<KeyboardRuntimeProps> = (props) => {
   // prevent reapplication after the initial load. If making modifications to
   // this component, be sure that this effect is not evaluated again.
   useEffect(() => {
+    console.debug(`${runtime.id}: MODIFY MESHES`);
+
     object.position.x = 0;
     object.position.y = 0;
     object.position.z = 0;

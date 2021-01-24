@@ -2,10 +2,14 @@ import * as React from "react";
 import { render } from "react-dom";
 import { Basic } from "./examples/Basic";
 import { MovingKeys } from "./examples/MovingKeys";
+import { preloadAssets } from "../../src/lib/assets";
 
 // TODO offer some sort of UI to control this? See:
 //  https://github.com/visionmedia/debug#browser-support
-localStorage.setItem("debug", `@midishare/keyboard:*,-@midishare/keyboard:raf`);
+// localStorage.setItem("debug", `@midishare/keyboard:*,-@midishare/keyboard:raf`);
+localStorage.setItem("debug", `@midishare/keyboard:raf`);
+
+preloadAssets().then((geometry) => console.debug("LOADED ASSETS", geometry));
 
 const App: React.FC = () => {
   return (

@@ -5,6 +5,11 @@ import { Color } from "three";
 
 export interface RuntimeOptions {
   /**
+   * A unique ID to reference the runtime by.
+   * */
+  readonly id: string;
+
+  /**
    * When a key is engaged, use a color to effectively increase the contrast
    * of notes in play. By default, no color applied.
    *
@@ -18,6 +23,7 @@ export interface RuntimeOptions {
 }
 
 export class Runtime {
+  public readonly id: string;
   public readonly keyPressedColor?: Color;
 
   private readonly store: StoreApi<KeyboardState>;
@@ -25,7 +31,9 @@ export class Runtime {
   private onReadyCallbacks: (() => void)[] = [];
   private onNeedRenderCallbacks: (() => void)[] = [];
 
-  constructor(store: StoreApi<KeyboardState>, options: RuntimeOptions = {}) {
+  constructor(store: StoreApi<KeyboardState>, options: RuntimeOptions) {
+    this.id = options.id;
+
     if (options.keyPressedColor) {
       this.keyPressedColor = new Color(options.keyPressedColor);
     }

@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useEffect, useRef } from "react";
 import { createRuntime, Keyboard } from "../../../src";
-import { Example } from "../Example";
+import { Example } from "../lib/Example";
 import { InlineCode } from "../lib/InlineCode";
 import { KeyName } from "../../../src/types";
 
 const MovingKeysExample: React.FC = () => {
-  const runtime = useRef(createRuntime());
+  const runtime = useRef(createRuntime({ id: "MovingKeysExample" }));
 
   useEffect(() => {
     const keyNamesWithVelocity: [KeyName, number][] = [

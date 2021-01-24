@@ -1,11 +1,11 @@
 import * as React from "react";
 import { useRef } from "react";
 import { createRuntime, Keyboard } from "../../../src";
-import { Example } from "../Example";
 import { InlineCode } from "../lib/InlineCode";
+import { Example } from "../lib/Example";
 
 const BasicExample: React.FC = () => {
-  const runtime = useRef(createRuntime());
+  const runtime = useRef(createRuntime({ id: "BasicExample" }));
 
   return <Keyboard runtime={runtime.current} />;
 };

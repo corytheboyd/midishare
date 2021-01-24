@@ -12,6 +12,11 @@ type ExampleProps = {
   code: string;
 };
 
+/**
+ * TODO Find fix for the annoying obnoxious margin added to the Prism pre
+ *  element. Come on y'all, we really still out here in 2021 forcing arbitrary
+ *  margin on consumers?!
+ * */
 export const Example: React.FC<ExampleProps> = (props) => {
   return (
     <article className="w-full">

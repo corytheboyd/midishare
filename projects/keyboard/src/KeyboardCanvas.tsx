@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Canvas } from "react-three-fiber";
 import { onlyRenderOnceLogger } from "./lib/debug";
+import { KeyboardRuntimeProps } from "./types";
 
-export const KeyboardCanvas: React.FC = (props) => {
+export const KeyboardCanvas: React.FC<KeyboardRuntimeProps> = (props) => {
   onlyRenderOnceLogger(KeyboardCanvas);
 
   return (
@@ -17,9 +18,9 @@ export const KeyboardCanvas: React.FC = (props) => {
       camera={{
         near: 0,
         far: 2000,
-        zoom: 1,
-        position: [0, 62.589, 75.926],
-        rotation: [-0.68, 0, 0],
+        // position: [0, 0, 0],
+        // position: [0, 62.589, 75.926],
+        // rotation: [-0.68, 0, 0],
       }}
       orthographic={true}
       invalidateFrameloop={true}

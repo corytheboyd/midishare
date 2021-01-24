@@ -26,9 +26,9 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
   }
 
   return (
-    <Container>
-      <KeyboardCanvas>
-        <KeyboardScene>
+    <Container runtimeRef={runtimeRef}>
+      <KeyboardCanvas runtimeRef={runtimeRef}>
+        <KeyboardScene runtimeRef={runtimeRef}>
           <KeyboardObject runtimeRef={runtimeRef} />
         </KeyboardScene>
       </KeyboardCanvas>
