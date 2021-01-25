@@ -10,6 +10,7 @@ import { OrbitControls, Stats } from "@react-three/drei";
 import { Flex, Box, useReflow } from "@react-three/flex";
 import { Canvas } from "react-three-fiber";
 import useMeasure from "react-use-measure";
+import mergeRefs from "react-merge-refs";
 
 interface KeyboardProps {
   /**
@@ -19,6 +20,8 @@ interface KeyboardProps {
 }
 
 export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
+  const runtimeRef = useRef(props.runtime);
+
   const sectionRef = useRef<HTMLElement>();
   const [resizeRef, bounds] = useMeasure({ scroll: false });
   useEffect(() => {
@@ -28,8 +31,6 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
     }
   }, [bounds.width, resizeRef]);
 
-  const runtimeRef = useRef(props.runtime);
-
   if (!props.runtime) {
     throw new Error(
       "Must instantiate runtime and provide through the Keyboard props API"
@@ -37,7 +38,10 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
   }
 
   return (
-    <Container runtimeRef={runtimeRef}>
+    <section
+      style={{ background: "black" }}
+      ref={mergeRefs([sectionRef, resizeRef as (el: HTMLElement) => void])}
+    >
       <Canvas
         gl={{
           antialias: true,
@@ -48,7 +52,7 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
         pixelRatio={window.devicePixelRatio}
         camera={{
           zoom: 100,
-          position: [0, 1, 1],
+          position: [0, 1, 0],
           rotation: [0, 0, 0],
         }}
         orthographic={true}
@@ -57,13 +61,13 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
         <Stats />
         <OrbitControls />
 
-        <pointLight position={[0, 10, 2]} power={10} color="yellow" />
+        <pointLight position={[0, 3, -2]} power={45} color="#FFFAD6" />
 
         <React.Suspense fallback={null}>
           <Model />
         </React.Suspense>
       </Canvas>
-    </Container>
+    </section>
   );
 });
 
