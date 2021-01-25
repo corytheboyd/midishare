@@ -1,16 +1,11 @@
 import * as React from "react";
-import { Container } from "./Container";
-import { KeyboardCanvas } from "./KeyboardCanvas";
-import { KeyboardScene } from "./KeyboardScene";
 import { Runtime } from "./lib/Runtime";
 import { memo, useEffect, useRef } from "react";
-import { onlyRenderOnceLogger } from "./lib/debug";
-import Model from "./gen/Model";
 import { OrbitControls, Stats } from "@react-three/drei";
-import { Flex, Box, useReflow } from "@react-three/flex";
 import { Canvas } from "react-three-fiber";
 import useMeasure from "react-use-measure";
 import mergeRefs from "react-merge-refs";
+import { Model } from "./gen/Model";
 
 interface KeyboardProps {
   /**
@@ -20,6 +15,7 @@ interface KeyboardProps {
 }
 
 export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
+  // TODO will get to you, my friend
   const runtimeRef = useRef(props.runtime);
 
   const sectionRef = useRef<HTMLElement>();
