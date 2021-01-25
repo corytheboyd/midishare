@@ -57,7 +57,7 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
         <Stats />
         <OrbitControls />
 
-        <pointLight position={[0, 3, -2]} power={45} color="#FFFAD6" />
+        <pointLight position={[0, 8, -3]} power={30} color="#FFFAD6" />
 
         <React.Suspense fallback={null}>
           <Model />
