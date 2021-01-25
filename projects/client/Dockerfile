@@ -6,12 +6,13 @@ WORKDIR /code/keyboard
 COPY projects/keyboard/package.json .
 COPY projects/keyboard/package-lock.json .
 RUN npm ci
-COPY projects/keyboard .
 
 WORKDIR /code/app
 COPY projects/client/package.json .
 COPY projects/client/package-lock.json .
 RUN npm ci
-COPY projects/client .
+
+COPY projects/keyboard /code/keyboard
+COPY projects/client /code/app
 
 ENTRYPOINT ["./node_modules/.bin/parcel", "serve", "src/index.html"]
