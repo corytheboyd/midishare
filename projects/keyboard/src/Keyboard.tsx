@@ -2,11 +2,14 @@ import * as React from "react";
 import { Container } from "./Container";
 import { KeyboardCanvas } from "./KeyboardCanvas";
 import { KeyboardScene } from "./KeyboardScene";
-import { KeyboardObject } from "./KeyboardObject";
 import { Runtime } from "./lib/Runtime";
-import { memo, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { onlyRenderOnceLogger } from "./lib/debug";
-import Model from "./gen/Keyboard";
+import Model from "./gen/Model";
+import { OrbitControls, Stats } from "@react-three/drei";
+import { Flex, Box, useReflow } from "@react-three/flex";
+import { Canvas } from "react-three-fiber";
+import useMeasure from "react-use-measure";
 
 interface KeyboardProps {
   /**
@@ -16,7 +19,14 @@ interface KeyboardProps {
 }
 
 export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
-  onlyRenderOnceLogger(Keyboard);
+  const sectionRef = useRef<HTMLElement>();
+  const [resizeRef, bounds] = useMeasure({ scroll: false });
+  useEffect(() => {
+    if (bounds.width > 0 && sectionRef.current) {
+      // Maintain dimensions that fit the keyboard based on the width of the viewport.
+      sectionRef.current.style.height = bounds.width * 0.12658 + "px";
+    }
+  }, [bounds.width, resizeRef]);
 
   const runtimeRef = useRef(props.runtime);
 
@@ -28,14 +38,31 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
 
   return (
     <Container runtimeRef={runtimeRef}>
-      <KeyboardCanvas runtimeRef={runtimeRef}>
-        <KeyboardScene runtimeRef={runtimeRef}>
-          <React.Suspense fallback={null}>
-            <Model />
-          </React.Suspense>
-          {/*<KeyboardObject runtimeRef={runtimeRef} />*/}
-        </KeyboardScene>
-      </KeyboardCanvas>
+      <Canvas
+        gl={{
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance",
+        }}
+        // resize={{ scroll: false, debounce: 250 }}
+        pixelRatio={window.devicePixelRatio}
+        camera={{
+          zoom: 100,
+          position: [0, 1, 1],
+          rotation: [0, 0, 0],
+        }}
+        orthographic={true}
+        invalidateFrameloop={true}
+      >
+        <Stats />
+        <OrbitControls />
+
+        <pointLight position={[0, 10, 2]} power={10} color="yellow" />
+
+        <React.Suspense fallback={null}>
+          <Model />
+        </React.Suspense>
+      </Canvas>
     </Container>
   );
 });

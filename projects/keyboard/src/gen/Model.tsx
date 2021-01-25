@@ -9,9 +9,6 @@ import { useGLTF } from "@react-three/drei/useGLTF";
 
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
-const assetUrl = new URL(process.env.CDN_URL);
-assetUrl.pathname = "keyboard.gltf";
-
 type GLTFResult = GLTF & {
   nodes: {
     A0: THREE.Mesh;
@@ -109,6 +106,9 @@ type GLTFResult = GLTF & {
   };
 };
 
+const assetUrl = new URL(process.env.CDN_URL);
+assetUrl.pathname = "keyboard.glb";
+
 export default function Model(props: JSX.IntrinsicElements["group"]) {
   const group = useRef<THREE.Group>();
   const { nodes, materials } = useGLTF(assetUrl.toString()) as GLTFResult;
@@ -117,530 +117,530 @@ export default function Model(props: JSX.IntrinsicElements["group"]) {
       <mesh
         material={materials.Natural}
         geometry={nodes.A0.geometry}
-        position={[-2.15, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-2.1494, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.A1.geometry}
-        position={[-1.56, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.5596, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.A2.geometry}
-        position={[-0.97, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.9695, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.A3.geometry}
-        position={[-0.38, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.3799, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.A4.geometry}
-        position={[0.21, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.2102, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.A5.geometry}
-        position={[0.8, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.8004, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.A6.geometry}
-        position={[1.39, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.3899, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.A7.geometry}
-        position={[1.98, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.98, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.B0.geometry}
-        position={[-2.07, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-2.0651, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.B1.geometry}
-        position={[-1.48, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.4751, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.B2.geometry}
-        position={[-0.88, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.885, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.B3.geometry}
-        position={[-0.3, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.2955, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.B4.geometry}
-        position={[0.29, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.2946, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.B5.geometry}
-        position={[0.88, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.8848, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.B6.geometry}
-        position={[1.47, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.4744, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.B7.geometry}
-        position={[2.06, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[2.0645, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.C1.geometry}
-        position={[-1.98, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.9804, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.C2.geometry}
-        position={[-1.39, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.3904, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.C3.geometry}
-        position={[-0.8, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.8007, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.C4.geometry}
-        position={[-0.21, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.2107, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.C5.geometry}
-        position={[0.38, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.3795, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.C6.geometry}
-        position={[0.97, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.9691, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.C7.geometry}
-        position={[1.56, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.5591, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.C8.geometry}
-        position={[2.15, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[2.1481, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.D1.geometry}
-        position={[-1.9, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.8966, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.D2.geometry}
-        position={[-1.31, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.3066, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.D3.geometry}
-        position={[-0.72, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.7169, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.D4.geometry}
-        position={[-0.13, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.1269, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.D5.geometry}
-        position={[0.46, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.4633, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.D6.geometry}
-        position={[1.05, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.0529, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.D7.geometry}
-        position={[1.64, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.6429, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.E1.geometry}
-        position={[-1.81, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.8121, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.E2.geometry}
-        position={[-1.22, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.2221, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.E3.geometry}
-        position={[-0.63, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.6325, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.E4.geometry}
-        position={[-0.04, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.0425, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.E5.geometry}
-        position={[0.55, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.5477, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.E6.geometry}
-        position={[1.14, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.1374, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.E7.geometry}
-        position={[1.73, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.7274, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.F1.geometry}
-        position={[-1.73, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.7277, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.F2.geometry}
-        position={[-1.14, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.1376, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.F3.geometry}
-        position={[-0.55, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.5481, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.F4.geometry}
-        position={[0.04, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.042, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.F5.geometry}
-        position={[0.63, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.6322, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.F6.geometry}
-        position={[1.22, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.2218, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.F7.geometry}
-        position={[1.81, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.8118, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.G1.geometry}
-        position={[-1.64, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.6439, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.G2.geometry}
-        position={[-1.05, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.0538, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.G3.geometry}
-        position={[-0.46, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.4643, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.G4.geometry}
-        position={[0.13, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.1258, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.G5.geometry}
-        position={[0.72, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.716, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.G6.geometry}
-        position={[1.31, 0.01, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.3055, 0.0127, -0.0024]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Natural}
         geometry={nodes.G7.geometry}
-        position={[1.9, 0.03, 0]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.8956, 0.0303, -0.0019]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.AsBb0.geometry}
-        position={[-2.11, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-2.1059, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.AsBb1.geometry}
-        position={[-1.52, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.5169, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.AsBb2.geometry}
-        position={[-0.93, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.9266, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.AsBb3.geometry}
-        position={[-0.34, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.3368, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.AsBb4.geometry}
-        position={[0.25, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.2534, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.AsBb5.geometry}
-        position={[0.84, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.844, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.AsBb6.geometry}
-        position={[1.43, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.4332, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.AsBb7.geometry}
-        position={[2.02, 0.04, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[2.0233, 0.0443, -0.1003]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.CsDb1.geometry}
-        position={[-1.94, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.9373, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.CsDb2.geometry}
-        position={[-1.35, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.3473, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.CsDb3.geometry}
-        position={[-0.76, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.7576, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.CsDb4.geometry}
-        position={[-0.17, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.1674, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.CsDb5.geometry}
-        position={[0.42, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.4228, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.CsDb6.geometry}
-        position={[1.01, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.0123, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.CsDb7.geometry}
-        position={[1.6, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.6023, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.DsEb1.geometry}
-        position={[-1.85, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.8539, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.DsEb2.geometry}
-        position={[-1.26, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.2636, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.DsEb3.geometry}
-        position={[-0.67, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.6737, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.DsEb4.geometry}
-        position={[-0.08, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.0839, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.DsEb5.geometry}
-        position={[0.51, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.5063, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.DsEb6.geometry}
-        position={[1.1, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.0959, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.DsEb7.geometry}
-        position={[1.69, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.6862, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.FsGb1.geometry}
-        position={[-1.68, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.6842, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.FsGb2.geometry}
-        position={[-1.09, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.0947, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.FsGb3.geometry}
-        position={[-0.5, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.5048, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.FsGb4.geometry}
-        position={[0.09, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.0853, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.FsGb5.geometry}
-        position={[0.68, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.6753, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.FsGb6.geometry}
-        position={[1.26, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.265, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.FsGb7.geometry}
-        position={[1.86, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.855, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.GsAb1.geometry}
-        position={[-1.6, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.6013, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.GsAb2.geometry}
-        position={[-1.01, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-1.0107, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.GsAb3.geometry}
-        position={[-0.42, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[-0.421, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.GsAb4.geometry}
-        position={[0.17, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.1684, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.GsAb5.geometry}
-        position={[0.76, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[0.7591, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.GsAb6.geometry}
-        position={[1.35, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.3484, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
       <mesh
         material={materials.Accidental}
         geometry={nodes.GsAb7.geometry}
-        position={[1.94, 0.03, -0.1]}
-        scale={[0.05, 0.03, 0.17]}
+        position={[1.939, 0.0318, -0.1022]}
+        scale={[0.0502, 0.028, 0.1675]}
       />
     </group>
   );

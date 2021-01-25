@@ -12,7 +12,6 @@ localStorage.setItem("debug", `@midishare/keyboard:raf`);
 
 const App: React.FC = () => {
   const runtime = useMemo(() => createRuntime({ id: "test" }), []);
-
   return <Keyboard runtime={runtime} />;
 
   return (

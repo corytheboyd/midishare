@@ -65,13 +65,7 @@ export const KeyboardScene: React.FC<KeyboardRuntimeProps> = (props) => {
         power={10}
         intensity={1}
       />
-      <React.Suspense
-        fallback={
-          <FallbackComponent color={props.runtimeRef.current.keyPressedColor} />
-        }
-      >
-        {props.children}
-      </React.Suspense>
+      {props.children}
     </>
   );
 };
