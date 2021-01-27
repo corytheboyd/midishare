@@ -1,10 +1,12 @@
 import * as React from "react";
 import { Runtime } from "./lib/Runtime";
 import { memo, useCallback, useEffect, useRef } from "react";
-import { Canvas, useThree } from "react-three-fiber";
+import { Canvas, invalidate, useFrame, useThree } from "react-three-fiber";
 import useMeasure, { RectReadOnly } from "react-use-measure";
 import { Model } from "./gen/Model";
 import { Group, OrthographicCamera } from "three";
+import { OrbitControls, Stats } from "@react-three/drei";
+import { KeyboardRuntimeProps } from "./types";
 
 interface KeyboardProps {
   /**
@@ -21,9 +23,10 @@ interface KeyboardProps {
 // until it fit the width exactly. Dumb? Sure. Works perfectly? Yes.
 const SCALE_RATIO = 0.2282;
 
-const Scene: React.FC<{ bounds: RectReadOnly }> = (props) => {
+const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
+  props
+) => {
   const modelRef = useRef<Group>();
-
   const setModelRef = useCallback((group: Group) => {
     modelRef.current = group;
     handleResize();
@@ -37,7 +40,6 @@ const Scene: React.FC<{ bounds: RectReadOnly }> = (props) => {
 
   const three = useThree();
   const camera = three.camera as OrthographicCamera;
-
   const handleResize = () => {
     // Adjust the camera to the bounds of the viewport to maintain aspect
     // ratio of projection.
@@ -53,14 +55,18 @@ const Scene: React.FC<{ bounds: RectReadOnly }> = (props) => {
     model.scale.set(newScale, newScale, newScale);
   };
 
+  const runtime = props.runtimeRef.current;
+  useFrame(() => {
+    if (runtime.needRender) {
+      invalidate();
+    }
+    // TODO animate keys
+  });
+
   return (
     <>
       <React.Suspense fallback={null}>
-        <Model
-          ref={setModelRef}
-          rotation={[-0.65, 0, 0]}
-          position={[0, 0, 10]}
-        />
+        <Model onClick={() => invalidate()} ref={setModelRef} />
       </React.Suspense>
     </>
   );
@@ -84,9 +90,10 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
           antialias: true,
           alpha: true,
           powerPreference: "high-performance",
+          physicallyCorrectLights: true,
         }}
         camera={{
-          position: [0, 1, 0],
+          position: [0, 1, 0.75],
           near: -1000,
           far: 1000,
         }}
@@ -94,7 +101,9 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
         orthographic={true}
         invalidateFrameloop={true}
       >
-        <Scene bounds={bounds} />
+        <Stats />
+        <OrbitControls />
+        <Scene bounds={bounds} runtimeRef={runtimeRef} />
       </Canvas>
     </section>
   );
