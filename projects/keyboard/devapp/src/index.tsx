@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import { Basic } from "./examples/Basic";
 import { MovingKeys } from "./examples/MovingKeys";
 import { createRuntime, Keyboard } from "../../src";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 // TODO offer some sort of UI to control this? See:
 //  https://github.com/visionmedia/debug#browser-support
@@ -11,7 +11,17 @@ import { useMemo } from "react";
 localStorage.setItem("debug", `@midishare/keyboard:raf`);
 
 const App: React.FC = () => {
-  const runtime = useMemo(() => createRuntime({ id: "test" }), []);
+  const runtime = useMemo(() => {
+    const runtime = createRuntime({ id: "test" });
+
+    runtime.onReady(() => {
+      console.debug("KEY ON, ASS UP");
+      runtime.keyOn("C4", 100);
+    });
+
+    return runtime;
+  }, []);
+
   return <Keyboard runtime={runtime} />;
 
   return (

@@ -3,10 +3,12 @@ import { Runtime } from "./lib/Runtime";
 import { memo, useCallback, useEffect, useRef } from "react";
 import { Canvas, invalidate, useFrame, useThree } from "react-three-fiber";
 import useMeasure, { RectReadOnly } from "react-use-measure";
-import { Model } from "./gen/Model";
+import { KeyMesh, KeyMeshMap, Model } from "./gen/Model";
 import { Group, OrthographicCamera } from "three";
 import { OrbitControls, Stats } from "@react-three/drei";
-import { KeyboardRuntimeProps } from "./types";
+import { KeyboardRuntimeProps, KeyName } from "./types";
+import { getIndexFromKeyName } from "./lib/convert/getIndexFromKeyName";
+import { lerp } from "./lib/lerp";
 
 interface KeyboardProps {
   /**
@@ -26,10 +28,28 @@ const SCALE_RATIO = 0.2282;
 const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
   props
 ) => {
+  const runtime = props.runtimeRef.current;
+
   const modelRef = useRef<Group>();
+  const keyMeshArrayRef = useRef<KeyMesh[]>();
+
   const setModelRef = useCallback((group: Group) => {
     modelRef.current = group;
     handleResize();
+
+    keyMeshArrayRef.current = group.children
+      .filter((object) => object.type === "Mesh")
+      .sort((object1, object2) => {
+        const keyName1 = object1.name as KeyName;
+        const keyName2 = object2.name as KeyName;
+        const value1 = getIndexFromKeyName(keyName1);
+        const value2 = getIndexFromKeyName(keyName2);
+        return value1 > value2 ? 1 : -1;
+      }) as KeyMesh[];
+
+    console.debug("keyMeshArrayRef.current", keyMeshArrayRef.current);
+
+    runtime.setIsReady();
   }, []);
 
   useEffect(() => {
@@ -55,18 +75,32 @@ const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
     model.scale.set(newScale, newScale, newScale);
   };
 
-  const runtime = props.runtimeRef.current;
+  useEffect(() => {
+    runtime.onNeedRender(() => invalidate());
+  }, []);
+
   useFrame(() => {
-    if (runtime.needRender) {
-      invalidate();
+    if (!runtime.needRender) {
+      return;
     }
+
     // TODO animate keys
+    for (let i = 0; i < 88; i++) {
+      const keyMesh = keyMeshArrayRef.current[i];
+      const velocity = runtime.keys[i];
+
+      if (!velocity) {
+        keyMesh.rotation.x = lerp(keyMesh.rotation.x, -0.06, 0.5);
+      } else {
+        keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0, 0.25);
+      }
+    }
   });
 
   return (
     <>
       <React.Suspense fallback={null}>
-        <Model onClick={() => invalidate()} ref={setModelRef} />
+        <Model ref={setModelRef} />
       </React.Suspense>
     </>
   );
