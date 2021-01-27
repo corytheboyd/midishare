@@ -29,6 +29,7 @@ const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
   props
 ) => {
   const runtime = props.runtimeRef.current;
+  useEffect(() => runtime.onNeedRender(invalidate), []);
 
   const modelRef = useRef<Group>();
   const keyMeshArrayRef = useRef<KeyMesh[]>();
@@ -75,24 +76,23 @@ const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
     model.scale.set(newScale, newScale, newScale);
   };
 
-  useEffect(() => {
-    runtime.onNeedRender(() => invalidate());
-  }, []);
-
   useFrame(() => {
-    if (!runtime.needRender) {
+    if (!keyMeshArrayRef.current) {
       return;
     }
 
-    // TODO animate keys
+    if (runtime.needRender) {
+      invalidate();
+    }
+
     for (let i = 0; i < 88; i++) {
       const keyMesh = keyMeshArrayRef.current[i];
       const velocity = runtime.keys[i];
 
       if (!velocity) {
-        keyMesh.rotation.x = lerp(keyMesh.rotation.x, -0.06, 0.5);
-      } else {
         keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0, 0.25);
+      } else {
+        keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0.06, 0.25);
       }
     }
   });
