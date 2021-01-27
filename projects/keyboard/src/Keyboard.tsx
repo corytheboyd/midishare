@@ -56,7 +56,11 @@ const Scene: React.FC<{ bounds: RectReadOnly }> = (props) => {
   return (
     <>
       <React.Suspense fallback={null}>
-        <Model ref={setModelRef} rotation={[-0.75, 0, 0]} />
+        <Model
+          ref={setModelRef}
+          rotation={[-0.65, 0, 0]}
+          position={[0, 0, 10]}
+        />
       </React.Suspense>
     </>
   );
