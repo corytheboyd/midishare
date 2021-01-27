@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Runtime } from "./lib/Runtime";
-import { memo, useEffect, useRef } from "react";
-import { OrbitControls, Stats } from "@react-three/drei";
-import { Canvas } from "react-three-fiber";
-import useMeasure from "react-use-measure";
+import { memo, useCallback, useEffect, useRef } from "react";
+import { Canvas, useThree } from "react-three-fiber";
+import useMeasure, { RectReadOnly } from "react-use-measure";
 import mergeRefs from "react-merge-refs";
 import { Model } from "./gen/Model";
+import { Group, OrthographicCamera } from "three";
 
 interface KeyboardProps {
   /**
@@ -14,28 +14,70 @@ interface KeyboardProps {
   runtime: Runtime;
 }
 
-export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
-  // TODO will get to you, my friend
-  const runtimeRef = useRef(props.runtime);
+// Used to calculate new scale of the model as viewport size changes the
+// orthographic camera box. It was derived from lazy trial/error to find a
+// single scale value (S) that fills the full width of a known container
+// width (W), giving us the formula: R = S/W, where R is this constant. The
+// values used were W=1205(px), S=275, and then +/- 0.0001 units at a time
+// until it fit the width exactly. Dumb? Sure. Works perfectly? Yes.
+const SCALE_RATIO = 0.2282;
 
-  const sectionRef = useRef<HTMLElement>();
-  const [resizeRef, bounds] = useMeasure({ scroll: false });
+const Scene: React.FC<{ bounds: RectReadOnly }> = (props) => {
+  const modelRef = useRef<Group>();
+
+  const setModelRef = useCallback((group: Group) => {
+    modelRef.current = group;
+    handleResize();
+  }, []);
+
   useEffect(() => {
-    if (bounds.width > 0 && sectionRef.current) {
-      // Maintain dimensions that fit the keyboard based on the width of the viewport.
-      sectionRef.current.style.height = bounds.width * 0.12658 + "px";
+    if (modelRef.current) {
+      handleResize();
     }
-  }, [bounds.width, resizeRef]);
+  }, [props.bounds]);
 
+  const { ...three } = useThree();
+  const camera = three.camera as OrthographicCamera;
+
+  const handleResize = () => {
+    // Adjust the camera to the bounds of the viewport to maintain aspect
+    // ratio of projection.
+    camera.right = props.bounds.width / 2;
+    camera.left = props.bounds.width / -2;
+    camera.top = props.bounds.height / 2;
+    camera.bottom = props.bounds.height / -2;
+    camera.updateProjectionMatrix();
+
+    // Adjust the scale of the model to fill the newly resized viewport.
+    const model = modelRef.current;
+    const newScale = props.bounds.width * SCALE_RATIO;
+    model.scale.set(newScale, newScale, newScale);
+  };
+
+  return (
+    <>
+      <React.Suspense fallback={null}>
+        <Model ref={setModelRef} />
+      </React.Suspense>
+    </>
+  );
+};
+
+export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
   if (!props.runtime) {
     throw new Error(
       "Must instantiate runtime and provide through the Keyboard props API"
     );
   }
+  // TODO will get to you, my friend
+  const runtimeRef = useRef(props.runtime);
+
+  const sectionRef = useRef<HTMLElement>();
+  const [resizeRef, bounds] = useMeasure({ scroll: false });
 
   return (
     <section
-      style={{ background: "black" }}
+      className="h-full"
       ref={mergeRefs([sectionRef, resizeRef as (el: HTMLElement) => void])}
     >
       <Canvas
@@ -44,24 +86,16 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
           alpha: true,
           powerPreference: "high-performance",
         }}
-        // resize={{ scroll: false, debounce: 250 }}
-        pixelRatio={window.devicePixelRatio}
         camera={{
-          zoom: 100,
           position: [0, 1, 0],
-          rotation: [0, 0, 0],
+          near: -1000,
+          far: 1000,
         }}
+        pixelRatio={2}
         orthographic={true}
         invalidateFrameloop={true}
       >
-        <Stats />
-        <OrbitControls />
-
-        <pointLight position={[0, 8, -3]} power={30} color="#FFFAD6" />
-
-        <React.Suspense fallback={null}>
-          <Model />
-        </React.Suspense>
+        <Scene bounds={bounds} />
       </Canvas>
     </section>
   );
