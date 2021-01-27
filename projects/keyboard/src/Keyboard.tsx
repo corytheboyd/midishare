@@ -3,7 +3,6 @@ import { Runtime } from "./lib/Runtime";
 import { memo, useCallback, useEffect, useRef } from "react";
 import { Canvas, useThree } from "react-three-fiber";
 import useMeasure, { RectReadOnly } from "react-use-measure";
-import mergeRefs from "react-merge-refs";
 import { Model } from "./gen/Model";
 import { Group, OrthographicCamera } from "three";
 
@@ -36,7 +35,7 @@ const Scene: React.FC<{ bounds: RectReadOnly }> = (props) => {
     }
   }, [props.bounds]);
 
-  const { ...three } = useThree();
+  const three = useThree();
   const camera = three.camera as OrthographicCamera;
 
   const handleResize = () => {
@@ -57,7 +56,7 @@ const Scene: React.FC<{ bounds: RectReadOnly }> = (props) => {
   return (
     <>
       <React.Suspense fallback={null}>
-        <Model ref={setModelRef} />
+        <Model ref={setModelRef} rotation={[-0.75, 0, 0]} />
       </React.Suspense>
     </>
   );
@@ -72,14 +71,10 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
   // TODO will get to you, my friend
   const runtimeRef = useRef(props.runtime);
 
-  const sectionRef = useRef<HTMLElement>();
   const [resizeRef, bounds] = useMeasure({ scroll: false });
 
   return (
-    <section
-      className="h-full"
-      ref={mergeRefs([sectionRef, resizeRef as (el: HTMLElement) => void])}
-    >
+    <section className="h-full" ref={resizeRef}>
       <Canvas
         gl={{
           antialias: true,

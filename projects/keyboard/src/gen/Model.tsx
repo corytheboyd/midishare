@@ -10,6 +10,7 @@ import { useGLTF } from "@react-three/drei/useGLTF";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import { BufferGeometry, Group, MeshPhongMaterial } from "three";
 import { KeyName } from "../types";
+import { GroupProps } from "react-three-fiber";
 
 type KeyMesh = THREE.Mesh<BufferGeometry, MeshPhongMaterial>;
 
@@ -26,8 +27,9 @@ type GLTFResult = GLTF & {
 const assetUrl = new URL(process.env.CDN_URL);
 assetUrl.pathname = "keyboard.glb";
 
-export const Model = forwardRef<Group>((props, ref) => {
+export const Model = forwardRef<Group, GroupProps>((props, ref) => {
   const gltfResult = useGLTF(assetUrl.toString()) as GLTFResult;
+
   const nodes = useMemo<{ [T in KeyName]: KeyMesh }>(() => {
     gltfResult.materials.Natural.color.set("#ffffff");
     gltfResult.materials.Accidental.color.set("#101010");
@@ -50,13 +52,7 @@ export const Model = forwardRef<Group>((props, ref) => {
   }, []);
 
   return (
-    <group
-      ref={ref}
-      rotation={[-0.75, 0, 0]}
-      position={[0, -10, 0]}
-      dispose={null}
-      {...props}
-    >
+    <group ref={ref} dispose={null} {...props}>
       <pointLight position={[0, 10, 3]} power={30} color="#FFFAD6" />
       <mesh
         material={nodes.A0.material}
