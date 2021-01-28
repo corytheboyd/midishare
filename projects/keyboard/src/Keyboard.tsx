@@ -140,7 +140,7 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
       <Canvas
         gl={{
           antialias: true,
-          alpha: false,
+          alpha: true,
           powerPreference: "high-performance",
         }}
         resize={false}
