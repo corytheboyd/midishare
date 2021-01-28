@@ -84,7 +84,7 @@ export const Scene: React.FC<
           keyMesh.material.emissive.lerp(voidColor, 0.15);
         }
       } else {
-        keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0.045, 0.25);
+        keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0.09, 0.25);
 
         if (runtime.keyPressedColor) {
           keyMesh.material.emissive.lerp(runtime.keyPressedColor, 1);
