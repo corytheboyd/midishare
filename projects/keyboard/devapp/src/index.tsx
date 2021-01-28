@@ -27,17 +27,19 @@ const App: React.FC = () => {
     runtime.keyOn("C4", 100);
     runtime.keyOn("E4", 100);
     runtime.keyOn("G4", 100);
+    runtime.keyOn("AsBb4", 100);
   };
 
   const handleMouseUp = () => {
     runtime.keyOff("C4");
     runtime.keyOff("E4");
     runtime.keyOff("G4");
+    runtime.keyOff("AsBb4");
   };
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="p-5 w-full bg-purple-300 shadow-inner rounded-xl">
+      <div className="p-5 w-full flex-grow bg-purple-300 shadow-inner rounded-xl">
         <Keyboard runtime={runtime} />
       </div>
       <button

@@ -1,14 +1,15 @@
 import * as React from "react";
 import { Runtime } from "./lib/Runtime";
 import { memo, useCallback, useEffect, useRef } from "react";
-import { Canvas, invalidate, useFrame, useThree } from "react-three-fiber";
+import { Canvas, invalidate, useFrame } from "react-three-fiber";
 import useMeasure, { RectReadOnly } from "react-use-measure";
-import { KeyMesh, KeyMeshMap, Model } from "./gen/Model";
-import { Color, Group, OrthographicCamera } from "three";
+import { KeyMesh, Model } from "./gen/Model";
+import { Color, Group } from "three";
 import { OrbitControls, Stats } from "@react-three/drei";
 import { KeyboardRuntimeProps, KeyName } from "./types";
 import { getIndexFromKeyName } from "./lib/convert/getIndexFromKeyName";
 import { lerp } from "./lib/lerp";
+import mergeRefs from "react-merge-refs";
 
 interface KeyboardProps {
   /**
@@ -50,8 +51,6 @@ const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
         return value1 > value2 ? 1 : -1;
       }) as KeyMesh[];
 
-    console.debug("keyMeshArrayRef.current", keyMeshArrayRef.current);
-
     runtime.setIsReady();
   }, []);
 
@@ -61,21 +60,10 @@ const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
     }
   }, [props.bounds]);
 
-  const three = useThree();
-  const camera = three.camera as OrthographicCamera;
   const handleResize = () => {
-    // Adjust the camera to the bounds of the viewport to maintain aspect
-    // ratio of projection.
-    camera.right = props.bounds.width / 2;
-    camera.left = props.bounds.width / -2;
-    camera.top = props.bounds.height / 2;
-    camera.bottom = props.bounds.height / -2;
-    camera.updateProjectionMatrix();
-
     // Adjust the scale of the model to fill the newly resized viewport.
-    const model = modelRef.current;
     const newScale = props.bounds.width * SCALE_RATIO;
-    model.scale.set(newScale, newScale, newScale);
+    modelRef.current.scale.set(newScale, newScale, newScale);
   };
 
   useFrame(() => {
@@ -98,7 +86,7 @@ const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
           keyMesh.material.emissive.lerp(voidColor, 0.15);
         }
       } else {
-        keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0.06, 0.25);
+        keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0.045, 0.25);
 
         if (runtime.keyPressedColor) {
           keyMesh.material.emissive.lerp(runtime.keyPressedColor, 1);
@@ -110,7 +98,13 @@ const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
   return (
     <>
       <React.Suspense fallback={null}>
-        <Model ref={setModelRef} position={[0, 0, 10]} />
+        <Model
+          ref={setModelRef}
+          // This magic formula is what aligns the keyboard with the top of
+          // the scene: https://imgur.com/a/VqGVaj7
+          // position={[0, 0, (props.bounds.width * SCALE_RATIO) / -3.64]}
+          position={[0, 0, (props.bounds.width * SCALE_RATIO) / -3.8]}
+        />
       </React.Suspense>
     </>
   );
@@ -125,17 +119,31 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
   // TODO will get to you, my friend
   const runtimeRef = useRef(props.runtime);
 
+  const containerRef = useRef<HTMLElement>();
   const [resizeRef, bounds] = useMeasure({ scroll: false });
 
+  useEffect(() => {
+    if (bounds.width === 0 || bounds.height === 0) {
+      return;
+    }
+
+    // This magic formula is what adjusts the height of the container to show
+    // the entirety of the vertical content as the width of the container
+    // changes. It's carefully selected to make sure there is enough padding
+    // below the keys to animate them being pressed https://imgur.com/a/6UVOZp0
+    containerRef.current.style.height =
+      bounds.width * (SCALE_RATIO / 1.83) + "px";
+  }, [bounds]);
+
   return (
-    <section className="h-full" ref={resizeRef}>
+    <section className="h-full" ref={mergeRefs([resizeRef, containerRef])}>
       <Canvas
         gl={{
-          antialias: false,
-          alpha: true,
-          powerPreference: "low-power",
-          physicallyCorrectLights: true,
+          antialias: true,
+          alpha: false,
+          powerPreference: "high-performance",
         }}
+        resize={false}
         camera={{
           position: [0, 1, 0.75],
           near: -1000,
@@ -144,6 +152,7 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
         pixelRatio={2}
         orthographic={true}
         invalidateFrameloop={true}
+        updateDefaultCamera={true}
       >
         <Stats />
         <OrbitControls />
