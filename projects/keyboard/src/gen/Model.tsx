@@ -55,19 +55,6 @@ export const Model = forwardRef<Group, GroupProps>((props, ref) => {
     return map;
   }, []);
 
-  // useEffect(() => {
-  //   console.debug("nodes", keyMeshMap);
-  //
-  //   for (const node of Object.values(keyMeshMap)) {
-  //     if (node.name === "C4") {
-  //       node.material.emissive.lerp(new Color("purple"), 0.75);
-  //     }
-  //     if (node.name === "CsDb4") {
-  //       node.material.emissive.lerp(new Color("purple"), 0.75);
-  //     }
-  //   }
-  // }, []);
-
   // TODO get back to this, it's a bit wonky for some reason as is. works fine
   //  looking at the model head on, but not if it's rotated.
   // const hoverColor = useMemo(() => new Color("white"), []);
@@ -83,7 +70,6 @@ export const Model = forwardRef<Group, GroupProps>((props, ref) => {
   //     invalidate();
   //   },
   // });
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const meshProps = (_keyMesh: KeyMesh) => ({});
 

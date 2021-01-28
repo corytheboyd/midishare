@@ -110,7 +110,7 @@ const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
   return (
     <>
       <React.Suspense fallback={null}>
-        <Model ref={setModelRef} />
+        <Model ref={setModelRef} position={[0, 0, 10]} />
       </React.Suspense>
     </>
   );
@@ -131,9 +131,9 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
     <section className="h-full" ref={resizeRef}>
       <Canvas
         gl={{
-          antialias: true,
+          antialias: false,
           alpha: true,
-          powerPreference: "high-performance",
+          powerPreference: "low-power",
           physicallyCorrectLights: true,
         }}
         camera={{

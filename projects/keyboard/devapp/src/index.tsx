@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import { Basic } from "./examples/Basic";
 import { MovingKeys } from "./examples/MovingKeys";
 import { createRuntime, Keyboard } from "../../src";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 // TODO offer some sort of UI to control this? See:
 //  https://github.com/visionmedia/debug#browser-support
