@@ -1,7 +1,11 @@
 import * as React from "react";
-import { StatusIndicator, StatusIndicatorColor } from "../StatusIndicator";
 import { useStore } from "../../../lib/store";
 import { useCallback } from "react";
+import { Widget } from "./Widget";
+import {
+  StatusIndicator,
+  StatusIndicatorColor,
+} from "../../common/StatusIndicator";
 
 const BPM: React.FC = () => {
   const activeInputId = useStore((state) => state.activeInputId);
@@ -21,7 +25,7 @@ const BPM: React.FC = () => {
   );
 };
 
-export const TimingClockViewer: React.FC = () => {
+export const TimingClock: React.FC = () => {
   const activeInputId = useStore((state) => state.activeInputId);
 
   const timingClockActive = useStore(
@@ -40,18 +44,16 @@ export const TimingClockViewer: React.FC = () => {
   }
 
   return (
-    <div className="bg-gray-300 text-gray-800 text-xs h-full w-full flex flex-col flex flex-col rounded">
-      <section className="text-center bg-gray-400 text-gray-600 font-bold py-0.5 px-2.5 rounded-t">
+    <Widget
+      title={
         <div className="flex items-center space-x-2">
           <span>Timing Clock</span>
           <StatusIndicator color={indicatorColor} size="xs" />
         </div>
-      </section>
-
-      <section className="p-1 flex flex-col items-center justify-center text-xs">
-        {!timingClockActive && <div className="text-gray-400">N/A</div>}
-        {timingClockActive && <BPM />}
-      </section>
-    </div>
+      }
+    >
+      {!timingClockActive && <div className="text-gray-400">N/A</div>}
+      {timingClockActive && <BPM />}
+    </Widget>
   );
 };

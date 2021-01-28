@@ -2,7 +2,7 @@ import { Page } from "../common/Page";
 import * as React from "react";
 import { Sidebar } from "./Sidebar";
 import { MidiMessageViewer } from "./MidiMessageViewer";
-import { TimingClockViewer } from "../common/TimingClockViewer";
+import { Widgets } from "./Widgets";
 
 export const Inspector: React.FC = () => {
   return (
@@ -12,9 +12,7 @@ export const Inspector: React.FC = () => {
 
         <section className="w-full h-full flex flex-col">
           <section className="flex-grow flex p-1 space-x-1">
-            <div>
-              <TimingClockViewer />
-            </div>
+            <Widgets />
           </section>
 
           <section className="flex-grow-0">
