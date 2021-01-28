@@ -61,7 +61,7 @@ export const Scene: React.FC<
     // This magic formula is what aligns the keyboard with the top of
     // the scene: https://imgur.com/a/VqGVaj7
     // position={[0, 0, (props.bounds.width * SCALE_RATIO) / -3.64]}
-    modelRef.current.position.z = (props.bounds.width * SCALE_RATIO) / -3.8;
+    modelRef.current.position.z = (props.bounds.width * SCALE_RATIO) / -4.3;
   };
 
   useFrame(() => {
@@ -95,7 +95,7 @@ export const Scene: React.FC<
 
   return (
     <>
-      <pointLight position={[0, 500, 500]} power={10 * Math.PI} />
+      <pointLight position={[0, 1000, 1000]} power={15 * Math.PI} />
       <React.Suspense fallback={null}>
         <Model ref={setModelRef} />
       </React.Suspense>

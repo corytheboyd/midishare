@@ -65,8 +65,6 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
         invalidateFrameloop={true}
         updateDefaultCamera={true}
       >
-        <Stats />
-        <OrbitControls />
         <Scene bounds={bounds} runtimeRef={runtimeRef} />
       </Canvas>
     </div>
