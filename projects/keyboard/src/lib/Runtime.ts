@@ -82,7 +82,7 @@ export class Runtime {
   }
 
   /**
-   * True when the Keyboard needs animation, otherwise false
+   * True when the Canvas needs animation, otherwise false
    * */
   public get needRender(): boolean {
     return this.store.getState().needRender;
@@ -96,7 +96,7 @@ export class Runtime {
   }
 
   /**
-   * Registers callback function to be executed after the Keyboard is ready to
+   * Registers callback function to be executed after the Canvas is ready to
    * receive input.
    * */
   public onReady(callback: () => void): void {
@@ -107,7 +107,7 @@ export class Runtime {
   }
 
   /**
-   * Registers callback function to be executed when the Keyboard needs to be
+   * Registers callback function to be executed when the Canvas needs to be
    * rendered. Used internally to invalidate the three.js render loop as keys state
    * changes.
    * */

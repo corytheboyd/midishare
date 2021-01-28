@@ -1,4 +1,4 @@
-# Keyboard
+# Canvas
 
 The beautiful piano keyboard for [React](https://reactjs.org/) applications.
 

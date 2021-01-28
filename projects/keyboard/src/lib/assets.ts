@@ -5,7 +5,7 @@ let keyboardGeometryPromise: Promise<BufferGeometry>;
 let keyboardGeometry: BufferGeometry;
 
 /**
- * Preloads assets needed to render the Keyboard.
+ * Preloads assets needed to render the Canvas.
  * */
 export async function preloadAssets(): Promise<void> {
   if (keyboardGeometryPromise) {
@@ -40,9 +40,7 @@ export function getKeyboardGeometry(): BufferGeometry {
   // TODO perhaps errors look different, i.e. it resolves to an object with
   //  no data or something.
   if (!keyboardGeometry) {
-    throw new Error(
-      "Keyboard geometry not yet loaded, this should not happen!"
-    );
+    throw new Error("Canvas geometry not yet loaded, this should not happen!");
   }
 
   return keyboardGeometry;

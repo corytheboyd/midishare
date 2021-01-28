@@ -7,7 +7,7 @@ import { Color, Group } from "three";
 import { KeyMesh, Model } from "./Model";
 import { getIndexFromKeyName } from "./convert/getIndexFromKeyName";
 import { lerp } from "./lerp";
-import { SCALE_RATIO } from "./Keyboard";
+import { SCALE_RATIO } from "./Canvas";
 
 const voidColor = new Color(0, 0, 0);
 
@@ -95,7 +95,7 @@ export const Scene: React.FC<
 
   return (
     <>
-      <pointLight position={[0, 1000, 250]} power={15 * Math.PI} />
+      <pointLight position={[0, 1000, 250]} power={7 * Math.PI} />
       <React.Suspense fallback={null}>
         <Model ref={setModelRef} />
       </React.Suspense>

@@ -1,17 +1,16 @@
 import * as React from "react";
-import { memo, useEffect, useRef } from "react";
-import { Canvas } from "react-three-fiber";
+import { memo, MutableRefObject, useEffect, useRef } from "react";
+import { Canvas as ThreeCanvas } from "react-three-fiber";
 import useMeasure from "react-use-measure";
-import { OrbitControls, Stats } from "@react-three/drei";
 import mergeRefs from "react-merge-refs";
-import { Runtime } from "./Runtime";
+import { Runtime, RuntimeOptions } from "./Runtime";
 import { Scene } from "./Scene";
+import { createRuntime } from "./createRuntime";
+import { v4 as uuid } from "uuid";
 
-interface KeyboardProps {
-  /**
-   * The runtime to use for this Keyboard instance.
-   * */
-  runtime: Runtime;
+interface CanvasProps {
+  runtime: MutableRefObject<Runtime>;
+  options?: Partial<RuntimeOptions>;
 }
 
 // Used to calculate new scale of the model as viewport size changes the
@@ -22,14 +21,14 @@ interface KeyboardProps {
 // until it fit the width exactly. Dumb? Sure. Works perfectly? Yes.
 export const SCALE_RATIO = 0.2282;
 
-export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
-  if (!props.runtime) {
-    throw new Error(
-      "Must instantiate runtime and provide through the Keyboard props API"
-    );
-  }
-  // TODO will get to you, my friend
-  const runtimeRef = useRef(props.runtime);
+export const Canvas: React.FC<CanvasProps> = memo((props) => {
+  const runtimeRef = useRef(
+    createRuntime({
+      id: uuid(),
+      ...(props.options || {}),
+    })
+  );
+  props.runtime.current = runtimeRef.current;
 
   const containerRef = useRef<HTMLElement>();
   const [resizeRef, bounds] = useMeasure({ scroll: false });
@@ -44,12 +43,12 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
     // changes. It's carefully selected to make sure there is enough padding
     // below the keys to animate them being pressed https://imgur.com/a/6UVOZp0
     containerRef.current.style.height =
-      bounds.width * (SCALE_RATIO / 1.83) + "px";
+      bounds.width * (SCALE_RATIO / 1.73) + "px";
   }, [bounds]);
 
   return (
     <div ref={mergeRefs([resizeRef, containerRef])}>
-      <Canvas
+      <ThreeCanvas
         gl={{
           antialias: true,
           alpha: true,
@@ -66,9 +65,9 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
         updateDefaultCamera={true}
       >
         <Scene bounds={bounds} runtimeRef={runtimeRef} />
-      </Canvas>
+      </ThreeCanvas>
     </div>
   );
 });
 
-Keyboard.displayName = "Keyboard";
+Canvas.displayName = "Canvas";

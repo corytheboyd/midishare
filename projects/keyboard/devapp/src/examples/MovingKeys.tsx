@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useRef } from "react";
-import { createRuntime, Keyboard } from "../../../src";
+import { createRuntime, Canvas } from "../../../src";
 import { Example } from "../lib/Example";
 import { InlineCode } from "../lib/InlineCode";
 import { KeyName } from "../../../src/types";
@@ -20,7 +20,7 @@ const MovingKeysExample: React.FC = () => {
     }
   });
 
-  return <Keyboard runtime={runtime.current} />;
+  return <Canvas runtime={runtime.current} />;
 };
 
 // ----------------------------------------------
