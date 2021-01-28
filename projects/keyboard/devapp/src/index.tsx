@@ -14,7 +14,7 @@ const App: React.FC = () => {
   const [ready, setReady] = useState(false);
 
   const runtime = useMemo(() => {
-    const runtime = createRuntime({ id: "test" });
+    const runtime = createRuntime({ id: "test", keyPressedColor: "purple" });
 
     runtime.onReady(() => {
       setReady(true);

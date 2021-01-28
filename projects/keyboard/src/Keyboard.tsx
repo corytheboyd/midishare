@@ -4,7 +4,7 @@ import { memo, useCallback, useEffect, useRef } from "react";
 import { Canvas, invalidate, useFrame, useThree } from "react-three-fiber";
 import useMeasure, { RectReadOnly } from "react-use-measure";
 import { KeyMesh, KeyMeshMap, Model } from "./gen/Model";
-import { Group, OrthographicCamera } from "three";
+import { Color, Group, OrthographicCamera } from "three";
 import { OrbitControls, Stats } from "@react-three/drei";
 import { KeyboardRuntimeProps, KeyName } from "./types";
 import { getIndexFromKeyName } from "./lib/convert/getIndexFromKeyName";
@@ -24,6 +24,8 @@ interface KeyboardProps {
 // values used were W=1205(px), S=275, and then +/- 0.0001 units at a time
 // until it fit the width exactly. Dumb? Sure. Works perfectly? Yes.
 const SCALE_RATIO = 0.2282;
+
+const voidColor = new Color(0, 0, 0);
 
 const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
   props
@@ -90,9 +92,17 @@ const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
       const velocity = runtime.keys[i];
 
       if (!velocity) {
-        keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0, 0.25);
+        keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0, 0.5);
+
+        if (runtime.keyPressedColor) {
+          keyMesh.material.emissive.lerp(voidColor, 0.15);
+        }
       } else {
         keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0.06, 0.25);
+
+        if (runtime.keyPressedColor) {
+          keyMesh.material.emissive.lerp(runtime.keyPressedColor, 1);
+        }
       }
     }
   });
