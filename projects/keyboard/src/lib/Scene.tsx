@@ -95,7 +95,7 @@ export const Scene: React.FC<
 
   return (
     <>
-      <pointLight position={[0, 1000, 1000]} power={15 * Math.PI} />
+      <pointLight position={[0, 1000, 250]} power={15 * Math.PI} />
       <React.Suspense fallback={null}>
         <Model ref={setModelRef} />
       </React.Suspense>
