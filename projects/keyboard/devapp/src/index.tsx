@@ -11,43 +11,60 @@ import { useMemo, useState } from "react";
 localStorage.setItem("debug", `@midishare/keyboard:raf`);
 
 const App: React.FC = () => {
-  const [ready, setReady] = useState(false);
+  const [show, setShow] = useState(true);
 
-  const runtime = useMemo(() => {
-    const runtime = createRuntime({ id: "test", keyPressedColor: "purple" });
-
-    runtime.onReady(() => {
-      setReady(true);
-    });
-
-    return runtime;
-  }, []);
+  const runtime1 = useMemo(
+    () => createRuntime({ id: "test-1", keyPressedColor: "purple" }),
+    []
+  );
+  const runtime2 = useMemo(
+    () => createRuntime({ id: "test-2", keyPressedColor: "green" }),
+    []
+  );
 
   const handleMouseDown = () => {
-    runtime.keyOn("C4", 100);
-    runtime.keyOn("E4", 100);
-    runtime.keyOn("G4", 100);
-    runtime.keyOn("AsBb4", 100);
+    runtime1.keyOn("C4", 100);
+    runtime1.keyOn("E4", 100);
+    runtime1.keyOn("G4", 100);
+    runtime1.keyOn("AsBb4", 100);
+
+    runtime2.keyOn("C4", 100);
+    runtime2.keyOn("E4", 100);
+    runtime2.keyOn("G4", 100);
+    runtime2.keyOn("AsBb4", 100);
   };
 
   const handleMouseUp = () => {
-    runtime.keyOff("C4");
-    runtime.keyOff("E4");
-    runtime.keyOff("G4");
-    runtime.keyOff("AsBb4");
+    runtime1.keyOff("C4");
+    runtime1.keyOff("E4");
+    runtime1.keyOff("G4");
+    runtime1.keyOff("AsBb4");
+
+    runtime2.keyOff("C4");
+    runtime2.keyOff("E4");
+    runtime2.keyOff("G4");
+    runtime2.keyOff("AsBb4");
   };
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="p-5 w-full flex-grow bg-purple-300 shadow-inner rounded-xl">
-        <Keyboard runtime={runtime} />
+      <div className="w-full">
+        <Keyboard runtime={runtime1} />
       </div>
-      <button
-        disabled={!ready || runtime.needRender}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-      >
+      {show && (
+        <div className="w-full">
+          <Keyboard runtime={runtime2} />
+        </div>
+      )}
+      <button onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
         Play Me Daddy
+      </button>
+      <button
+        onClick={() => {
+          setShow(!show);
+        }}
+      >
+        {show ? "Hide" : "Show"} me daddy
       </button>
     </div>
   );

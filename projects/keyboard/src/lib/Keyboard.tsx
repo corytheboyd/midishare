@@ -1,15 +1,15 @@
 import * as React from "react";
-import { Runtime } from "./lib/Runtime";
 import { memo, useCallback, useEffect, useRef } from "react";
 import { Canvas, invalidate, useFrame } from "react-three-fiber";
 import useMeasure, { RectReadOnly } from "react-use-measure";
-import { KeyMesh, Model } from "./gen/Model";
+import { KeyMesh, Model } from "./Model";
 import { Color, Group } from "three";
 import { OrbitControls, Stats } from "@react-three/drei";
-import { KeyboardRuntimeProps, KeyName } from "./types";
-import { getIndexFromKeyName } from "./lib/convert/getIndexFromKeyName";
-import { lerp } from "./lib/lerp";
 import mergeRefs from "react-merge-refs";
+import { KeyboardRuntimeProps, KeyName } from "../types";
+import { Runtime } from "./Runtime";
+import { getIndexFromKeyName } from "./convert/getIndexFromKeyName";
+import { lerp } from "./lerp";
 
 interface KeyboardProps {
   /**
@@ -37,8 +37,14 @@ const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
   const modelRef = useRef<Group>();
   const keyMeshArrayRef = useRef<KeyMesh[]>();
 
-  const setModelRef = useCallback((group: Group) => {
+  const setModelRef = useCallback((group: Group | null) => {
     modelRef.current = group;
+
+    if (modelRef.current === null) {
+      console.debug("Model component was unmounted, clearing ref value");
+      return;
+    }
+
     handleResize();
 
     keyMeshArrayRef.current = group.children
@@ -61,9 +67,18 @@ const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
   }, [props.bounds]);
 
   const handleResize = () => {
+    if (!modelRef.current) {
+      return;
+    }
+
     // Adjust the scale of the model to fill the newly resized viewport.
     const newScale = props.bounds.width * SCALE_RATIO;
     modelRef.current.scale.set(newScale, newScale, newScale);
+
+    // This magic formula is what aligns the keyboard with the top of
+    // the scene: https://imgur.com/a/VqGVaj7
+    // position={[0, 0, (props.bounds.width * SCALE_RATIO) / -3.64]}
+    modelRef.current.position.z = (props.bounds.width * SCALE_RATIO) / -3.8;
   };
 
   useFrame(() => {
@@ -97,14 +112,9 @@ const Scene: React.FC<KeyboardRuntimeProps & { bounds: RectReadOnly }> = (
 
   return (
     <>
+      <pointLight position={[0, 500, 500]} power={10 * Math.PI} />
       <React.Suspense fallback={null}>
-        <Model
-          ref={setModelRef}
-          // This magic formula is what aligns the keyboard with the top of
-          // the scene: https://imgur.com/a/VqGVaj7
-          // position={[0, 0, (props.bounds.width * SCALE_RATIO) / -3.64]}
-          position={[0, 0, (props.bounds.width * SCALE_RATIO) / -3.8]}
-        />
+        <Model ref={setModelRef} />
       </React.Suspense>
     </>
   );
@@ -136,14 +146,13 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
   }, [bounds]);
 
   return (
-    <section className="h-full" ref={mergeRefs([resizeRef, containerRef])}>
+    <div ref={mergeRefs([resizeRef, containerRef])}>
       <Canvas
         gl={{
           antialias: true,
           alpha: true,
           powerPreference: "high-performance",
         }}
-        resize={false}
         camera={{
           position: [0, 1, 0.75],
           near: -1000,
@@ -158,7 +167,7 @@ export const Keyboard: React.FC<KeyboardProps> = memo((props) => {
         <OrbitControls />
         <Scene bounds={bounds} runtimeRef={runtimeRef} />
       </Canvas>
-    </section>
+    </div>
   );
 });
 

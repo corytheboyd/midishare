@@ -1,2 +1,2 @@
-export { Keyboard } from "./Keyboard";
+export { Keyboard } from "./lib/Keyboard";
 export { createRuntime } from "./lib/createRuntime";
