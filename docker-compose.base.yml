@@ -12,11 +12,15 @@ services:
       PORT: 3000
       ADDRESS: client
       PUBLIC_PATH: /app/
-      SERVER_URL: http://server:3000
+      SERVER_URL:
 
   server:
     container_name: server
     init: true
+    environment:
+      BASE_URL:
+      SSL_CERT_PATH:
+      SSL_KEY_PATH:
     build:
       context: .
       dockerfile: projects/server/Dockerfile

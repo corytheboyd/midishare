@@ -32,18 +32,19 @@ services:
       - "3000:3000" # HTTPS
       - "3001:3001" # WS
     environment:
+      DEBUG: express:*
       NODE_ENV: development
       HOST: client
       PORT: 3000
       HMR_PORT: 3001
       CDN_HOST: https://localhost:9000
+      SERVER_URL: https://localhost:4000
       CACHE_DIR: /parcel-cache
       OUT_DIR: /parcel-build
     volumes:
       - "./projects/client/src:/code/app/src"
-      - "./projects/common:/code/common:ro"
-      - "./projects/keyboard/src:/code/@midishare/keyboard/src"
       - "./projects/common/ssl:/code/ssl:ro"
+      - "./projects/keyboard/src:/code/@midishare/keyboard/src:ro"
       - type: volume
         source: client_parce-cache
         target: /parcel-cache
@@ -60,6 +61,18 @@ services:
 
   server:
     container_name: server
+    env_file: projects/server/.env
+    ports:
+      - "4000:4000"
+    environment:
+      ADDRESS: server
+      PORT: 4000
+      BASE_URL: https://localhost:4000
+      SSL_CERT_PATH: /code/app/ssl/localhost.pem
+      SSL_KEY_PATH: /code/app/ssl/localhost-key.pem
+    volumes:
+      - "./projects/server/src:/code/app/src"
+      - "./projects/common/ssl:/code/app/ssl:ro"
 
   keyboard:
     container_name: keyboard
