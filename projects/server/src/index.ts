@@ -1,16 +1,17 @@
 import express from "express";
-import { auth, ConfigParams as AuthConfigParams } from "express-openid-connect";
 import { createServer, ServerOptions } from "https";
 import { readFileSync } from "fs";
 import helmet from "helmet";
-import { v1 as api } from "./lib/api/v1";
+import { api } from "./lib/api/v1";
+import { auth, ConfigParams as AuthConfigParams } from "express-openid-connect";
+import morgan from "morgan";
 
 const authConfig: AuthConfigParams = {
   authRequired: false,
   auth0Logout: true,
   issuerBaseURL: "https://midishare.us.auth0.com",
+  clientID: "2rIFY7EvPtPahpILRu657x8Bk0BiXiLf",
   baseURL: process.env.BASE_URL,
-  clientID: process.env.AUTH0_CLIENT_ID,
   clientSecret: process.env.AUTH0_CLIENT_SECRET,
   secret: process.env.AUTH_SECRET,
 };
@@ -27,6 +28,7 @@ const app = express();
 
 // Third-party middlewares
 app.use(helmet());
+app.use(morgan("combined"));
 app.use(auth(authConfig));
 
 // Application middlewares
