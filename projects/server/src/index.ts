@@ -1,9 +1,5 @@
 import express from "express";
-import {
-  auth,
-  ConfigParams as AuthConfigParams,
-  RequestContext,
-} from "express-openid-connect";
+import { auth, ConfigParams as AuthConfigParams } from "express-openid-connect";
 import { createServer, ServerOptions } from "https";
 import { readFileSync } from "fs";
 import helmet from "helmet";
@@ -35,14 +31,6 @@ app.use(auth(authConfig));
 
 // Application middlewares
 app.use("/api/v1", api());
-
-app.get("/", (req, res) => {
-  // TODO revisit.. or don't. Not sure if any amount of TS tomfoolery would
-  //  even make this cleaner.
-  const request = (req as unknown) as { oidc: RequestContext };
-
-  res.send(request.oidc.isAuthenticated() ? "Logged In" : "Logged Out");
-});
 
 const server = createServer(serverConfig, app);
 server.listen(port, address, () => {
