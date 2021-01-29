@@ -17,7 +17,7 @@ After finding the perfect icon from https://heroicons.com:
 1. Copy source as `JSX` as opposed to `SVG`
 1. Add both `sm` and `md` versions to respective directories
     * Follow the naming convention for the file name
-1. Add entries to `./{sm,md}/index.ts` files
+1. Add entries to `./{sm,md}/v1.ts` files
     * Follow the naming convention for the exported object name
 1. Add canonical name to prop types definition
     * Note: NOT following the naming convention. This should match heroicons.com names verbatim

@@ -10,4 +10,4 @@ COPY projects/server/package-lock.json .
 RUN npm ci
 COPY projects/server .
 
-ENTRYPOINT ["./node_modules/.bin/ts-node-dev", "src/index.ts"]
+ENTRYPOINT ["./node_modules/.bin/ts-node-dev", "src/v1.ts"]

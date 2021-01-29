@@ -7,6 +7,7 @@ import {
 import { createServer, ServerOptions } from "https";
 import { readFileSync } from "fs";
 import helmet from "helmet";
+import { v1 as api } from "./lib/api/v1";
 
 const authConfig: AuthConfigParams = {
   authRequired: false,
@@ -27,8 +28,13 @@ const port = parseInt(process.env.PORT as string, 10);
 const address = process.env.ADDRESS as string;
 
 const app = express();
+
+// Third-party middlewares
 app.use(helmet());
 app.use(auth(authConfig));
+
+// Application middlewares
+app.use("/api/v1", api());
 
 app.get("/", (req, res) => {
   // TODO revisit.. or don't. Not sure if any amount of TS tomfoolery would

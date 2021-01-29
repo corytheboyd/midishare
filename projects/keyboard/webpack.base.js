@@ -4,7 +4,7 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
   },
-  entry: "./src/index.ts",
+  entry: "./src/v1.ts",
   output: {
     path: path.resolve(__dirname, "build"),
     filename: "index.js",
