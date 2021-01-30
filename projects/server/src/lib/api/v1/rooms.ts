@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { requiresAuth } from "express-openid-connect";
+import { requiresAuth } from "../../auth/requiresAuth";
 
 export const rooms = (): Router => {
   const router = Router();
+
+  router.use(requiresAuth);
 
   router.get("/", (req, res) => {
     res.send("ROOMS INDEX");

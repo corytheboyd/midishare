@@ -7,7 +7,7 @@ export const profiles = (): Router => {
   router.get("/me", async (req, res) => {
     const context = getAuthContext(req);
 
-    if (!context.user) {
+    if (!context.isAuthenticated()) {
       res.status(204);
       res.contentType("text");
       res.send("Unauthorized");
