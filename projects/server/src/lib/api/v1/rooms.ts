@@ -4,8 +4,6 @@ import { requiresAuth } from "express-openid-connect";
 export const rooms = (): Router => {
   const router = Router();
 
-  router.use(requiresAuth());
-
   router.get("/", (req, res) => {
     res.send("ROOMS INDEX");
   });

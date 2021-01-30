@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { api } from "./lib/api/v1";
 import { auth, ConfigParams as AuthConfigParams } from "express-openid-connect";
 import morgan from "morgan";
+import cors, { CorsOptions } from "cors";
 
 const authConfig: AuthConfigParams = {
   authRequired: false,
@@ -21,6 +22,13 @@ const serverConfig: ServerOptions = {
   key: readFileSync(process.env.SSL_KEY_PATH as string),
 };
 
+const corsConfig: CorsOptions = {
+  origin: [
+    process.env.CLIENT_ORIGIN as string,
+    authConfig.issuerBaseURL as string,
+  ],
+};
+
 const port = parseInt(process.env.PORT as string, 10);
 const address = process.env.ADDRESS as string;
 
@@ -28,6 +36,7 @@ const app = express();
 
 // Third-party middlewares
 app.use(helmet());
+app.use(cors(corsConfig));
 app.use(morgan("combined"));
 app.use(auth(authConfig));
 

@@ -21,6 +21,7 @@ services:
       BASE_URL:
       SSL_CERT_PATH:
       SSL_KEY_PATH:
+      CLIENT_ORIGIN:
     build:
       context: .
       dockerfile: projects/server/Dockerfile

@@ -1,12 +1,14 @@
 import * as React from "react";
 import { render } from "react-dom";
+import { QueryClientProvider } from "react-query";
+import { queryClient } from "./lib/queryClient";
+import { ReactQueryDevtools } from "react-query/devtools";
+import { App } from "./views/App";
 
-const App: React.FC = () => {
-  return (
-    <div>
-      <h1>Midishare!</h1>
-    </div>
-  );
-};
-
-render(<App />, document.getElementById("root"));
+render(
+  <QueryClientProvider client={queryClient}>
+    <ReactQueryDevtools initialIsOpen={true} />
+    <App />
+  </QueryClientProvider>,
+  document.getElementById("root")
+);

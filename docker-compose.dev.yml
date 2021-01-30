@@ -70,6 +70,7 @@ services:
       BASE_URL: https://localhost:4000
       SSL_CERT_PATH: /code/app/ssl/localhost.pem
       SSL_KEY_PATH: /code/app/ssl/localhost-key.pem
+      CLIENT_ORIGIN: https://localhost:3000
     volumes:
       - "./projects/server/src:/code/app/src"
       - "./projects/common/ssl:/code/app/ssl:ro"
