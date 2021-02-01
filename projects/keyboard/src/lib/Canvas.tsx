@@ -10,7 +10,7 @@ import { v4 as uuid } from "uuid";
 
 interface CanvasProps {
   runtime: MutableRefObject<Runtime>;
-  options?: Partial<RuntimeOptions>;
+  options?: RuntimeOptions;
 }
 
 // Used to calculate new scale of the model as viewport size changes the
@@ -22,12 +22,9 @@ interface CanvasProps {
 export const SCALE_RATIO = 0.2282;
 
 export const Canvas: React.FC<CanvasProps> = memo((props) => {
-  const runtimeRef = useRef(
-    createRuntime({
-      id: uuid(),
-      ...(props.options || {}),
-    })
-  );
+  console.log("props.options", props.options);
+
+  const runtimeRef = useRef(createRuntime(props.options || {}));
   props.runtime.current = runtimeRef.current;
 
   const containerRef = useRef<HTMLElement>();
@@ -35,6 +32,10 @@ export const Canvas: React.FC<CanvasProps> = memo((props) => {
 
   useEffect(() => {
     if (bounds.width === 0 || bounds.height === 0) {
+      return;
+    }
+
+    if (!containerRef.current) {
       return;
     }
 
@@ -47,7 +48,9 @@ export const Canvas: React.FC<CanvasProps> = memo((props) => {
   }, [bounds]);
 
   return (
-    <div ref={mergeRefs([resizeRef, containerRef])}>
+    <div
+      ref={mergeRefs([containerRef, resizeRef as (el: HTMLElement) => void])}
+    >
       <ThreeCanvas
         gl={{
           antialias: true,

@@ -20,7 +20,7 @@ export const Scene: React.FC<
   const modelRef = useRef<Group>();
   const keyMeshArrayRef = useRef<KeyMesh[]>();
 
-  const setModelRef = useCallback((group: Group | null) => {
+  const setModelRef = useCallback((group: Group) => {
     modelRef.current = group;
 
     if (modelRef.current === null) {
@@ -97,7 +97,7 @@ export const Scene: React.FC<
     <>
       <pointLight position={[0, 1000, 250]} power={7 * Math.PI} />
       <React.Suspense fallback={null}>
-        <Model ref={setModelRef} />
+        <Model ref={setModelRef} runtimeRef={props.runtimeRef} />
       </React.Suspense>
     </>
   );

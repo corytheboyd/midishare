@@ -3,7 +3,7 @@ import { forwardRef, useMemo } from "react";
 
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { BufferGeometry, Group, Mesh, MeshStandardMaterial } from "three";
-import { KeyName } from "../types";
+import { KeyboardRuntimeProps, KeyName } from "../types";
 import { useLoader } from "react-three-fiber";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 
@@ -11,20 +11,20 @@ export type KeyMesh = Mesh<BufferGeometry, MeshStandardMaterial> & {
   name: KeyName;
 };
 
-const assetUrl = new URL(process.env.CDN_URL);
-assetUrl.pathname = "keyboard.glb";
+export const Model = forwardRef<Group, KeyboardRuntimeProps>((props, ref) => {
+  const runtime = props.runtimeRef.current;
 
-export const Model = forwardRef<Group>((props, ref) => {
-  // const gltfResult = useGLTF(assetUrl.toString()) as GLTFResult;
-  const result = useLoader(
-    GLTFLoader,
-    assetUrl.toString(),
-    (loader: GLTFLoader) => {
-      const dracoLoader = new DRACOLoader();
-      dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
-      loader.setDRACOLoader(dracoLoader);
-    }
-  ) as GLTF & {
+  const assetUrl = useMemo(() => {
+    const url = new URL(runtime.assetPath);
+    url.pathname = "keyboard.glb";
+    return url.toString();
+  }, []);
+
+  const result = useLoader(GLTFLoader, assetUrl, (loader) => {
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
+    (loader as GLTFLoader).setDRACOLoader(dracoLoader);
+  }) as GLTF & {
     nodes: Record<KeyName | "Scene", KeyMesh>;
     materials: Record<"Natural" | "Accidental", MeshStandardMaterial>;
   };
@@ -33,7 +33,7 @@ export const Model = forwardRef<Group>((props, ref) => {
     const group = new Group();
 
     result.nodes.A0.geometry.computeBoundingBox();
-    const zOffset = result.nodes.A0.geometry.boundingBox.max.y;
+    const zOffset = result.nodes.A0.geometry.boundingBox!.max.y;
 
     group.add(
       ...result.scene.children.map((child) => {

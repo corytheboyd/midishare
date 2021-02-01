@@ -58,6 +58,10 @@ const ProfileSection: React.FC = () => {
       } else if (response.status === 200) {
         return await response.json();
       }
+    },
+    {
+      refetchInterval: false,
+      refetchOnWindowFocus: false,
     }
   );
 

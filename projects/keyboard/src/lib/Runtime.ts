@@ -5,9 +5,11 @@ import { Color } from "three";
 
 export interface RuntimeOptions {
   /**
-   * A unique ID to reference the runtime by.
+   * Root URL of the assets. Right now, this is Cory Knowledge Only, but that
+   * can be generalized in the future. Also, might not even need assets
+   * anymore if/when I replace the model with raw geometries in code.
    * */
-  readonly id: string;
+  assetPath?: string;
 
   /**
    * When a key is engaged, use a color to effectively increase the contrast
@@ -19,11 +21,11 @@ export interface RuntimeOptions {
    * This value can be anything that the three.js Color constructor accepts.
    * See: https://threejs.org/docs/index.html#api/en/math/Color
    * */
-  readonly keyPressedColor?: string | number;
+  keyPressedColor?: string | number;
 }
 
 export class Runtime {
-  public readonly id: string;
+  public readonly assetPath: string;
   public readonly keyPressedColor?: Color;
 
   private readonly store: StoreApi<KeyboardState>;
@@ -32,7 +34,7 @@ export class Runtime {
   private onNeedRenderCallbacks: (() => void)[] = [];
 
   constructor(store: StoreApi<KeyboardState>, options: RuntimeOptions) {
-    this.id = options.id;
+    this.assetPath = options.assetPath || (process.env.CDN_URL as string);
 
     if (options.keyPressedColor) {
       this.keyPressedColor = new Color(options.keyPressedColor);

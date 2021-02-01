@@ -1,7 +1,10 @@
-import React from "react";
-import { Chrome, MaxWidthContent } from "./Chrome";
+import React, { useRef } from "react";
+import { Chrome } from "./Chrome";
+import { Keyboard, Runtime } from "@midishare/keyboard";
 
 export const App: React.FC = () => {
+  const runtimeRef = useRef<Runtime>();
+
   return (
     <Chrome>
       <article className="flex flex-col items-center">
@@ -14,7 +17,13 @@ export const App: React.FC = () => {
           </p>
         </div>
 
-        <MaxWidthContent></MaxWidthContent>
+        <code>process.env.CDN_URL = {process.env.CDN_URL}</code>
+        <Keyboard
+          runtime={runtimeRef}
+          options={{
+            assetPath: process.env.CDN_URL,
+          }}
+        />
       </article>
     </Chrome>
   );
