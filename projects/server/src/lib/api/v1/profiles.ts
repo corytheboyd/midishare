@@ -1,20 +1,12 @@
 import { Router } from "express";
 import { fromRequest } from "../../getOpenIdContext";
+import { requiresAuth } from "express-openid-connect";
 
 export const profiles = (): Router => {
   const router = Router();
 
-  router.get("/me", async (req, res) => {
+  router.get("/me", requiresAuth(), async (req, res) => {
     const context = fromRequest(req);
-
-    if (!context.isAuthenticated()) {
-      res.status(204);
-      res.contentType("text");
-      res.send("Unauthorized");
-      return;
-    }
-
-    res.status(200);
     res.send(context.user);
   });
 
