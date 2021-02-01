@@ -32,7 +32,6 @@ services:
       - "3000:3000" # HTTPS
       - "3001:3001" # WS
     environment:
-      DEBUG: express:*
       NODE_ENV: development
       HOST: client
       PORT: 3000
@@ -65,12 +64,13 @@ services:
     ports:
       - "4000:4000"
     environment:
+#      DEBUG: express-openid-connect:*
       ADDRESS: server
       PORT: 4000
       BASE_URL: https://localhost:4000
       SSL_CERT_PATH: /code/app/ssl/localhost.pem
       SSL_KEY_PATH: /code/app/ssl/localhost-key.pem
-      CLIENT_ORIGIN: https://localhost:3000
+      CLIENT_URL: https://localhost:3000
     volumes:
       - "./projects/server/src:/code/app/src"
       - "./projects/common/ssl:/code/app/ssl:ro"

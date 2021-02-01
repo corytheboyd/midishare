@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { getAuthContext } from "../../getAuthContext";
+import { fromRequest } from "../../getOpenIdContext";
 
 export const profiles = (): Router => {
   const router = Router();
 
   router.get("/me", async (req, res) => {
-    const context = getAuthContext(req);
+    const context = fromRequest(req);
 
     if (!context.isAuthenticated()) {
       res.status(204);

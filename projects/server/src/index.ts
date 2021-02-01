@@ -8,13 +8,43 @@ import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
 
 const authConfig: AuthConfigParams = {
-  authRequired: false,
-  auth0Logout: true,
   issuerBaseURL: "https://midishare.us.auth0.com",
   clientID: "2rIFY7EvPtPahpILRu657x8Bk0BiXiLf",
+  errorOnRequiredAuth: true,
+  authRequired: false,
+  auth0Logout: true,
   baseURL: process.env.BASE_URL,
   clientSecret: process.env.AUTH0_CLIENT_SECRET,
   secret: process.env.AUTH_SECRET,
+  routes: {
+    login: "/auth/login",
+    logout: "/auth/logout",
+    callback: "/auth/callback",
+    postLogoutRedirect: process.env.CLIENT_URL,
+  },
+  /**
+   * After tons of mucking around, realized this is the correct method of
+   * overriding the login oidc params. At first, tried adding my own
+   * /auth/login middleware to call through to oidc.login({ returnTo }), which
+   * was not working as documented for whatever reason.
+   * */
+  getLoginState: () => {
+    return {
+      returnTo: process.env.CLIENT_URL,
+    };
+  },
+  /**
+   * Function for custom callback handling after receiving tokens and before
+   * redirecting This can be used for handling token storage, making userinfo
+   * calls, claim validation, etc.
+   *
+   * If you see an infinite redirect loop after login, look here.
+   * */
+  afterCallback: async (req, res, session) => {
+    // TODO we may want to store the session here. might make sense when
+    //  revisiting coturn
+    return session;
+  },
 };
 
 const serverConfig: ServerOptions = {
@@ -24,9 +54,10 @@ const serverConfig: ServerOptions = {
 
 const corsConfig: CorsOptions = {
   origin: [
-    process.env.CLIENT_ORIGIN as string,
+    process.env.CLIENT_URL as string,
     authConfig.issuerBaseURL as string,
   ],
+  credentials: true,
 };
 
 const port = parseInt(process.env.PORT as string, 10);
@@ -35,9 +66,9 @@ const address = process.env.ADDRESS as string;
 const app = express();
 
 // Third-party middlewares
+app.use(morgan("combined"));
 app.use(helmet());
 app.use(cors(corsConfig));
-app.use(morgan("combined"));
 app.use(auth(authConfig));
 
 // Application middlewares
