@@ -12,3 +12,8 @@ render(
   </QueryClientProvider>,
   document.getElementById("root")
 );
+
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+if (module.hot) module.hot.accept();
+/* eslint-enable @typescript-eslint/ban-ts-comment */
