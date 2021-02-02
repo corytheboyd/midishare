@@ -2,9 +2,8 @@ version: "3.8"
 
 volumes:
   client_parcel-cache:
-  client_parcel-build:
+  docs_parcel-cache:
   inspector_parcel-cache:
-  inspector_parcel-build:
 
 services:
   cdn:
@@ -35,32 +34,42 @@ services:
       CDN_URL: https://localhost:9000
       SERVER_URL: https://localhost:4000
       CACHE_DIR: /parcel-cache
-      OUT_DIR: /parcel-build
     volumes:
       - "./projects/client/src:/code/app/src"
-      - "./projects/common/ssl:/code/ssl:ro"
-      - "./projects/keyboard/dist:/code/@midishare/keyboard/dist:ro"
+      - "./projects/common/ssl:/code/common/ssl:ro"
+      - "./projects/keyboard/dist:/code/keyboard/dist:ro"
       - type: volume
         source: client_parcel-cache
         target: /parcel-cache
-      - type: volume
-        source: client_parcel-build
-        target: /parcel-build
     command:
       - "--cache-dir=/parcel-cache"
-      - "--out-dir=/parcel-build"
       - "--port=3000"
       - "--hmr-port=3001"
-      - "--cert=/code/ssl/localhost.pem"
-      - "--key=/code/ssl/localhost-key.pem"
+      - "--cert=/code/common/ssl/localhost.pem"
+      - "--key=/code/common/ssl/localhost-key.pem"
 
   docs:
     build:
       target: development
     ports:
       - "3100:3000"
+      - "3101:3001"
     environment:
       NODE_ENV: development
+      CDN_URL: https://localhost:9000
+    volumes:
+      - "./projects/docs/src:/code/app/src"
+      - "./projects/common/ssl:/code/common/ssl:ro"
+      - "./projects/keyboard/dist:/code/keyboard/dist:ro"
+      - type: volume
+        source: docs_parcel-cache
+        target: /parcel-cache
+    command:
+      - "--cache-dir=/parcel-cache"
+      - "--port=3000"
+      - "--hmr-port=3001"
+      - "--cert=/code/common/ssl/localhost.pem"
+      - "--key=/code/common/ssl/localhost-key.pem"
 
   server:
     container_name: server
@@ -68,25 +77,27 @@ services:
     ports:
       - "4000:4000"
     environment:
-#      DEBUG: express-openid-connect:*
       ADDRESS: server
       PORT: 4000
       BASE_URL: https://localhost:4000
-      SSL_CERT_PATH: /code/app/ssl/localhost.pem
-      SSL_KEY_PATH: /code/app/ssl/localhost-key.pem
+      SSL_CERT_PATH: /code/common/ssl/localhost.pem
+      SSL_KEY_PATH: /code/common/ssl/localhost-key.pem
       CLIENT_URL: https://localhost:3000
     volumes:
       - "./projects/server/src:/code/app/src"
-      - "./projects/common/ssl:/code/app/ssl:ro"
+      - "./projects/common/ssl:/code/common/ssl:ro"
 
   keyboard:
     build:
       target: development
-    environment:
-      CDN_URL: https://localhost:9000
     volumes:
-      - "./projects/keyboard/src:/code/src"
-      - "./projects/common:/code/common"
+      - "./projects/keyboard/src:/code/app/src"
+
+      # By writing to the host filesystem, we violate a bit of
+      # the perfect Docker vacuum in order to seamlessly gain
+      # IDE intellisense powers. This is worth it IMO.
+      # TODO There is probably a better way lol
+      - "./projects/keyboard/dist:/code/app/dist"
     command:
       - "--watch"
 
@@ -99,20 +110,16 @@ services:
       dockerfile: projects/inspector/Dockerfile
     volumes:
       - "./projects/inspector/src:/code/src"
-      - "./projects/common/ssl:/code/ssl:ro"
+      - "./projects/common/ssl:/code/common/ssl:ro"
       - type: volume
         source: inspector_parcel-cache
         target: /parcel-cache
-      - type: volume
-        source: inspector_parcel-build
-        target: /parcel-build
     ports:
       - "3200:3000" # HTTPS
       - "3201:3001" # WS
     command:
       - "--cache-dir=/parcel-cache"
-      - "--out-dir=/parcel-build"
       - "--port=3000"
       - "--hmr-port=3001"
-      - "--cert=/code/ssl/localhost.pem"
-      - "--key=/code/ssl/localhost-key.pem"
+      - "--cert=/code/common/ssl/localhost.pem"
+      - "--key=/code/common/ssl/localhost-key.pem"

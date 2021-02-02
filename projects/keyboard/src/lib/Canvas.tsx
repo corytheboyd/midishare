@@ -14,8 +14,6 @@ interface CanvasProps {
 }
 
 export const Canvas: React.FC<CanvasProps> = memo((props) => {
-  console.log("props.options", props.options);
-
   const runtimeRef = useRef(createRuntime(props.options || {}));
   props.runtime.current = runtimeRef.current;
 

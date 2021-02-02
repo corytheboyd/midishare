@@ -2,6 +2,9 @@ FROM node:14.15.3 AS node-base
 
 FROM node-base AS development
 
+WORKDIR /code/common
+COPY projects/common/tsconfig.base.json .
+
 WORKDIR /code/app
 COPY projects/keyboard/package.json .
 COPY projects/keyboard/package-lock.json .

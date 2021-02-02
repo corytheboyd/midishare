@@ -8,10 +8,22 @@ export default {
     dir: "dist",
     format: "es",
     sourcemap: true,
+    preserveModules: true,
   },
   watch: {
     clearScreen: false,
   },
-  external: ["react", "react-dom", "three"],
-  plugins: [commonjs(), nodeResolve(), typescript()],
+  external: [
+    "react",
+    "react-dom",
+
+    // This matches both the main three import as well as the
+    // three/examples imports
+    /^three(?:\/.*)?$/,
+  ],
+  plugins: [
+    nodeResolve({ moduleDirectories: ["node_modules"] }),
+    commonjs(),
+    typescript(),
+  ],
 };

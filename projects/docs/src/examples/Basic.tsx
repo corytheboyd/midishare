@@ -2,9 +2,7 @@ import * as React from "react";
 import { ButtonHTMLAttributes, useRef } from "react";
 import { InlineCode } from "../lib/InlineCode";
 import { Example } from "../lib/Example";
-
-// TODO
-// import { Keyboard, Runtime } from "@midishare/keyboard";
+import { Keyboard, Runtime } from "@midishare/keyboard";
 
 const Button: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
   return (
@@ -23,7 +21,13 @@ const BasicExample: React.FC = () => {
   const runtimeRef = useRef<Runtime>();
 
   const keyboard = (
-    <Keyboard runtime={runtimeRef} options={{ keyPressedColor: "purple" }} />
+    <Keyboard
+      runtime={runtimeRef}
+      options={{
+        keyPressedColor: "purple",
+        assetPath: process.env.CDN_URL as string,
+      }}
+    />
   );
 
   const noteButton = (

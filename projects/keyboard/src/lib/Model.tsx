@@ -17,7 +17,7 @@ export const Model = forwardRef<Group, KeyboardRuntimeProps>((props, ref) => {
     const url = new URL(runtime.assetPath);
     url.pathname = "keyboard.glb";
     return url.toString();
-  }, []);
+  }, [runtime.assetPath]);
 
   const result = useLoader(GLTFLoader, assetUrl, (loader) => {
     const dracoLoader = new DRACOLoader();

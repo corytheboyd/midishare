@@ -58,3 +58,31 @@ Build and push the production images:
 DOCKER_ENV=prod bin/dcp build
 DOCKER_ENV=prod bin/dcp push
 ```
+
+## Package Linking
+
+The Keyboard package is structured and used internals as an NPM module. This comes with it's own fun stack of issues, but it's worth dealing with for the sake of decoupling and, well, publishing bits of work to the world later!
+
+Most things work in the Docker-sphere, but this one requires a bit of work to be done on the host machine in order to preserve intellisense and dependency indexing in your IDE. I prefer not compromising at all on that, because that's how you get unmaintainable trash heaps of code.
+
+Okay so what you have to do:
+
+```
+# Make sure you're doing this against the correct Node version
+nvm use
+
+# Create the global symlink (as @midishare/keyboard, per the package.json)
+(cd projects/keyboard && npm link)
+
+# Link @midishare/keyboard to dependant projects
+(cd projects/docs && npm link @midishare/keyboard)
+(cd projects/client && npm link @midishare/keyboard)
+```
+
+It's really not that bad. Yeah yeah, I know your "BUT THIS DOESN'T SCALE" sense is flying off the charts. Look, this is a tiny project, not a Google monorepo. There really won't end up being much/any more than `@midishare/keyboard` being shared like this, and there won't be many more dependants of packages than the edge projects (`client`, etc.). 
+
+### Why not Docker volumes?
+
+What I also ended up doing is hosting the keyboard dist on the host and bind mouinting it to dependant projects. The cleaner approach feels like it would be to instead share the build entire through Docker volumes defined in compose.
+
+The absolutely biggest reason I avoided that was to support IDE intellisense-- trivially accomplished by writing keyboard `dist` to the host. This is far more worth than some fetishization of "pure" contianerization. This is all relevant only to the development build anyway.
