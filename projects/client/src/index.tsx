@@ -3,12 +3,23 @@ import { render } from "react-dom";
 import { QueryClientProvider } from "react-query";
 import { queryClient } from "./lib/queryClient";
 import { ReactQueryDevtools } from "react-query/devtools";
-import { App } from "./views/App";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Home } from "./views/pages/Home";
+import { ControlCenter } from "./views/pages/ControlCenter";
 
 render(
   <QueryClientProvider client={queryClient}>
     <ReactQueryDevtools initialIsOpen={true} />
-    <App />
+    <Router>
+      <Switch>
+        <Route path="/control-center">
+          <ControlCenter />
+        </Route>
+        <Route path="/">
+          <Home />
+        </Route>
+      </Switch>
+    </Router>
   </QueryClientProvider>,
   document.getElementById("root")
 );

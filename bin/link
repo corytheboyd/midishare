@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -euo pipefail
+
+(cd projects/keyboard && npm link)
+(cd projects/client && npm link @midishare/keyboard)
+(cd projects/docs && npm link @midishare/keyboard)

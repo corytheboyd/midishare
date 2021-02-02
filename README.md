@@ -22,6 +22,8 @@ Put together a prototype and tested it with my teacher, and it worked!
 
 # Development
 
+**Update: I removed that script, it was distracting. TODO Update this section!**
+
 1. Install Docker Engine and Docker Compose.
 1. Install dependencies:
     ```
@@ -71,12 +73,10 @@ Okay so what you have to do:
 # Make sure you're doing this against the correct Node version
 nvm use
 
-# Create the global symlink (as @midishare/keyboard, per the package.json)
-(cd projects/keyboard && npm link)
-
-# Link @midishare/keyboard to dependant projects
-(cd projects/docs && npm link @midishare/keyboard)
-(cd projects/client && npm link @midishare/keyboard)
+# Run the link script, which does the following:
+# 1. Create the global symlink (as @midishare/keyboard, per the package.json)
+# 2. Link @midishare/keyboard to dependant projects
+bin/link
 ```
 
 It's really not that bad. Yeah yeah, I know your "BUT THIS DOESN'T SCALE" sense is flying off the charts. Look, this is a tiny project, not a Google monorepo. There really won't end up being much/any more than `@midishare/keyboard` being shared like this, and there won't be many more dependants of packages than the edge projects (`client`, etc.). 
