@@ -7,6 +7,7 @@ import {
 } from "@midishare/keyboard";
 import { Helmet } from "react-helmet";
 import { PeerLane } from "../PeerLane";
+import { Play } from "../common/icons/sm/Play";
 
 export const Session: React.FC = () => {
   const localColor = "blue";
@@ -65,6 +66,14 @@ export const Session: React.FC = () => {
           runtime={localRuntime}
           color={localColor}
           keyboardDisabled={true}
+          disabledMessageContent={
+            <div className="flex items-center space-x-2 w-full">
+              <div className="w-5 h-5">
+                <Play />
+              </div>
+              <span>Bird up</span>
+            </div>
+          }
         />
       </div>
     </Chrome>

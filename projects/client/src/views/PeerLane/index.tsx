@@ -5,6 +5,7 @@ type PeerLaneProps = {
   runtime: Runtime;
   color: "green" | "purple" | "red" | "blue" | "yellow";
   keyboardDisabled?: boolean;
+  disabledMessageContent?: JSX.Element;
 };
 
 const KeyboardWell: React.FC<PeerLaneProps> = (props) => {
@@ -28,6 +29,11 @@ const KeyboardWell: React.FC<PeerLaneProps> = (props) => {
 
   return (
     <div className={containerClassNames.join(" ")}>
+      {props.keyboardDisabled && props.disabledMessageContent && (
+        <div className="bg-black text-white absolute self-center px-2 py-1 rounded z-10">
+          {props.disabledMessageContent}
+        </div>
+      )}
       <div className={keyboardClassNames.join(" ")}>
         <Keyboard runtime={props.runtime} />
       </div>
