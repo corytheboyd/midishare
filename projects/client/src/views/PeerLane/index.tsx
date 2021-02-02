@@ -9,7 +9,7 @@ type PeerLaneProps = {
 };
 
 const KeyboardWell: React.FC<PeerLaneProps> = (props) => {
-  const classNames: string[] = "flex-auto p-3 flex flex-col justify-center rounded shadow-inner inset-5".split(
+  const classNames: string[] = "flex-auto p-3 flex flex-col justify-center rounded shadow-inner transition inset-5".split(
     " "
   );
   const bg = (weight: number) => `bg-${props.color}-${weight}`;
@@ -30,9 +30,11 @@ const KeyboardWell: React.FC<PeerLaneProps> = (props) => {
 };
 
 export const PeerLane: React.FC<PeerLaneProps> = (props) => {
+  const needRender = props.runtime.useStore((state) => state.needRender);
+
   return (
     <div className="w-full h-full flex space-x-2">
-      <KeyboardWell {...props} />
+      <KeyboardWell {...props} keyboardActive={needRender} />
       <div className="w-80 flex-grow-0 flex flex-col space-y-2">
         <div
           className={`flex-auto flex justify-center items-center rounded shadow-md bg-${props.color}-100`}

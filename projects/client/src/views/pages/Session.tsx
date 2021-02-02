@@ -34,28 +34,24 @@ export const Session: React.FC = () => {
     const loop = (runtime: Runtime) => {
       intervalIds.push(
         setInterval(() => {
-          const randomKey = getKeyNameFromIndex(Math.ceil(Math.random() * 87));
+          const randomKey = getKeyNameFromIndex(Math.floor(Math.random() * 87));
           const randomVelocity = Math.ceil(Math.random() * 127);
 
           runtime.keyOn(randomKey, randomVelocity);
           setTimeout(() => {
             runtime.keyOff(randomKey);
-          }, 250);
-        }, Math.random() * 1000)
+          }, 500);
+        }, 1000)
       );
     };
 
     setTimeout(() => loop(localRuntime), Math.random() * 250);
-    setTimeout(() => loop(localRuntime), Math.random() * 250);
-    setTimeout(() => loop(localRuntime), Math.random() * 250);
-    setTimeout(() => loop(localRuntime), Math.random() * 250);
-    setTimeout(() => loop(remoteRuntime), Math.random() * 250);
-    setTimeout(() => loop(remoteRuntime), Math.random() * 250);
-    setTimeout(() => loop(remoteRuntime), Math.random() * 250);
     setTimeout(() => loop(remoteRuntime), Math.random() * 250);
 
     return () => intervalIds.forEach((id) => clearInterval(id));
   }, []);
+
+  console.debug("Render Session Page");
 
   return (
     <Chrome>

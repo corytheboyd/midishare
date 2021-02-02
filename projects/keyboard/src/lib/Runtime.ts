@@ -2,6 +2,7 @@ import { StoreApi } from "zustand/vanilla";
 import { runtimeLogger } from "./debug";
 import { Color } from "three";
 import { KeyboardState, KeyName } from "./types";
+import create, { UseStore } from "zustand";
 
 export interface RuntimeOptions {
   /**
@@ -27,9 +28,9 @@ export interface RuntimeOptions {
 export class Runtime {
   public readonly assetPath: string;
   public readonly keyPressedColor?: Color;
+  public readonly useStore: UseStore<KeyboardState>;
 
   private readonly store: StoreApi<KeyboardState>;
-
   private onReadyCallbacks: (() => void)[] = [];
   private onNeedRenderCallbacks: (() => void)[] = [];
 
@@ -41,6 +42,8 @@ export class Runtime {
     }
 
     this.store = store;
+    this.useStore = create(store);
+
     this.store.subscribe(
       (value: boolean, previousValue: boolean) => {
         if (value && !previousValue) {
