@@ -55,7 +55,7 @@ export const Session: React.FC = () => {
   console.debug("Render Session Page");
 
   return (
-    <Chrome>
+    <Chrome hideFooter={true}>
       <Helmet>
         <title>Midishare • Session</title>
       </Helmet>

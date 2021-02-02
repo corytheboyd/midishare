@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Keyboard, Runtime } from "@midishare/keyboard";
 
 type PeerLaneProps = {
@@ -12,7 +12,7 @@ const KeyboardWell: React.FC<PeerLaneProps> = (props) => {
   const keys = props.runtime.useStore((state) => state.keys);
   const keyboardActive = useMemo(() => keys.some((i) => i > 0), [keys]);
 
-  const containerClassNames: string[] = "flex-auto p-3 flex flex-col justify-center rounded shadow-inner transition inset-5".split(
+  const containerClassNames: string[] = "flex-auto p-3 flex flex-col justify-center rounded-2xl shadow-inner transition inset-5".split(
     " "
   );
   const keyboardClassNames: string[] = [];
@@ -20,11 +20,12 @@ const KeyboardWell: React.FC<PeerLaneProps> = (props) => {
 
   if (props.keyboardDisabled) {
     keyboardClassNames.push("opacity-20");
+  }
+
+  if (keyboardActive) {
     containerClassNames.push(bg(100));
-  } else if (keyboardActive) {
-    containerClassNames.push(bg(200));
   } else {
-    containerClassNames.push(bg(100));
+    containerClassNames.push(bg(50));
   }
 
   return (
@@ -41,16 +42,21 @@ const KeyboardWell: React.FC<PeerLaneProps> = (props) => {
   );
 };
 
+const VideoWell: React.FC<PeerLaneProps> = (props) => {
+  return (
+    <div className="flex-auto flex flex-col justify-center items-center shadow-md">
+      <div className="w-full flex-auto bg-gray-800 rounded-t"></div>
+      <div className="w-full h-7 flex-grow-0 bg-gray-500 rounded-b"></div>
+    </div>
+  );
+};
+
 export const PeerLane: React.FC<PeerLaneProps> = (props) => {
   return (
     <div className="w-full h-full flex space-x-2">
       <KeyboardWell {...props} />
       <div className="w-80 flex-grow-0 flex flex-col space-y-2">
-        <div
-          className={`flex-auto flex justify-center items-center rounded shadow-md bg-${props.color}-100`}
-        >
-          <span>VIDEO</span>
-        </div>
+        <VideoWell {...props} />
         <div className="flex-auto flex justify-center items-center">
           <span>stats and stuff</span>
         </div>
