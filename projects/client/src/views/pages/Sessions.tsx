@@ -3,6 +3,7 @@ import { Chrome, MaxWidthContent } from "../Chrome";
 import { Play } from "../common/icons/sm/Play";
 import { Button } from "../common/Button";
 import { Helmet } from "react-helmet";
+import { Routes } from "../routes";
 
 export const Sessions: React.FC = () => {
   return (
@@ -10,6 +11,7 @@ export const Sessions: React.FC = () => {
       <Helmet>
         <title>Midishare • Sessions</title>
       </Helmet>
+
       <div className="flex flex-col mt-4 px-3">
         <MaxWidthContent>
           <div>
@@ -21,7 +23,10 @@ export const Sessions: React.FC = () => {
           </div>
 
           <div className="mt-2">
-            <Button className="flex items-center justify-center space-x-1 px-2 py-1 rounded border-2 border-green-400 text-green-500 transition hover:shadow-md">
+            <Button
+              to={Routes.SESSION}
+              className="flex items-center justify-center space-x-1 px-2 py-1 rounded border-2 border-green-400 text-green-500 transition hover:shadow-md"
+            >
               <div className="w-7 h-7">
                 <Play />
               </div>

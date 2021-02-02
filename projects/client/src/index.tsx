@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Home } from "./views/pages/Home";
 import { Sessions } from "./views/pages/Sessions";
 import { Helmet } from "react-helmet";
+import { Routes } from "./views/routes";
+import { Session } from "./views/pages/Session";
 
 render(
   <QueryClientProvider client={queryClient}>
@@ -16,10 +18,13 @@ render(
     </Helmet>
     <Router>
       <Switch>
-        <Route path="/control-center">
+        <Route path={Routes.SESSION}>
+          <Session />
+        </Route>
+        <Route path={Routes.SESSIONS}>
           <Sessions />
         </Route>
-        <Route path="/">
+        <Route path={Routes.HOME}>
           <Home />
         </Route>
       </Switch>
