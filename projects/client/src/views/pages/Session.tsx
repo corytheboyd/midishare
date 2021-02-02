@@ -45,7 +45,7 @@ export const Session: React.FC = () => {
       );
     };
 
-    setTimeout(() => loop(localRuntime), Math.random() * 250);
+    // setTimeout(() => loop(localRuntime), Math.random() * 250);
     setTimeout(() => loop(remoteRuntime), Math.random() * 250);
 
     return () => intervalIds.forEach((id) => clearInterval(id));
