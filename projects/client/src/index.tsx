@@ -5,7 +5,7 @@ import { queryClient } from "./lib/queryClient";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Home } from "./views/pages/Home";
-import { ControlCenter } from "./views/pages/ControlCenter";
+import { CreateSession } from "./views/pages/CreateSession";
 
 render(
   <QueryClientProvider client={queryClient}>
@@ -13,7 +13,7 @@ render(
     <Router>
       <Switch>
         <Route path="/control-center">
-          <ControlCenter />
+          <CreateSession />
         </Route>
         <Route path="/">
           <Home />

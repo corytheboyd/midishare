@@ -10,7 +10,7 @@ export const MaxWidthContent: React.FC = (props) => (
 
 export const Chrome: React.FC = (props) => {
   return (
-    <div id="chrome" className="flex flex-col h-full">
+    <div className="flex flex-col h-full">
       <nav className="flex flex-col p-4 border-b-2">
         <Navbar />
       </nav>
