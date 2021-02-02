@@ -11,22 +11,26 @@ const KeyboardWell: React.FC<PeerLaneProps> = (props) => {
   const keys = props.runtime.useStore((state) => state.keys);
   const keyboardActive = useMemo(() => keys.some((i) => i > 0), [keys]);
 
-  const classNames: string[] = "flex-auto p-3 flex flex-col justify-center rounded shadow-inner transition inset-5".split(
+  const containerClassNames: string[] = "flex-auto p-3 flex flex-col justify-center rounded shadow-inner transition inset-5".split(
     " "
   );
+  const keyboardClassNames: string[] = [];
   const bg = (weight: number) => `bg-${props.color}-${weight}`;
 
   if (props.keyboardDisabled) {
-    classNames.push(bg(50), "opacity-50");
+    keyboardClassNames.push("opacity-20");
+    containerClassNames.push(bg(100));
   } else if (keyboardActive) {
-    classNames.push(bg(200));
+    containerClassNames.push(bg(200));
   } else {
-    classNames.push(bg(100));
+    containerClassNames.push(bg(100));
   }
 
   return (
-    <div className={classNames.join(" ")}>
-      <Keyboard runtime={props.runtime} />
+    <div className={containerClassNames.join(" ")}>
+      <div className={keyboardClassNames.join(" ")}>
+        <Keyboard runtime={props.runtime} />
+      </div>
     </div>
   );
 };

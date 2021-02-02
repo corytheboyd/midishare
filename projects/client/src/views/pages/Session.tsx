@@ -61,7 +61,11 @@ export const Session: React.FC = () => {
 
       <div className="flex flex-col h-full w-full space-y-2 p-2">
         <PeerLane runtime={remoteRuntime} color={remoteColor} />
-        <PeerLane runtime={localRuntime} color={localColor} />
+        <PeerLane
+          runtime={localRuntime}
+          color={localColor}
+          keyboardDisabled={true}
+        />
       </div>
     </Chrome>
   );
