@@ -1,8 +1,8 @@
 import create, { StoreApi } from "zustand/vanilla";
-import { KeyboardState } from "../types";
 import produce from "immer";
 import { storeLogger } from "./debug";
 import { getIndexFromKeyName } from "./convert/getIndexFromKeyName";
+import { KeyboardState } from "./types";
 
 /**
  * TODO would need to change if playback speed is adjustable! it could no

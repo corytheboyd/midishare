@@ -25,3 +25,17 @@ services:
     build:
       context: .
       dockerfile: projects/server/Dockerfile
+
+  docs:
+    container_name: docs
+    init: true
+    build:
+      context: .
+      dockerfile: projects/docs/Dockerfile
+
+  keyboard:
+    container_name: keyboard
+    init: true
+    build:
+      context: .
+      dockerfile: projects/keyboard/Dockerfile

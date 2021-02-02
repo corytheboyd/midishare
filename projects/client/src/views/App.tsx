@@ -1,9 +1,11 @@
 import React, { useRef } from "react";
 import { Chrome } from "./Chrome";
-import { Keyboard, Runtime } from "@midishare/keyboard";
+
+// TODO move keyboard to actual npm package
+// import { Keyboard, Runtime } from "@midishare/keyboard";
 
 export const App: React.FC = () => {
-  const runtimeRef = useRef<Runtime>();
+  // const runtimeRef = useRef<Runtime>();
 
   return (
     <Chrome>
@@ -18,12 +20,12 @@ export const App: React.FC = () => {
         </div>
 
         <code>process.env.CDN_URL = {process.env.CDN_URL}</code>
-        <Keyboard
-          runtime={runtimeRef}
-          options={{
-            assetPath: process.env.CDN_URL,
-          }}
-        />
+        {/*<Keyboard*/}
+        {/*  runtime={runtimeRef}*/}
+        {/*  options={{*/}
+        {/*    assetPath: process.env.CDN_URL,*/}
+        {/*  }}*/}
+        {/*/>*/}
       </article>
     </Chrome>
   );

@@ -1,11 +1,10 @@
-import * as React from "react";
-import { forwardRef, useMemo } from "react";
+import React, { forwardRef, useMemo } from "react";
 
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { BufferGeometry, Group, Mesh, MeshStandardMaterial } from "three";
-import { KeyboardRuntimeProps, KeyName } from "../types";
 import { useLoader } from "react-three-fiber";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
+import { KeyboardRuntimeProps, KeyName } from "./types";
 
 export type KeyMesh = Mesh<BufferGeometry, MeshStandardMaterial> & {
   name: KeyName;

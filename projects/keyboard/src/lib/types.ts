@@ -1,5 +1,5 @@
-import { Runtime } from "./lib/Runtime";
 import { MutableRefObject } from "react";
+import { Runtime } from "./Runtime";
 
 export interface KeyboardRuntimeProps {
   runtimeRef: MutableRefObject<Runtime>;

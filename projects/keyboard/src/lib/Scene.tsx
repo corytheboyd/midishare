@@ -1,5 +1,4 @@
 import * as React from "react";
-import { KeyboardRuntimeProps, KeyName } from "../types";
 import { RectReadOnly } from "react-use-measure";
 import { useCallback, useEffect, useRef } from "react";
 import { invalidate, useFrame } from "react-three-fiber";
@@ -7,7 +6,8 @@ import { Color, Group } from "three";
 import { KeyMesh, Model } from "./Model";
 import { getIndexFromKeyName } from "./convert/getIndexFromKeyName";
 import { lerp } from "./lerp";
-import { SCALE_RATIO } from "./Canvas";
+import { SCALE_RATIO } from "./constants";
+import { KeyboardRuntimeProps, KeyName } from "./types";
 
 const voidColor = new Color(0, 0, 0);
 

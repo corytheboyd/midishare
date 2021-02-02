@@ -1,8 +1,9 @@
-import { KeyName, NoteName } from "../../types";
 import { noteNameRelativePositionMap } from "./common";
+import { KeyName, NoteName } from "../types";
 
-export function getKeyNameFromIndex(index: number): KeyName {
+export function getKeyNameFromIndex(index: number): KeyName | void {
   const octave = Math.floor((index + noteNameRelativePositionMap.A) / 12);
+
   let noteName: NoteName;
   switch (index % 12) {
     case 0:
@@ -41,6 +42,8 @@ export function getKeyNameFromIndex(index: number): KeyName {
     case 11:
       noteName = "GsAb";
       break;
+    default:
+      return;
   }
   return (noteName + octave) as KeyName;
 }

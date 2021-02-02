@@ -1,9 +1,10 @@
 import * as React from "react";
 import { ButtonHTMLAttributes, useRef } from "react";
-import { Keyboard } from "../../../src";
 import { InlineCode } from "../lib/InlineCode";
 import { Example } from "../lib/Example";
-import { Runtime } from "../../../src/lib/Runtime";
+
+// TODO
+// import { Keyboard, Runtime } from "@midishare/keyboard";
 
 const Button: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
   return (

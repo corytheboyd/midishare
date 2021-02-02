@@ -1,5 +1,5 @@
-import { KeyName, NoteName } from "../../types";
 import { noteNameRelativePositionMap } from "./common";
+import { KeyName, NoteName } from "../types";
 
 export function getIndexFromKeyName(keyName: KeyName): number {
   const octave = parseInt(keyName[keyName.length - 1], 10);

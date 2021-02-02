@@ -1,7 +1,7 @@
 import { StoreApi } from "zustand/vanilla";
-import { KeyboardState, KeyName } from "../types";
 import { runtimeLogger } from "./debug";
 import { Color } from "three";
+import { KeyboardState, KeyName } from "./types";
 
 export interface RuntimeOptions {
   /**

@@ -1,4 +1,4 @@
-import { NoteName } from "../../types";
+import { NoteName } from "../types";
 
 export const noteNameRelativePositionMap: Record<NoteName, number> = {
   C: 0,
