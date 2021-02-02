@@ -1,34 +1,12 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Chrome } from "../Chrome";
-import { createRuntime, Keyboard, Runtime } from "@midishare/keyboard";
+import {
+  createRuntime,
+  getKeyNameFromIndex,
+  Runtime,
+} from "@midishare/keyboard";
 import { Helmet } from "react-helmet";
-
-type PeerLaneProps = {
-  runtime: Runtime;
-  color: "green" | "purple" | "red" | "blue" | "yellow";
-};
-
-const PeerLane: React.FC<PeerLaneProps> = (props) => {
-  return (
-    <div className="w-full h-full flex space-x-2">
-      <div
-        className={`flex-auto p-3 flex flex-col justify-center rounded shadow-inner inset-5 bg-${props.color}-100`}
-      >
-        <Keyboard runtime={props.runtime} />
-      </div>
-      <div className="w-80 flex-grow-0 flex flex-col space-y-2">
-        <div
-          className={`flex-auto flex justify-center items-center rounded shadow-md bg-${props.color}-100`}
-        >
-          <span>VIDEO</span>
-        </div>
-        <div className="flex-auto flex justify-center items-center">
-          <span>stats and stuff</span>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { PeerLane } from "../PeerLane";
 
 export const Session: React.FC = () => {
   const localColor = "blue";
@@ -49,6 +27,35 @@ export const Session: React.FC = () => {
       }),
     []
   );
+
+  useEffect(() => {
+    const intervalIds: NodeJS.Timeout[] = [];
+
+    const loop = (runtime: Runtime) => {
+      intervalIds.push(
+        setInterval(() => {
+          const randomKey = getKeyNameFromIndex(Math.ceil(Math.random() * 87));
+          const randomVelocity = Math.ceil(Math.random() * 127);
+
+          runtime.keyOn(randomKey, randomVelocity);
+          setTimeout(() => {
+            runtime.keyOff(randomKey);
+          }, 250);
+        }, Math.random() * 1000)
+      );
+    };
+
+    setTimeout(() => loop(localRuntime), Math.random() * 250);
+    setTimeout(() => loop(localRuntime), Math.random() * 250);
+    setTimeout(() => loop(localRuntime), Math.random() * 250);
+    setTimeout(() => loop(localRuntime), Math.random() * 250);
+    setTimeout(() => loop(remoteRuntime), Math.random() * 250);
+    setTimeout(() => loop(remoteRuntime), Math.random() * 250);
+    setTimeout(() => loop(remoteRuntime), Math.random() * 250);
+    setTimeout(() => loop(remoteRuntime), Math.random() * 250);
+
+    return () => intervalIds.forEach((id) => clearInterval(id));
+  }, []);
 
   return (
     <Chrome>

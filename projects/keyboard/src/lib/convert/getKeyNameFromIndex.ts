@@ -1,49 +1,34 @@
 import { noteNameRelativePositionMap } from "./common";
-import { KeyName, NoteName } from "../types";
+import { KeyName } from "../types";
 
-export function getKeyNameFromIndex(index: number): KeyName | void {
+export function getKeyNameFromIndex(index: number): KeyName {
   const octave = Math.floor((index + noteNameRelativePositionMap.A) / 12);
-
-  let noteName: NoteName;
   switch (index % 12) {
     case 0:
-      noteName = "A";
-      break;
+      return `A${octave}` as KeyName;
     case 1:
-      noteName = "AsBb";
-      break;
+      return `AsBb${octave}` as KeyName;
     case 2:
-      noteName = "B";
-      break;
+      return `B${octave}` as KeyName;
     case 3:
-      noteName = "C";
-      break;
+      return `C${octave}` as KeyName;
     case 4:
-      noteName = "CsDb";
-      break;
+      return `CsDb${octave}` as KeyName;
     case 5:
-      noteName = "D";
-      break;
+      return `D${octave}` as KeyName;
     case 6:
-      noteName = "DsEb";
-      break;
+      return `DsEb${octave}` as KeyName;
     case 7:
-      noteName = "E";
-      break;
+      return `E${octave}` as KeyName;
     case 8:
-      noteName = "F";
-      break;
+      return `F${octave}` as KeyName;
     case 9:
-      noteName = "FsGb";
-      break;
+      return `FsGb${octave}` as KeyName;
     case 10:
-      noteName = "G";
-      break;
+      return `G${octave}` as KeyName;
     case 11:
-      noteName = "GsAb";
-      break;
+      return `GsAb${octave}` as KeyName;
     default:
-      return;
+      throw new Error("This should never happen");
   }
-  return (noteName + octave) as KeyName;
 }
