@@ -5,15 +5,19 @@ import { queryClient } from "./lib/queryClient";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Home } from "./views/pages/Home";
-import { CreateSession } from "./views/pages/CreateSession";
+import { Sessions } from "./views/pages/Sessions";
+import { Helmet } from "react-helmet";
 
 render(
   <QueryClientProvider client={queryClient}>
     <ReactQueryDevtools initialIsOpen={true} />
+    <Helmet>
+      <title>Midishare</title>
+    </Helmet>
     <Router>
       <Switch>
         <Route path="/control-center">
-          <CreateSession />
+          <Sessions />
         </Route>
         <Route path="/">
           <Home />

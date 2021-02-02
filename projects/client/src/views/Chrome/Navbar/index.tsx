@@ -1,10 +1,10 @@
 import React from "react";
 import { useQuery } from "react-query";
 import { Queries } from "../../../lib/queryClient";
-import { Login } from "../../../lib/icons/sm/Login";
-import { Logout } from "../../../lib/icons/sm/Logout";
 import { MaxWidthContent } from "../index";
 import { Button } from "../../common/Button";
+import { Login } from "../../common/icons/sm/Login";
+import { Logout } from "../../common/icons/sm/Logout";
 
 type UserProfile = {
   name: string;
@@ -25,7 +25,10 @@ const LOGOUT_URL = (() => {
 })();
 
 const AuthButton: React.FC<{ href: string }> = (props) => (
-  <Button className="px-2 py-1 flex space-x-0.5 items-center text-sm">
+  <Button
+    href={props.href}
+    className="px-2 py-1 flex space-x-0.5 items-center text-sm"
+  >
     {props.children}
   </Button>
 );
