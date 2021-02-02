@@ -1,10 +1,6 @@
 import { MutableRefObject } from "react";
 import { Runtime } from "./Runtime";
 
-export interface KeyboardRuntimeProps {
-  runtimeRef: MutableRefObject<Runtime>;
-}
-
 export type KeyboardState = {
   /**
    * Request render in the case that we are not running in a game loop.

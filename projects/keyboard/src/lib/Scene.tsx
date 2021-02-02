@@ -7,15 +7,18 @@ import { KeyMesh, Model } from "./Model";
 import { getIndexFromKeyName } from "./convert/getIndexFromKeyName";
 import { lerp } from "./lerp";
 import { SCALE_RATIO } from "./constants";
-import { KeyboardRuntimeProps, KeyName } from "./types";
+import { KeyName } from "./types";
+import { Runtime } from "./Runtime";
 
 const voidColor = new Color(0, 0, 0);
 
-export const Scene: React.FC<
-  KeyboardRuntimeProps & { bounds: RectReadOnly }
-> = (props) => {
-  const runtime = props.runtimeRef.current;
-  useEffect(() => runtime.onNeedRender(invalidate), []);
+type SceneProps = {
+  runtime: Runtime;
+  bounds: RectReadOnly;
+};
+
+export const Scene: React.FC<SceneProps> = (props) => {
+  useEffect(() => props.runtime.onNeedRender(invalidate), []);
 
   const modelRef = useRef<Group>();
   const keyMeshArrayRef = useRef<KeyMesh[]>();
@@ -40,7 +43,7 @@ export const Scene: React.FC<
         return value1 > value2 ? 1 : -1;
       }) as KeyMesh[];
 
-    runtime.setIsReady();
+    props.runtime.setIsReady();
   }, []);
 
   useEffect(() => {
@@ -69,25 +72,25 @@ export const Scene: React.FC<
       return;
     }
 
-    if (runtime.needRender) {
+    if (props.runtime.needRender) {
       invalidate();
     }
 
     for (let i = 0; i < 88; i++) {
       const keyMesh = keyMeshArrayRef.current[i];
-      const velocity = runtime.keys[i];
+      const velocity = props.runtime.keys[i];
 
       if (!velocity) {
         keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0, 0.5);
 
-        if (runtime.keyPressedColor) {
+        if (props.runtime.keyPressedColor) {
           keyMesh.material.emissive.lerp(voidColor, 0.15);
         }
       } else {
         keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0.09, 0.25);
 
-        if (runtime.keyPressedColor) {
-          keyMesh.material.emissive.lerp(runtime.keyPressedColor, 1);
+        if (props.runtime.keyPressedColor) {
+          keyMesh.material.emissive.lerp(props.runtime.keyPressedColor, 1);
         }
       }
     }
@@ -97,7 +100,7 @@ export const Scene: React.FC<
     <>
       <pointLight position={[0, 1000, 250]} power={7 * Math.PI} />
       <React.Suspense fallback={null}>
-        <Model ref={setModelRef} runtimeRef={props.runtimeRef} />
+        <Model ref={setModelRef} runtime={props.runtime} />
       </React.Suspense>
     </>
   );

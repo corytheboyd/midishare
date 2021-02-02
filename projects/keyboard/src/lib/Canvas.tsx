@@ -1,22 +1,18 @@
 import * as React from "react";
-import { memo, MutableRefObject, useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { Canvas as ThreeCanvas } from "react-three-fiber";
 import useMeasure from "react-use-measure";
 import mergeRefs from "react-merge-refs";
 import { Runtime, RuntimeOptions } from "./Runtime";
 import { Scene } from "./Scene";
-import { createRuntime } from "./createRuntime";
 import { SCALE_RATIO } from "./constants";
 
 interface CanvasProps {
-  runtime: MutableRefObject<Runtime>;
+  runtime: Runtime;
   options?: RuntimeOptions;
 }
 
 export const Canvas: React.FC<CanvasProps> = memo((props) => {
-  const runtimeRef = useRef(createRuntime(props.options || {}));
-  props.runtime.current = runtimeRef.current;
-
   const containerRef = useRef<HTMLElement>();
   const [resizeRef, bounds] = useMeasure({ scroll: false });
 
@@ -57,7 +53,7 @@ export const Canvas: React.FC<CanvasProps> = memo((props) => {
         invalidateFrameloop={true}
         updateDefaultCamera={true}
       >
-        <Scene bounds={bounds} runtimeRef={runtimeRef} />
+        <Scene bounds={bounds} runtime={props.runtime} />
       </ThreeCanvas>
     </div>
   );

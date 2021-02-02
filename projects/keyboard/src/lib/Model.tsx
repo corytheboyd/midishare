@@ -4,20 +4,23 @@ import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { BufferGeometry, Group, Mesh, MeshStandardMaterial } from "three";
 import { useLoader } from "react-three-fiber";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
-import { KeyboardRuntimeProps, KeyName } from "./types";
+import { KeyName } from "./types";
+import { Runtime } from "./Runtime";
 
 export type KeyMesh = Mesh<BufferGeometry, MeshStandardMaterial> & {
   name: KeyName;
 };
 
-export const Model = forwardRef<Group, KeyboardRuntimeProps>((props, ref) => {
-  const runtime = props.runtimeRef.current;
+type ModelProps = {
+  runtime: Runtime;
+};
 
+export const Model = forwardRef<Group, ModelProps>((props, ref) => {
   const assetUrl = useMemo(() => {
-    const url = new URL(runtime.assetPath);
+    const url = new URL(props.runtime.assetPath);
     url.pathname = "keyboard.glb";
     return url.toString();
-  }, [runtime.assetPath]);
+  }, [props.runtime.assetPath]);
 
   const result = useLoader(GLTFLoader, assetUrl, (loader) => {
     const dracoLoader = new DRACOLoader();
