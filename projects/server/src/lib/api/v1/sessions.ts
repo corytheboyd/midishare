@@ -16,7 +16,8 @@ export const sessions = (): Router => {
     const newSession: Session = {
       id: uuid(),
     };
-    res.send(newSession);
+    res.status(201);
+    setTimeout(() => res.send(newSession), 1000);
   });
 
   router.post("/:roomId/join", (req, res) => {

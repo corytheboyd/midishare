@@ -1,4 +1,4 @@
-import React from "react";
+import React, { HTMLProps } from "react";
 import { Link, LinkProps } from "react-router-dom";
 
 type ButtonProps = {
@@ -14,7 +14,9 @@ type ButtonProps = {
 };
 
 export const Button: React.FC<
-  ButtonProps & React.HTMLAttributes<HTMLButtonElement | HTMLAnchorElement>
+  ButtonProps &
+    React.ButtonHTMLAttributes<HTMLButtonElement> &
+    React.AnchorHTMLAttributes<HTMLAnchorElement>
 > = ({ to, href, ...props }) => {
   if (to) {
     return (

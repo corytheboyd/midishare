@@ -6,8 +6,12 @@ import { Helmet } from "react-helmet";
 import { useMutation } from "react-query";
 import { Session } from "@midishare/common";
 import { ExclamationCircle } from "../common/icons/sm/ExclamationCircle";
+import { useHistory } from "react-router-dom";
+import { Routes } from "../routes";
 
 export const Sessions: React.FC = () => {
+  const history = useHistory();
+
   const mutation = useMutation<Session, Error>(async () => {
     const url = new URL(process.env.SERVER_URL as string);
     url.pathname = "/api/v1/sessions";
@@ -22,7 +26,11 @@ export const Sessions: React.FC = () => {
       throw new Error("Failed to create session");
     }
 
-    return response.json();
+    const session = (await response.json()) as Session;
+
+    console.debug("CREATED SESSION", session);
+
+    history.push(Routes.SESSION.replace(/:id/, session.id));
   });
 
   return (
@@ -42,8 +50,6 @@ export const Sessions: React.FC = () => {
           </div>
 
           <div className="mt-2">
-            {mutation.isLoading && <span>Creating...</span>}
-
             {mutation.isError && (
               <div className="text-red-500 mb-1.5">
                 <div className="flex space-x-2 items-center">
@@ -57,17 +63,18 @@ export const Sessions: React.FC = () => {
               </div>
             )}
 
-            {!mutation.isLoading && (
-              <Button
-                onClick={() => mutation.mutate()}
-                className="flex w-48 items-center justify-center space-x-1 px-2 py-1 rounded text-white bg-green-500 transition hover:shadow-md"
-              >
-                <div className="w-7 h-7">
-                  <Play />
-                </div>
-                <span className="text-lg">Start Session</span>
-              </Button>
-            )}
+            <Button
+              disabled={mutation.isLoading}
+              onClick={() => mutation.mutate()}
+              className="flex w-48 items-center justify-center space-x-1 px-2 py-1 rounded text-white bg-green-500 transition hover:shadow-md"
+            >
+              <div className="w-6 h-6">
+                <Play />
+              </div>
+              <span className="text-lg">
+                {mutation.isLoading ? "Starting..." : "Start Session"}
+              </span>
+            </Button>
           </div>
         </MaxWidthContent>
       </div>
