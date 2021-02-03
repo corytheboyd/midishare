@@ -1,17 +1,22 @@
 import React, { useEffect, useMemo } from "react";
 import { Chrome } from "../Chrome";
+import { Helmet } from "react-helmet";
+import { PeerLane } from "../PeerLane";
+import { AttachMidiPrompt } from "../PeerLane/AttachMidiPrompt";
 import {
   createRuntime,
   getKeyNameFromIndex,
   Runtime,
 } from "@midishare/keyboard";
-import { Helmet } from "react-helmet";
-import { PeerLane } from "../PeerLane";
-import { Play } from "../common/icons/sm/Play";
+import { useStore } from "../../lib/store";
+
+const localColor = "blue";
+const remoteColor = "yellow";
 
 export const Session: React.FC = () => {
-  const localColor = "blue";
-  const remoteColor = "yellow";
+  const activeMidiInputDeviceId = useStore(
+    (state) => state.activeMidiInputDeviceId
+  );
 
   const localRuntime = useMemo(
     () =>
@@ -52,8 +57,6 @@ export const Session: React.FC = () => {
     return () => intervalIds.forEach((id) => clearInterval(id));
   }, []);
 
-  console.debug("Render Session Page");
-
   return (
     <Chrome hideFooter={true}>
       <Helmet>
@@ -65,15 +68,8 @@ export const Session: React.FC = () => {
         <PeerLane
           runtime={localRuntime}
           color={localColor}
-          keyboardDisabled={true}
-          disabledMessageContent={
-            <div className="flex items-center space-x-2 w-full">
-              <div className="w-5 h-5">
-                <Play />
-              </div>
-              <span>Bird up</span>
-            </div>
-          }
+          keyboardDisabled={!activeMidiInputDeviceId}
+          disabledMessageContent={<AttachMidiPrompt />}
         />
       </div>
     </Chrome>
