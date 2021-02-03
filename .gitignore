@@ -1,6 +1,12 @@
 # Secrets
 **/.env
 
+# Protected assets
+/assets/protected/**/*
+
+# Self-signed certs that can't be shared
+/ssl/*.pem
+
 # Editor droppings
 .idea
 
