@@ -1,5 +1,6 @@
-import WebMidi from "webmidi";
+import WebMidi, { InputEvents } from "webmidi";
 import { store } from "./store";
+import { handleMidiInput } from "./handleMidiInput";
 
 export function getMidiAccess(): void {
   if (store.getState().midiAccessGranted !== null) {
@@ -13,15 +14,36 @@ export function getMidiAccess(): void {
     }
     store.getState().setMidiAccessGranted(true);
 
-    for (const input of WebMidi.inputs) {
-      store.getState().addMidiInputDevice(input);
-    }
-
     WebMidi.addListener("connected", (event) => {
       if (event.port.type !== "input") {
         return;
       }
       store.getState().addMidiInputDevice(event.port);
+
+      event.port.addListener("noteon", "all", (event) => {
+        handleMidiInput(
+          event.target.id,
+          event.type,
+          event.data,
+          event.timestamp
+        );
+      });
+      event.port.addListener("noteoff", "all", (event) => {
+        handleMidiInput(
+          event.target.id,
+          event.type,
+          event.data,
+          event.timestamp
+        );
+      });
+      event.port.addListener("controlchange", "all", (event) => {
+        handleMidiInput(
+          event.target.id,
+          event.type,
+          event.data,
+          event.timestamp
+        );
+      });
     });
 
     WebMidi.addListener("disconnected", (event) => {

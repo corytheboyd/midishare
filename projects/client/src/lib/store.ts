@@ -2,6 +2,12 @@ import create from "zustand/vanilla";
 import createReactHook from "zustand";
 import { Input } from "webmidi";
 import produce from "immer";
+import { createRuntime, Runtime } from "@midishare/keyboard";
+
+type SessionState = {
+  localKeyboardRuntime: Runtime;
+  remoteKeyboardRuntime: Runtime;
+};
 
 export type State = {
   /**
@@ -26,6 +32,12 @@ export type State = {
    * */
   activeMidiInputDeviceId: string | null;
   setActiveMidiInputDeviceId: (inputId: string) => void;
+
+  /**
+   * Global state for the active Session.
+   * */
+  session?: SessionState;
+  createSession: () => void;
 };
 
 export const store = create<State>((set, get) => ({
@@ -58,6 +70,19 @@ export const store = create<State>((set, get) => ({
     set(
       produce(get(), (state) => {
         state.activeMidiInputDeviceId = inputId;
+      })
+    ),
+  createSession: () =>
+    set(
+      produce(get(), (state) => {
+        state.session = {
+          localKeyboardRuntime: createRuntime({
+            keyPressedColor: "blue",
+          }),
+          remoteKeyboardRuntime: createRuntime({
+            keyPressedColor: "yellow",
+          }),
+        };
       })
     ),
 }));

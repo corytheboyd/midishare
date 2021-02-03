@@ -64,7 +64,6 @@ const DeviceSelect: React.FC = () => {
 
 export const AttachMidiPrompt: React.FC = () => {
   const midiAccessGranted = useStore((state) => state.midiAccessGranted);
-  console.debug("midiAccessGranted", midiAccessGranted);
 
   return (
     <div className="flex items-center space-x-1">
