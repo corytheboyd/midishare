@@ -96,6 +96,15 @@ services:
     command:
       - "--watch"
 
+  common:
+    build:
+      target: development
+    volumes:
+      - "./projects/common/src:/code/app/src"
+      - "./projects/common/dist:/code/app/dist"
+    command:
+      - "--watch"
+
   inspector:
     container_name: inspector
     init: true

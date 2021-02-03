@@ -39,3 +39,10 @@ services:
     build:
       context: .
       dockerfile: projects/keyboard/Dockerfile
+
+  common:
+    container_name: common
+    init: true
+    build:
+      context: .
+      dockerfile: projects/common/Dockerfile
