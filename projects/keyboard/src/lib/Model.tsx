@@ -1,5 +1,4 @@
 import React, { forwardRef, useMemo } from "react";
-
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { BufferGeometry, Group, Mesh, MeshStandardMaterial } from "three";
 import { useLoader } from "react-three-fiber";
@@ -16,13 +15,9 @@ type ModelProps = {
 };
 
 export const Model = forwardRef<Group, ModelProps>((props, ref) => {
-  const assetUrl = useMemo(() => {
-    const url = new URL(props.runtime.assetPath);
-    url.pathname = "keyboard.glb";
-    return url.toString();
-  }, [props.runtime.assetPath]);
+  const assetPath = props.runtime.assetPath + "/keyboard.glb";
 
-  const result = useLoader(GLTFLoader, assetUrl, (loader) => {
+  const result = useLoader(GLTFLoader, assetPath, (loader) => {
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
     (loader as GLTFLoader).setDRACOLoader(dracoLoader);

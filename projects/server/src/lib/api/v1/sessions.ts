@@ -11,7 +11,9 @@ export const sessions = (): Router => {
   });
 
   router.post("/", (req, res) => {
-    res.send("CREATE ROOM");
+    setTimeout(() => {
+      res.send("CREATE ROOM");
+    }, 1000);
   });
 
   router.post("/:roomId/join", (req, res) => {

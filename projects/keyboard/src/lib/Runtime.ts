@@ -10,7 +10,7 @@ export interface RuntimeOptions {
    * can be generalized in the future. Also, might not even need assets
    * anymore if/when I replace the model with raw geometries in code.
    * */
-  assetPath?: string;
+  assetPath: string;
 
   /**
    * When a key is engaged, use a color to effectively increase the contrast
@@ -35,7 +35,7 @@ export class Runtime {
   private onNeedRenderCallbacks: (() => void)[] = [];
 
   constructor(store: StoreApi<KeyboardState>, options: RuntimeOptions) {
-    this.assetPath = options.assetPath || (process.env.CDN_URL as string);
+    this.assetPath = options.assetPath;
 
     if (options.keyPressedColor) {
       this.keyPressedColor = new Color(options.keyPressedColor);

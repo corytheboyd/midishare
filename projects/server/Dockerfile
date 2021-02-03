@@ -2,8 +2,8 @@ FROM node:14.15.3 AS node_base
 
 FROM node_base AS development
 
-# TODO This common directory is a mess of concerns
-COPY projects/common/tsconfig.base.json /code/common/
+WORKDIR /
+COPY tsconfig.base.json .
 
 WORKDIR /code/app
 COPY projects/server/package.json .

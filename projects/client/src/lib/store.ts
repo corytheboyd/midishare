@@ -40,6 +40,12 @@ export type State = {
   createSession: () => void;
 };
 
+const PROTECTED_CDN_URL = (() => {
+  const url = new URL(process.env.CDN_URL as string);
+  url.pathname = "/protected";
+  return url.toString();
+})();
+
 export const store = create<State>((set, get) => ({
   midiAccessGranted: null,
   midiInputDevices: [],
@@ -77,9 +83,11 @@ export const store = create<State>((set, get) => ({
       produce(get(), (state) => {
         state.session = {
           localKeyboardRuntime: createRuntime({
+            assetPath: PROTECTED_CDN_URL,
             keyPressedColor: "blue",
           }),
           remoteKeyboardRuntime: createRuntime({
+            assetPath: PROTECTED_CDN_URL,
             keyPressedColor: "yellow",
           }),
         };

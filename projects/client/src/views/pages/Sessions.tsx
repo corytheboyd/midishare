@@ -3,9 +3,22 @@ import { Chrome, MaxWidthContent } from "../Chrome";
 import { Play } from "../common/icons/sm/Play";
 import { Button } from "../common/Button";
 import { Helmet } from "react-helmet";
-import { Routes } from "../routes";
+import { useMutation } from "react-query";
 
 export const Sessions: React.FC = () => {
+  const mutation = useMutation(async () => {
+    const url = new URL(process.env.SERVER_URL as string);
+    url.pathname = "/api/v1/sessions";
+
+    const response = await fetch(url.toString(), {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+    });
+
+    console.debug("CREATE ROOM RESPONSE", response);
+  });
+
   return (
     <Chrome>
       <Helmet>
@@ -23,15 +36,26 @@ export const Sessions: React.FC = () => {
           </div>
 
           <div className="mt-2">
-            <Button
-              to={Routes.SESSION}
-              className="flex items-center justify-center space-x-1 px-2 py-1 rounded border-2 border-green-400 text-green-500 transition hover:shadow-md"
-            >
-              <div className="w-7 h-7">
-                <Play />
+            {mutation.isLoading && <span>Creating...</span>}
+
+            {mutation.isError && (
+              <div>
+                <span>Something went wrong with your request</span>
+                <span className="font-mono">{mutation.error?.message}</span>
               </div>
-              <span className="text-lg">Start Session</span>
-            </Button>
+            )}
+
+            {!mutation.isLoading && (
+              <Button
+                onClick={() => mutation.mutate()}
+                className="flex w-48 items-center justify-center space-x-1 px-2 py-1 rounded text-white bg-green-500 transition hover:shadow-md"
+              >
+                <div className="w-7 h-7">
+                  <Play />
+                </div>
+                <span className="text-lg">Start Session</span>
+              </Button>
+            )}
           </div>
         </MaxWidthContent>
       </div>
