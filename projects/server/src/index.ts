@@ -88,12 +88,12 @@ webSocketServer.on("connection", (ws) => {
     console.debug("MESSAGE", data);
   });
 
-  setInterval(() => {
+  const intervalId = setInterval(() => {
     ws.ping(null, false, (error) => {
       if (error) {
-        console.debug("PING FAIL");
-      } else {
-        console.debug("PING SUCCESS");
+        console.debug("PING FAIL, CLOSE CONNECTION");
+        ws.close();
+        clearInterval(intervalId);
       }
     });
   }, 1000);
