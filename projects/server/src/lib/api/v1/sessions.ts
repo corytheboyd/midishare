@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { requiresAuth } from "express-openid-connect";
 
-export const rooms = (): Router => {
+export const sessions = (): Router => {
   const router = Router();
 
   router.use(requiresAuth());
