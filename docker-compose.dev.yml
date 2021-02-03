@@ -33,7 +33,7 @@ services:
       HMR_PORT: 3001
       CDN_URL: https://localhost:9000
       SERVER_URL: https://localhost:4000
-      CACHE_DIR: /parcel-cache
+      WS_URL: ws://localhost:4000
     volumes:
       - "./projects/client/src:/code/app/src"
       - "./projects/common/ssl:/code/common/ssl:ro"

@@ -10,6 +10,17 @@ import { Helmet } from "react-helmet";
 import { Routes } from "./views/routes";
 import { Session } from "./views/pages/Session";
 
+const ws = new WebSocket(process.env.WS_URL as string);
+
+ws.addEventListener("message", function (event) {
+  console.debug("WS MESSAGE", event.data);
+});
+
+ws.addEventListener("open", function () {
+  console.debug("WS OPEN", this);
+  this.send("hey");
+});
+
 render(
   <QueryClientProvider client={queryClient}>
     <ReactQueryDevtools initialIsOpen={true} />

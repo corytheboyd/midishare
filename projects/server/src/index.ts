@@ -6,6 +6,7 @@ import { api } from "./lib/api/v1";
 import { auth, ConfigParams as AuthConfigParams } from "express-openid-connect";
 import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
+import { Server as WebSocketServer } from "ws";
 
 const authConfig: AuthConfigParams = {
   issuerBaseURL: "https://midishare.us.auth0.com",
@@ -74,7 +75,36 @@ app.use(auth(authConfig));
 // Application middlewares
 app.use("/api/v1", api());
 
-const server = createServer(serverConfig, app);
-server.listen(port, address, () => {
+const httpServer = createServer(serverConfig, app);
+
+const webSocketServer = new WebSocketServer({
+  noServer: true,
+});
+
+webSocketServer.on("connection", (ws) => {
+  console.debug("CONNECTED");
+
+  ws.on("message", (data) => {
+    console.debug("MESSAGE", data);
+  });
+
+  setInterval(() => {
+    ws.ping(null, false, (error) => {
+      if (error) {
+        console.debug("PING FAIL");
+      } else {
+        console.debug("PING SUCCESS");
+      }
+    });
+  }, 1000);
+});
+
+httpServer.on("upgrade", (req, socket, head) => {
+  webSocketServer.handleUpgrade(req, socket, head, (ws) => {
+    webSocketServer.emit("connection", ws);
+  });
+});
+
+httpServer.listen(port, address, () => {
   console.log(`Listening on https://${address}:${port}`);
 });
