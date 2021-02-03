@@ -26,12 +26,13 @@ export const Sessions: React.FC = () => {
       throw new Error("Failed to create session");
     }
 
-    const session = (await response.json()) as Session;
-
-    console.debug("CREATED SESSION", session);
-
-    history.push(Routes.SESSION.replace(/:id/, session.id));
+    return response.json();
   });
+
+  const handleCreateSession = async () => {
+    const session = await mutation.mutateAsync();
+    history.push(Routes.SESSION.replace(/:id/, session.id));
+  };
 
   return (
     <Chrome>
@@ -65,7 +66,7 @@ export const Sessions: React.FC = () => {
 
             <Button
               disabled={mutation.isLoading}
-              onClick={() => mutation.mutate()}
+              onClick={handleCreateSession}
               className="flex w-48 items-center justify-center space-x-1 px-2 py-1 rounded text-white bg-green-500 transition hover:shadow-md"
             >
               <div className="w-6 h-6">
