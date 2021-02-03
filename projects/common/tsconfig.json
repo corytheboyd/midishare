@@ -3,10 +3,9 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "jsx": "react",
     "module": "ESNext",
     "target": "ESNext",
     "moduleResolution": "node",
-    "declaration": true
+    "declaration": true,
   }
 }

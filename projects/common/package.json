@@ -4,7 +4,7 @@
   "description": "Shared code between Midishare projects",
   "author": "Cory Boyd <me@corytheboyd.com> (https://corytheboyd.com)",
   "private": true,
-  "module": "dist/src/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.1.0",

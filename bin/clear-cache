@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -euo pipefail
+
+(cd projects/common && sudo rm -rf dist)
+(cd projects/keyboard && sudo rm -rf dist)
+
+bin/dcp-dev down -v

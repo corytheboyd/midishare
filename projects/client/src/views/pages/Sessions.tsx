@@ -4,9 +4,11 @@ import { Play } from "../common/icons/sm/Play";
 import { Button } from "../common/Button";
 import { Helmet } from "react-helmet";
 import { useMutation } from "react-query";
+import { Session } from "@midishare/common";
+import { ExclamationCircle } from "../common/icons/sm/ExclamationCircle";
 
 export const Sessions: React.FC = () => {
-  const mutation = useMutation(async () => {
+  const mutation = useMutation<Session, Error>(async () => {
     const url = new URL(process.env.SERVER_URL as string);
     url.pathname = "/api/v1/sessions";
 
@@ -16,7 +18,11 @@ export const Sessions: React.FC = () => {
       credentials: "include",
     });
 
-    console.debug("CREATE ROOM RESPONSE", response);
+    if (response.status !== 201) {
+      throw new Error("Failed to create session");
+    }
+
+    return response.json();
   });
 
   return (
@@ -39,9 +45,15 @@ export const Sessions: React.FC = () => {
             {mutation.isLoading && <span>Creating...</span>}
 
             {mutation.isError && (
-              <div>
-                <span>Something went wrong with your request</span>
-                <span className="font-mono">{mutation.error?.message}</span>
+              <div className="text-red-500 mb-1.5">
+                <div className="flex space-x-2 items-center">
+                  <div className="w-5 h-5">
+                    <ExclamationCircle />
+                  </div>
+                  <p className="text-sm">
+                    Something went wrong with your request, try again shortly!
+                  </p>
+                </div>
               </div>
             )}
 

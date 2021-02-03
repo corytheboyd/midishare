@@ -13,12 +13,10 @@ export const sessions = (): Router => {
   });
 
   router.post("/", (req, res) => {
-    setTimeout(() => {
-      res.send("CREATE ROOM");
-      const newSession: Session = {
-        id: uuid(),
-      };
-    }, 1000);
+    const newSession: Session = {
+      id: uuid(),
+    };
+    res.send(newSession);
   });
 
   router.post("/:roomId/join", (req, res) => {
