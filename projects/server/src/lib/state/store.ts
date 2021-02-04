@@ -1,9 +1,6 @@
 import create from "zustand/vanilla";
 import produce from "immer";
-
-type Session = {
-  id: string;
-};
+import { Session } from "@midishare/common";
 
 type AppState = {
   sessions: Record<string, Session>;

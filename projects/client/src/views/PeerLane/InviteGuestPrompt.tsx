@@ -6,7 +6,7 @@ import { CopyTextInput } from "../common/CopyTextInput";
 import { CopyTextButton } from "../common/CopyTextButton";
 
 export const InviteGuestPrompt: React.FC = () => {
-  const sessionId = useStore((state) => state.session?.serverSession.id);
+  const sessionId = useStore((state) => state.session?.id);
 
   const joinUrl = useMemo(() => {
     if (!sessionId) {

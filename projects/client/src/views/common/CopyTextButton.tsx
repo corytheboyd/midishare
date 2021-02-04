@@ -23,7 +23,6 @@ export const CopyTextButton: React.FC<{
     }
     // const clipboard = new ClipboardJS(".copy-text-button");
     const clipboard = new ClipboardJS(buttonRef.current);
-    console.debug("clipboard", clipboard);
 
     clipboard.on("success", () => {
       setStatus("success");

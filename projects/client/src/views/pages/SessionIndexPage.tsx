@@ -4,36 +4,30 @@ import { Play } from "../common/icons/sm/Play";
 import { Button } from "../common/Button";
 import { Helmet } from "react-helmet";
 import { useMutation } from "react-query";
-import { Session } from "@midishare/common";
 import { ExclamationCircle } from "../common/icons/sm/ExclamationCircle";
 import { useHistory } from "react-router-dom";
 import { Routes } from "../routes";
 import { useStore } from "../../lib/store";
+import { Session } from "@midishare/common";
+import { Queries, queryClient } from "../../lib/queryClient";
+import { createSession } from "../../lib/mutations/createSession";
 
-export const Sessions: React.FC = () => {
+export const SessionIndexPage: React.FC = () => {
   const history = useHistory();
 
-  const mutation = useMutation<Session, Error>(async () => {
-    const url = new URL(process.env.SERVER_URL as string);
-    url.pathname = "/api/v1/sessions";
-
-    const response = await fetch(url.toString(), {
-      method: "POST",
-      mode: "cors",
-      credentials: "include",
-    });
-
-    if (response.status !== 201) {
-      throw new Error("Failed to create session");
-    }
-
-    return response.json();
+  const mutation = useMutation<Session, Error>(createSession, {
+    onSuccess: (data) => {
+      queryClient.setQueryData([Queries.SESSIONS, data.id], data);
+    },
   });
 
   const handleCreateSession = async () => {
     const session = await mutation.mutateAsync();
+
+    useStore.getState().setSession(session);
+    useStore.getState().initializeRuntime();
+
     history.push(Routes.SESSION.replace(/:id/, session.id));
-    useStore.getState().createSession(session);
   };
 
   return (

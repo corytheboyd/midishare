@@ -31,14 +31,19 @@ export type State = {
   setActiveMidiInputDeviceId: (inputId: string) => void;
 
   /**
-   * Global state for the active Session.
+   * The active session, as returned by the server
    * */
-  session?: {
-    serverSession: Session;
+  session?: Session;
+  setSession: (session: Session) => void;
+
+  /**
+   * The active runtime components, as used on the session page
+   * */
+  runtime?: {
     localKeyboardRuntime: Runtime;
     remoteKeyboardRuntime: Runtime;
   };
-  createSession: (serverSession: Session) => void;
+  initializeRuntime: () => void;
 };
 
 export const store = create<State>((set, get) => ({
@@ -73,20 +78,27 @@ export const store = create<State>((set, get) => ({
         state.activeMidiInputDeviceId = inputId;
       })
     ),
-  createSession: (serverSession) =>
+  setSession: (session) =>
     set(
       produce(get(), (state) => {
-        state.session = {
-          serverSession,
-          localKeyboardRuntime: createRuntime({
-            assetPath: PROTECTED_CDN_URL,
-            keyPressedColor: "blue",
-          }),
-          remoteKeyboardRuntime: createRuntime({
-            assetPath: PROTECTED_CDN_URL,
-            keyPressedColor: "yellow",
-          }),
-        };
+        state.session = session;
+      })
+    ),
+  initializeRuntime: () =>
+    set(
+      produce(get(), (state) => {
+        if (!state.runtime) {
+          state.runtime = {
+            localKeyboardRuntime: createRuntime({
+              assetPath: PROTECTED_CDN_URL,
+              keyPressedColor: "blue",
+            }),
+            remoteKeyboardRuntime: createRuntime({
+              assetPath: PROTECTED_CDN_URL,
+              keyPressedColor: "yellow",
+            }),
+          };
+        }
       })
     ),
 }));

@@ -5,12 +5,8 @@ import { MaxWidthContent } from "../index";
 import { Button } from "../../common/Button";
 import { Login } from "../../common/icons/sm/Login";
 import { Logout } from "../../common/icons/sm/Logout";
-
-type UserProfile = {
-  name: string;
-  picture: string;
-  email: string;
-};
+import { UserProfile } from "@midishare/common";
+import { getCurrentUser, queryKey } from "../../../lib/queries/getCurrentUser";
 
 const LOGIN_URL = (() => {
   const url = new URL(process.env.SERVER_URL as string);
@@ -34,23 +30,9 @@ const AuthButton: React.FC<{ href: string }> = (props) => (
 );
 
 const ProfileSection: React.FC = () => {
-  const { isLoading, data } = useQuery<UserProfile>(
-    [Queries.PROFILES, "me"],
-    async () => {
-      const url = new URL(process.env.SERVER_URL as string);
-      url.pathname = `/api/v1/profiles/me`;
-
-      const response = await fetch(url.toString(), {
-        mode: "cors",
-        credentials: "include",
-      });
-
-      if (response.status === 401) {
-        return null;
-      } else if (response.status === 200) {
-        return await response.json();
-      }
-    },
+  const { isLoading, data } = useQuery<UserProfile | null>(
+    queryKey(),
+    () => getCurrentUser(),
     {
       refetchInterval: false,
       refetchOnWindowFocus: false,

@@ -3,7 +3,7 @@ import { Chrome } from "../Chrome";
 import { createRuntime, Keyboard } from "@midishare/keyboard";
 import { PROTECTED_CDN_URL } from "../../lib/constants";
 
-export const Home: React.FC = () => {
+export const HomePage: React.FC = () => {
   const runtime = useMemo(
     () =>
       createRuntime({

@@ -5,6 +5,13 @@
  * */
 type UserId = string;
 
+export type UserProfile = {
+  sub: UserId;
+  name: string;
+  picture: string;
+  email: string;
+};
+
 export type Session = {
   /**
    * Unique ID of the Session. Used to join the session with.

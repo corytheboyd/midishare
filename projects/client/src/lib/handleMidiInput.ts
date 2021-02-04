@@ -29,9 +29,11 @@ export function handleMidiInput(
     const keyName = getKeyNameFromIndex(note - 21);
 
     if (type === "noteon") {
-      store.getState().session?.localKeyboardRuntime.keyOn(keyName, velocity);
+      store
+        .getState()
+        .activeSession?.localKeyboardRuntime.keyOn(keyName, velocity);
     } else {
-      store.getState().session?.localKeyboardRuntime.keyOff(keyName);
+      store.getState().activeSession?.localKeyboardRuntime.keyOff(keyName);
     }
   }
 }
