@@ -5,8 +5,6 @@ set -euo pipefail
 (cd projects/keyboard && npm link)
 (cd projects/common && npm link)
 
-(cd projects/client && npm link @midishare/keyboard)
+(cd projects/client && npm link @midishare/keyboard @midishare/common)
 (cd projects/docs && npm link @midishare/keyboard)
-
-(cd projects/client && npm link @midishare/common)
 (cd projects/server && npm link @midishare/common)

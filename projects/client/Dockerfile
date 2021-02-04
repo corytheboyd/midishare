@@ -19,8 +19,7 @@ WORKDIR /code/app
 COPY projects/client/package.json .
 COPY projects/client/package-lock.json .
 RUN npm ci
-RUN npm link @midishare/common
-RUN npm link @midishare/keyboard
+RUN npm link @midishare/common @midishare/keyboard
 
 COPY projects/common /code/common
 COPY projects/keyboard /code/keyboard

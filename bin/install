@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -euo pipefail
+
+(cd projects/client && npm ci)
+(cd projects/common && npm ci)
+(cd projects/docs && npm ci)
+(cd projects/inspector && npm ci)
+(cd projects/keyboard && npm ci)
+(cd projects/server && npm ci)
