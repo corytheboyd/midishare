@@ -10,7 +10,7 @@ import { Server as WebSocketServer } from "ws";
 
 const authConfig: AuthConfigParams = {
   issuerBaseURL: "https://midishare.us.auth0.com",
-  clientID: "2rIFY7EvPtPahpILRu657x8Bk0BiXiLf",
+  clientID: "KfeOyf0URxB0TmuMSDaI8orGQ4Ufvs78",
   errorOnRequiredAuth: true,
   authRequired: false,
   auth0Logout: true,
@@ -65,9 +65,10 @@ const port = parseInt(process.env.PORT as string, 10);
 const address = process.env.ADDRESS as string;
 
 const app = express();
+const logger = morgan("combined");
 
 // Third-party middlewares
-app.use(morgan("combined"));
+app.use(logger);
 app.use(helmet());
 app.use(cors(corsConfig));
 app.use(auth(authConfig));
@@ -101,6 +102,7 @@ webSocketServer.on("connection", (ws) => {
 
 httpServer.on("upgrade", (req, socket, head) => {
   webSocketServer.handleUpgrade(req, socket, head, (ws) => {
+    logger(req, socket, () => {});
     webSocketServer.emit("connection", ws);
   });
 });

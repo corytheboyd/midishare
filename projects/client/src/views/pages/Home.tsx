@@ -1,11 +1,16 @@
 import React, { useMemo } from "react";
 import { Chrome } from "../Chrome";
 import { createRuntime, Keyboard } from "@midishare/keyboard";
+import { PROTECTED_CDN_URL } from "../../lib/constants";
 
 export const Home: React.FC = () => {
-  const runtime = useMemo(() => {
-    return createRuntime({});
-  }, []);
+  const runtime = useMemo(
+    () =>
+      createRuntime({
+        assetPath: PROTECTED_CDN_URL,
+      }),
+    []
+  );
 
   return (
     <Chrome>
@@ -20,12 +25,7 @@ export const Home: React.FC = () => {
           </p>
 
           <div className="mt-8">
-            <Keyboard
-              runtime={runtime}
-              options={{
-                assetPath: process.env.CDN_URL,
-              }}
-            />
+            <Keyboard runtime={runtime} />
           </div>
         </div>
       </article>

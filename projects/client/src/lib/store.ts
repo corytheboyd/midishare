@@ -3,6 +3,7 @@ import createReactHook from "zustand";
 import { Input } from "webmidi";
 import produce from "immer";
 import { createRuntime, Runtime } from "@midishare/keyboard";
+import { PROTECTED_CDN_URL } from "./constants";
 
 type SessionState = {
   localKeyboardRuntime: Runtime;
@@ -39,12 +40,6 @@ export type State = {
   session?: SessionState;
   createSession: () => void;
 };
-
-const PROTECTED_CDN_URL = (() => {
-  const url = new URL(process.env.CDN_URL as string);
-  url.pathname = "/protected";
-  return url.toString();
-})();
 
 export const store = create<State>((set, get) => ({
   midiAccessGranted: null,
