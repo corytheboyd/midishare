@@ -1,4 +1,4 @@
-import React, { HTMLProps } from "react";
+import React, { ForwardedRef, forwardRef, HTMLProps } from "react";
 import { Link, LinkProps } from "react-router-dom";
 
 type ButtonProps = {
@@ -13,14 +13,15 @@ type ButtonProps = {
   to?: string;
 };
 
-export const Button: React.FC<
+export const Button = forwardRef<
+  HTMLButtonElement | HTMLAnchorElement,
   ButtonProps &
     React.ButtonHTMLAttributes<HTMLButtonElement> &
     React.AnchorHTMLAttributes<HTMLAnchorElement>
-> = ({ to, href, ...props }) => {
+>(({ to, href, ...props }, ref) => {
   if (to) {
     return (
-      <Link to={to} {...props}>
+      <Link to={to} ref={ref as ForwardedRef<HTMLAnchorElement>} {...props}>
         {props.children}
       </Link>
     );
@@ -28,11 +29,16 @@ export const Button: React.FC<
 
   if (href) {
     return (
-      <a href={href} {...props}>
+      <a href={href} ref={ref as ForwardedRef<HTMLAnchorElement>} {...props}>
         {props.children}
       </a>
     );
   }
 
-  return <button {...props}>{props.children}</button>;
-};
+  return (
+    <button ref={ref as ForwardedRef<HTMLButtonElement>} {...props}>
+      {props.children}
+    </button>
+  );
+});
+Button.displayName = "Button";
