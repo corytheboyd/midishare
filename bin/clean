@@ -2,7 +2,18 @@
 
 set -euo pipefail
 
+echo Removing local bundles...
 (cd projects/common && sudo rm -rf dist)
 (cd projects/keyboard && sudo rm -rf dist)
 
+echo Removing dependencies...
+(cd projects/client && rm -rf node_modules)
+(cd projects/common && rm -rf node_modules)
+(cd projects/docs && rm -rf node_modules)
+(cd projects/inspector && rm -rf node_modules)
+(cd projects/keyboard && rm -rf node_modules)
+(cd projects/server && rm -rf node_modules)
+
+echo Cleaning up Docker images and volumes...
+bin/dcp-dev rm -v
 bin/dcp-dev down -v

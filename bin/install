@@ -2,9 +2,23 @@
 
 set -euo pipefail
 
+echo Install dependencies for projects/client...
 (cd projects/client && npm ci)
+
+echo Install dependencies for projects/common...
 (cd projects/common && npm ci)
+
+echo Install dependencies for projects/docs...
 (cd projects/docs && npm ci)
+
+echo Install dependencies for projects/inspector...
 (cd projects/inspector && npm ci)
+
+echo Install dependencies for projects/keyboard...
 (cd projects/keyboard && npm ci)
+
+echo Install dependencies for projects/server...
 (cd projects/server && npm ci)
+
+echo Creating Docker images...
+bin/dcp-dev build
