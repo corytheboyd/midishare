@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet";
 import { PeerLane } from "../PeerLane";
 import { AttachMidiPrompt } from "../PeerLane/AttachMidiPrompt";
 import { useStore } from "../../lib/store";
+import { InviteGuestPrompt } from "../PeerLane/InviteGuestPrompt";
 
 const localColor = "blue";
 const remoteColor = "yellow";
@@ -35,7 +36,12 @@ export const Session: React.FC = () => {
       {session && localRuntime && remoteRuntime && (
         <div className="flex flex-col h-full w-full space-y-2 p-2">
           {/* Remote Peer */}
-          <PeerLane runtime={remoteRuntime} color={remoteColor} />
+          <PeerLane
+            runtime={remoteRuntime}
+            color={remoteColor}
+            keyboardDisabled={!session.serverSession.participants.guest}
+            disabledMessageContent={<InviteGuestPrompt />}
+          />
 
           {/* Local Peer */}
           <PeerLane

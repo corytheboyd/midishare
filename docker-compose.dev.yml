@@ -31,6 +31,7 @@ services:
       HOST: client
       PORT: 3000
       HMR_PORT: 3001
+      PUBLIC_URL: https://localhost:3000
       CDN_URL: https://localhost:9000
       SERVER_URL: https://localhost:4000
       WS_URL: ws://localhost:4000
