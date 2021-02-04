@@ -8,6 +8,7 @@ import { Session } from "@midishare/common";
 import { ExclamationCircle } from "../common/icons/sm/ExclamationCircle";
 import { useHistory } from "react-router-dom";
 import { Routes } from "../routes";
+import { useStore } from "../../lib/store";
 
 export const Sessions: React.FC = () => {
   const history = useHistory();
@@ -32,6 +33,7 @@ export const Sessions: React.FC = () => {
   const handleCreateSession = async () => {
     const session = await mutation.mutateAsync();
     history.push(Routes.SESSION.replace(/:id/, session.id));
+    useStore.getState().createSession(session);
   };
 
   return (

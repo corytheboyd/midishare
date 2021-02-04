@@ -4,11 +4,7 @@ import { Input } from "webmidi";
 import produce from "immer";
 import { createRuntime, Runtime } from "@midishare/keyboard";
 import { PROTECTED_CDN_URL } from "./constants";
-
-type SessionState = {
-  localKeyboardRuntime: Runtime;
-  remoteKeyboardRuntime: Runtime;
-};
+import { Session } from "@midishare/common";
 
 export type State = {
   /**
@@ -37,8 +33,12 @@ export type State = {
   /**
    * Global state for the active Session.
    * */
-  session?: SessionState;
-  createSession: () => void;
+  session?: {
+    serverSession: Session;
+    localKeyboardRuntime: Runtime;
+    remoteKeyboardRuntime: Runtime;
+  };
+  createSession: (serverSession: Session) => void;
 };
 
 export const store = create<State>((set, get) => ({
@@ -73,10 +73,11 @@ export const store = create<State>((set, get) => ({
         state.activeMidiInputDeviceId = inputId;
       })
     ),
-  createSession: () =>
+  createSession: (serverSession) =>
     set(
       produce(get(), (state) => {
         state.session = {
+          serverSession,
           localKeyboardRuntime: createRuntime({
             assetPath: PROTECTED_CDN_URL,
             keyPressedColor: "blue",

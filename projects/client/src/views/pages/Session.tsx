@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Chrome } from "../Chrome";
 import { Helmet } from "react-helmet";
 import { PeerLane } from "../PeerLane";
 import { AttachMidiPrompt } from "../PeerLane/AttachMidiPrompt";
-import { createRuntime } from "@midishare/keyboard";
 import { useStore } from "../../lib/store";
 
 const localColor = "blue";
@@ -18,7 +17,8 @@ export const Session: React.FC = () => {
 
   useEffect(() => {
     if (!session) {
-      useStore.getState().createSession();
+      // TODO join session and then create
+      // useStore.getState().createSession();
     }
   }, [session]);
 
