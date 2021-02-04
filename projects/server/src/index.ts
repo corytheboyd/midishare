@@ -39,7 +39,7 @@ const authConfig: AuthConfigParams = {
    * redirecting This can be used for handling token storage, making userinfo
    * calls, claim validation, etc.
    *
-   * If you see an infinite redirect loop after login, look here.
+   * If you see an infinite redirect loop after login, look here
    * */
   afterCallback: async (req, res, session) => {
     // TODO we may want to store the session here. might make sense when

@@ -1,9 +1,14 @@
 import { Request, Response } from "express";
 import { RequestContext, ResponseContext } from "express-openid-connect";
+import { UserinfoResponse } from "openid-client";
 
-export function fromRequest(request: Request): RequestContext {
+interface RequestContextWithUser extends RequestContext {
+  user?: UserinfoResponse;
+}
+
+export function fromRequest(request: Request): RequestContextWithUser {
   const requestWithContext = request as typeof request & {
-    oidc: RequestContext;
+    oidc: RequestContextWithUser;
   };
   return requestWithContext.oidc;
 }
