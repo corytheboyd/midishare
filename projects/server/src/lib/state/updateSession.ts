@@ -25,7 +25,7 @@ const UPDATE_LOCK_TIMEOUT_SECONDS = 3;
  * */
 export async function updateSession(
   id: string,
-  partial: Omit<RecursivePartial<Session>, "id">
+  partial: Omit<RecursivePartial<Session>, "id" | "createdAt" | "updatedAt">
 ): Promise<Session> {
   return new Promise((resolve, reject) => {
     const lockKey = `${SESSIONS_HASH_NAME}|lock|${id}`;
@@ -47,6 +47,7 @@ export async function updateSession(
         updatedSession = {
           ...JSON.parse(value),
           ...partial,
+          updatedAt: new Date().toISOString(),
         };
       } catch (error) {
         redisClient.unwatch();

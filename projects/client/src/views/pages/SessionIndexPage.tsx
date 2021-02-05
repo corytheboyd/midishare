@@ -16,6 +16,9 @@ import {
   getAllSessions,
   queryKey as getAllSessionsQueryKey,
 } from "../../lib/queries/getAllSessions";
+import { deleteSession } from "../../lib/mutations/deleteSession";
+import { BaseButton } from "../common/buttons/BaseButton";
+import { SmallSecondaryButton } from "../common/buttons/SmallSecondaryButton";
 
 export const SessionIndexPage: React.FC = () => {
   const history = useHistory();
@@ -30,6 +33,10 @@ export const SessionIndexPage: React.FC = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(getSessionQueryKey(data.id), data);
     },
+  });
+
+  const deleteSessionMutation = useMutation(deleteSession, {
+    onSuccess: () => queryClient.invalidateQueries(getAllSessionsQueryKey()),
   });
 
   const handleCreateSession = async () => {
@@ -49,34 +56,66 @@ export const SessionIndexPage: React.FC = () => {
 
       <div className="flex flex-col mt-4 px-3">
         <MaxWidthContent>
-          <div>
-            <h1 className="text-xl font-bold font-serif">Create Session</h1>
-            <p className="text-md text-gray-500">
-              Starts a new real-time MIDI streaming session that you can invite
-              someone to join.
-            </p>
-          </div>
+          <div className="space-y-3">
+            <div>
+              <h1 className="text-xl font-bold font-serif">Create Session</h1>
+              <p className="text-md text-gray-500">
+                Starts a new real-time MIDI streaming session that you can
+                invite someone to join.
+              </p>
+            </div>
 
-          <div className="mt-2">
             {createSessionMutation.isError && (
               <InlineErrorMessage
                 message={createSessionMutation.error!.message}
               />
             )}
 
-            <LargePrimaryButton
-              disabled={createSessionMutation.isLoading}
-              onClick={handleCreateSession}
-            >
-              <div className="w-6 h-6">
-                <Play />
+            <div>
+              <LargePrimaryButton
+                disabled={createSessionMutation.isLoading}
+                onClick={handleCreateSession}
+              >
+                <div className="w-6 h-6">
+                  <Play />
+                </div>
+                <span className="text-lg">
+                  {createSessionMutation.isLoading
+                    ? "Starting..."
+                    : "Start Session"}
+                </span>
+              </LargePrimaryButton>
+            </div>
+
+            {!allSessionsQuery.isLoading && (
+              <div className="pt-3">
+                <h1 className="text-xl font-bold font-serif">Sessions</h1>
+
+                {allSessionsQuery.isError && (
+                  <InlineErrorMessage
+                    message={allSessionsQuery.error!.message}
+                  />
+                )}
+
+                <div className="w-full">
+                  {allSessionsQuery.data!.map((session) => (
+                    <div key={session.id} className="py-1 flex">
+                      <div className="flex-grow">
+                        <span>{session.id}</span>
+                      </div>
+                      <div className="space-x-2 text-sm">
+                        <SmallSecondaryButton color="green">
+                          Join
+                        </SmallSecondaryButton>
+                        <SmallSecondaryButton color="red">
+                          Delete
+                        </SmallSecondaryButton>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <span className="text-lg">
-                {createSessionMutation.isLoading
-                  ? "Starting..."
-                  : "Start Session"}
-              </span>
-            </LargePrimaryButton>
+            )}
           </div>
         </MaxWidthContent>
       </div>

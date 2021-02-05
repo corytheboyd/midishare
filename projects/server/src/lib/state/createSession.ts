@@ -15,11 +15,13 @@ export const SESSION_IDS_BY_USER_ID_SET_NAME = (userId: UserId): string =>
  * */
 export async function createSession(
   userId: UserId,
-  partial: Omit<Session, "id">
+  partial: Omit<Session, "id" | "createdAt" | "updatedAt">
 ): Promise<Session> {
   return new Promise((resolve, reject) => {
     const session = {
       id: uuid(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       ...partial,
     };
 

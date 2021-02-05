@@ -6,6 +6,7 @@ import { getCurrentUserId } from "../../getCurrentUserId";
 import { createSession } from "../../state/createSession";
 import { updateSession } from "../../state/updateSession";
 import { getAllSessions } from "../../state/getAllSessions";
+import { deleteSession } from "../../state/deleteSession";
 
 export const sessions = (): Router => {
   const router = Router();
@@ -67,6 +68,22 @@ export const sessions = (): Router => {
       res.send(updatedSession);
     }
   );
+
+  router.delete("/:id", requiresAuth(), async (req, res) => {
+    const userId = getCurrentUserId(req);
+    const session = await getSession(req.params.id);
+
+    if (session.participants.host !== userId) {
+      res.status(404);
+      res.end();
+      return;
+    }
+
+    await deleteSession(session);
+
+    res.status(204);
+    res.end();
+  });
 
   return router;
 };
