@@ -22,7 +22,7 @@ import { SmallSecondaryButton } from "../common/buttons/SmallSecondaryButton";
 export const SessionIndexPage: React.FC = () => {
   const history = useHistory();
 
-  const allSessionsQuery = useQuery<Session[], Error>(
+  const getAllSessionsQuery = useQuery<Session[], Error>(
     getAllSessionsQueryKey(),
     () => getAllSessions()
   );
@@ -33,7 +33,7 @@ export const SessionIndexPage: React.FC = () => {
     },
   });
 
-  const deleteSessionMutation = useMutation<Session, Error, { id: string }>(
+  const deleteSessionMutation = useMutation<void, Error, { id: string }>(
     ({ id }) => deleteSession(id),
     {
       onSuccess: (session, variables) => {
@@ -68,55 +68,67 @@ export const SessionIndexPage: React.FC = () => {
 
       <div className="flex flex-col mt-4 px-3">
         <MaxWidthContent>
-          <div className="space-y-3">
-            <div>
-              <h1 className="text-xl font-bold font-serif">Create Session</h1>
-              <p className="text-md text-gray-500">
-                Starts a new real-time MIDI streaming session that you can
-                invite someone to join.
-              </p>
-            </div>
+          <div className="space-y-5">
+            <section>
+              <div>
+                <h1 className="text-xl font-bold font-serif">Create Session</h1>
+                <p className="text-sm text-gray-500">
+                  Starts a new real-time MIDI streaming session that you can
+                  invite someone to join.
+                </p>
+              </div>
 
-            {createSessionMutation.isError && (
-              <InlineErrorMessage
-                message={createSessionMutation.error!.message}
-              />
-            )}
+              {createSessionMutation.isError && (
+                <InlineErrorMessage
+                  message={createSessionMutation.error!.message}
+                />
+              )}
 
-            <div>
-              <LargePrimaryButton
-                disabled={createSessionMutation.isLoading}
-                onClick={handleCreateSession}
-              >
-                <div className="w-6 h-6">
-                  <Play />
-                </div>
-                <span className="text-lg">
-                  {createSessionMutation.isLoading
-                    ? "Starting..."
-                    : "Start Session"}
-                </span>
-              </LargePrimaryButton>
-            </div>
+              <div className="mt-3">
+                <LargePrimaryButton
+                  disabled={createSessionMutation.isLoading}
+                  onClick={handleCreateSession}
+                >
+                  <div className="w-6 h-6">
+                    <Play />
+                  </div>
+                  <span className="text-lg">
+                    {createSessionMutation.isLoading
+                      ? "Starting..."
+                      : "Start Session"}
+                  </span>
+                </LargePrimaryButton>
+              </div>
+            </section>
 
-            {!allSessionsQuery.isLoading && allSessionsQuery.data!.length > 0 && (
-              <div className="pt-3">
+            <section>
+              <div>
                 <h1 className="text-xl font-bold font-serif">Sessions</h1>
+                <p className="text-sm text-gray-500">
+                  The sessions that you are currently participating in
+                </p>
+              </div>
 
-                {allSessionsQuery.isError && (
-                  <InlineErrorMessage
-                    message={allSessionsQuery.error!.message}
-                  />
-                )}
+              {getAllSessionsQuery.isError && (
+                <InlineErrorMessage
+                  message={getAllSessionsQuery.error!.message}
+                />
+              )}
 
-                <div className="w-full">
-                  {allSessionsQuery.data!.map((session) => (
+              <div className="w-full mt-3">
+                {getAllSessionsQuery.isLoading && <span>Loading...</span>}
+
+                {!getAllSessionsQuery.isLoading &&
+                  getAllSessionsQuery.data!.map((session) => (
                     <div key={session.id} className="py-1 flex">
                       <div className="flex-grow">
                         <span>{session.id}</span>
                       </div>
                       <div className="space-x-2 text-sm">
-                        <SmallSecondaryButton color="green">
+                        <SmallSecondaryButton
+                          color="green"
+                          onClick={() => navigateToSession(session)}
+                        >
                           Join
                         </SmallSecondaryButton>
 
@@ -130,9 +142,8 @@ export const SessionIndexPage: React.FC = () => {
                       </div>
                     </div>
                   ))}
-                </div>
               </div>
-            )}
+            </section>
           </div>
         </MaxWidthContent>
       </div>
