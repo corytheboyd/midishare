@@ -1,6 +1,7 @@
 import { Session } from "@midishare/common";
-import { redisClient } from "./redisClient";
+import deepmerge from "deepmerge";
 import { SESSIONS_HASH_NAME } from "./createSession";
+import { redisClient } from "./redisClient";
 
 /**
  * Shamelessly stolen from StackOverflow
@@ -42,13 +43,13 @@ export async function updateSession(
         return;
       }
 
+      const session: Session = JSON.parse(value);
       let updatedSession: Session;
       try {
-        updatedSession = {
-          ...JSON.parse(value),
+        updatedSession = deepmerge(session, {
           ...partial,
           updatedAt: new Date().toISOString(),
-        };
+        }) as Session;
       } catch (error) {
         redisClient.unwatch();
         reject(error);

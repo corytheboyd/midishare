@@ -6,6 +6,18 @@ volumes:
   inspector_parcel-cache:
 
 services:
+  redis-commander:
+    image: rediscommander/redis-commander
+    container_name: redis-commander
+    init: true
+    ports:
+      - "4100:4100"
+    environment:
+      HOST: localhost
+      PORT: 4100
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
   cdn:
     container_name: cdn
     image: nginx:1.19.6
@@ -54,8 +66,8 @@ services:
     build:
       target: development
     ports:
-      - "3100:3000"
-      - "3101:3001"
+      - "3100:3100"
+      - "3101:3101"
     environment:
       NODE_ENV: development
       CDN_URL: https://localhost:9000
@@ -68,8 +80,8 @@ services:
         target: /parcel-cache
     command:
       - "--cache-dir=/parcel-cache"
-      - "--port=3000"
-      - "--hmr-port=3001"
+      - "--port=3100"
+      - "--hmr-port=3101"
       - "--cert=/ssl/localhost.pem"
       - "--key=/ssl/localhost-key.pem"
 
@@ -122,11 +134,11 @@ services:
         source: inspector_parcel-cache
         target: /parcel-cache
     ports:
-      - "3200:3000" # HTTPS
-      - "3201:3001" # WS
+      - "3200:3200" # HTTPS
+      - "3201:3201" # WS
     command:
       - "--cache-dir=/parcel-cache"
-      - "--port=3000"
-      - "--hmr-port=3001"
+      - "--port=3200"
+      - "--hmr-port=3201"
       - "--cert=/ssl/localhost.pem"
       - "--key=/ssl/localhost-key.pem"

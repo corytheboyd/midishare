@@ -16,6 +16,7 @@
     "@types/ws": "^7.4.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "deepmerge": "^4.2.2",
     "express": "^4.17.1",
     "express-openid-connect": "^2.2.1",
     "helmet": "^4.4.1",
