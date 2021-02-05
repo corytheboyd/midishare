@@ -5,9 +5,20 @@ import { getSession } from "../../state/getSession";
 import { getCurrentUserId } from "../../getCurrentUserId";
 import { createSession } from "../../state/createSession";
 import { updateSession } from "../../state/updateSession";
+import { getAllSessions } from "../../state/getAllSessions";
 
 export const sessions = (): Router => {
   const router = Router();
+
+  router.get(
+    "/",
+    requiresAuth(() => false),
+    async (req, res) => {
+      const userId = getCurrentUserId(req);
+      const sessions = await getAllSessions(userId);
+      res.send(sessions);
+    }
+  );
 
   router.get("/:id", async (req, res) => {
     const session = await getSession(req.params.id);
@@ -24,7 +35,8 @@ export const sessions = (): Router => {
   router.post("/", requiresAuth(), async (req, res) => {
     const context = fromRequest(req);
 
-    const session = await createSession({
+    const userId = getCurrentUserId(req);
+    const session = await createSession(userId, {
       participants: {
         host: context.user!.sub,
       },

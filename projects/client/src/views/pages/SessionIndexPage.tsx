@@ -1,31 +1,39 @@
 import React from "react";
 import { Chrome, MaxWidthContent } from "../Chrome";
 import { Play } from "../common/icons/sm/Play";
-import { BaseButton } from "../common/buttons/BaseButton";
 import { Helmet } from "react-helmet";
-import { useMutation } from "react-query";
-import { ExclamationCircle } from "../common/icons/sm/ExclamationCircle";
+import { useMutation, useQuery } from "react-query";
 import { useHistory } from "react-router-dom";
 import { Routes } from "../routes";
 import { useStore } from "../../lib/store";
 import { Session } from "@midishare/common";
-import { Queries, queryClient } from "../../lib/queryClient";
+import { queryClient } from "../../lib/queryClient";
 import { createSession } from "../../lib/mutations/createSession";
 import { queryKey as getSessionQueryKey } from "../../lib/queries/getSession";
 import { LargePrimaryButton } from "../common/buttons/LargePrimaryButton";
 import { InlineErrorMessage } from "../common/InlineErrorMessage";
+import {
+  getAllSessions,
+  queryKey as getAllSessionsQueryKey,
+} from "../../lib/queries/getAllSessions";
 
 export const SessionIndexPage: React.FC = () => {
   const history = useHistory();
 
-  const mutation = useMutation<Session, Error>(createSession, {
+  const allSessionsQuery = useQuery<Session[], Error>(
+    getAllSessionsQueryKey(),
+    () => getAllSessions()
+  );
+  console.debug("allSessionsQuery", allSessionsQuery);
+
+  const createSessionMutation = useMutation<Session, Error>(createSession, {
     onSuccess: (data) => {
       queryClient.setQueryData(getSessionQueryKey(data.id), data);
     },
   });
 
   const handleCreateSession = async () => {
-    const session = await mutation.mutateAsync();
+    const session = await createSessionMutation.mutateAsync();
 
     useStore.getState().setSession(session);
     useStore.getState().initializeRuntime();
@@ -50,19 +58,23 @@ export const SessionIndexPage: React.FC = () => {
           </div>
 
           <div className="mt-2">
-            {mutation.isError && (
-              <InlineErrorMessage message={mutation.error!.message} />
+            {createSessionMutation.isError && (
+              <InlineErrorMessage
+                message={createSessionMutation.error!.message}
+              />
             )}
 
             <LargePrimaryButton
-              disabled={mutation.isLoading}
+              disabled={createSessionMutation.isLoading}
               onClick={handleCreateSession}
             >
               <div className="w-6 h-6">
                 <Play />
               </div>
               <span className="text-lg">
-                {mutation.isLoading ? "Starting..." : "Start Session"}
+                {createSessionMutation.isLoading
+                  ? "Starting..."
+                  : "Start Session"}
               </span>
             </LargePrimaryButton>
           </div>
