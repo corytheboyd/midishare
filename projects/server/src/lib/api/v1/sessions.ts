@@ -3,8 +3,8 @@ import { requiresAuth } from "express-openid-connect";
 import { fromRequest } from "../../getOpenIdContext";
 import { getSession } from "../../state/getSession";
 import { getCurrentUserId } from "../../getCurrentUserId";
-import { addGuestToSession } from "../../state/addGuestToSession";
 import { createSession } from "../../state/createSession";
+import { updateSession } from "../../state/updateSession";
 
 export const sessions = (): Router => {
   const router = Router();
@@ -38,7 +38,7 @@ export const sessions = (): Router => {
     "/:id/join",
     requiresAuth(() => false),
     async (req, res) => {
-      let session = await getSession(req.params.id);
+      const session = await getSession(req.params.id);
 
       if (!session) {
         res.status(404);
@@ -47,12 +47,12 @@ export const sessions = (): Router => {
       }
 
       const userId = getCurrentUserId(req);
-      addGuestToSession(session.id, userId);
-
-      // Re-fetch after update
-      session = await getSession(req.params.id);
-
-      res.send(session);
+      const updatedSession = await updateSession(session.id, {
+        participants: {
+          guest: userId,
+        },
+      });
+      res.send(updatedSession);
     }
   );
 
