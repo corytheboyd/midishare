@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { RequestContext, ResponseContext } from "express-openid-connect";
 import { UserinfoResponse } from "openid-client";
 
-interface RequestContextWithUser extends RequestContext {
+export interface RequestContextWithUser extends RequestContext {
   user?: UserinfoResponse;
 }
 

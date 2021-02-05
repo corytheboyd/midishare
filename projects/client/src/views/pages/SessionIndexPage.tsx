@@ -13,6 +13,7 @@ import { Queries, queryClient } from "../../lib/queryClient";
 import { createSession } from "../../lib/mutations/createSession";
 import { queryKey as getSessionQueryKey } from "../../lib/queries/getSession";
 import { LargePrimaryButton } from "../common/buttons/LargePrimaryButton";
+import { InlineErrorMessage } from "../common/InlineErrorMessage";
 
 export const SessionIndexPage: React.FC = () => {
   const history = useHistory();
@@ -50,16 +51,7 @@ export const SessionIndexPage: React.FC = () => {
 
           <div className="mt-2">
             {mutation.isError && (
-              <div className="text-red-500 mb-1.5">
-                <div className="flex space-x-2 items-center">
-                  <div className="w-5 h-5">
-                    <ExclamationCircle />
-                  </div>
-                  <p className="text-sm">
-                    Something went wrong with your request, try again shortly!
-                  </p>
-                </div>
-              </div>
+              <InlineErrorMessage message={mutation.error!.message} />
             )}
 
             <LargePrimaryButton

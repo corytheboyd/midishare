@@ -12,13 +12,13 @@ import { queryKey as getSessionQueryKey } from "../../lib/queries/getSession";
 import { Session } from "@midishare/common";
 import { useStore } from "../../lib/store";
 import { Routes } from "../routes";
-import { ExclamationCircle } from "../common/icons/sm/ExclamationCircle";
+import { InlineErrorMessage } from "../common/InlineErrorMessage";
 
 export const SessionJoinPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
   const history = useHistory();
 
-  const getSessionQuery = useQuery(queryKey(urlParams.id), () =>
+  const getSessionQuery = useQuery<Session, Error>(queryKey(urlParams.id), () =>
     getSession(urlParams.id)
   );
 
@@ -38,8 +38,9 @@ export const SessionJoinPage: React.FC = () => {
     const session = await joinSessionMutation.mutateAsync();
 
     useStore.getState().setSession(session);
+    useStore.getState().initializeRuntime();
 
-    history.push(Routes.SESSION.replace(/id/, session.id));
+    history.push(Routes.SESSION.replace(/:id/, session.id));
   };
 
   const joinDisabled =
@@ -60,18 +61,15 @@ export const SessionJoinPage: React.FC = () => {
             </p>
           </div>
 
-          <div className={`mt-2 ${joinDisabled && "opacity-50"}`}>
+          <div className={`mt-2 space-y-1.5 ${joinDisabled && "opacity-50"}`}>
+            {getSessionQuery.isError && (
+              <InlineErrorMessage message={getSessionQuery.error!.message} />
+            )}
+
             {joinSessionMutation.isError && (
-              <div className="text-red-500 mb-1.5">
-                <div className="flex space-x-2 items-center">
-                  <div className="w-5 h-5">
-                    <ExclamationCircle />
-                  </div>
-                  <p className="text-sm">
-                    Something went wrong with your request, try again shortly!
-                  </p>
-                </div>
-              </div>
+              <InlineErrorMessage
+                message={joinSessionMutation.error!.message}
+              />
             )}
 
             <LargePrimaryButton

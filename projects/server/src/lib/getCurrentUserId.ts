@@ -15,7 +15,7 @@ export function getCurrentUserId(req: Request): string {
   const context = fromRequest(req);
   const anonymousId = req.signedCookies[ANONYMOUS_ID_COOKIE_NAME];
 
-  if (context.isAuthenticated()) {
+  if (context?.isAuthenticated()) {
     if (!context.user) {
       return anonymousId;
     }

@@ -38,20 +38,27 @@ export const sessions = (): Router => {
     res.send(session);
   });
 
-  router.post("/:id/join", attemptSilentLogin(), (req, res) => {
-    const session = getSession(req.params.id);
+  router.post(
+    "/:id/join",
+    requiresAuth(() => false),
+    (req, res) => {
+      let session = getSession(req.params.id);
 
-    if (!session) {
-      res.status(404);
-      res.end();
-      return;
+      if (!session) {
+        res.status(404);
+        res.end();
+        return;
+      }
+
+      const userId = getCurrentUserId(req);
+      addGuestToSession(session.id, userId);
+
+      // Re-fetch after update
+      session = getSession(req.params.id);
+
+      res.send(session);
     }
-
-    const userId = getCurrentUserId(req);
-    addGuestToSession(session.id, userId);
-
-    res.send({});
-  });
+  );
 
   return router;
 };
