@@ -1,18 +1,18 @@
-import { Chrome, MaxWidthContent } from "../Chrome";
+import { Chrome, MaxWidthContent } from "../../Chrome";
 import { Helmet } from "react-helmet";
 import React from "react";
 import { useMutation, useQuery } from "react-query";
-import { getSession, queryKey } from "../../lib/queries/getSession";
+import { getSession, queryKey } from "../../../lib/queries/getSession";
 import { useHistory, useParams } from "react-router-dom";
-import { LargePrimaryButton } from "../common/buttons/LargePrimaryButton";
-import { Play } from "../common/icons/sm/Play";
-import { joinSession } from "../../lib/mutations/joinSession";
-import { queryClient } from "../../lib/queryClient";
-import { queryKey as getSessionQueryKey } from "../../lib/queries/getSession";
+import { LargePrimaryButton } from "../../common/buttons/LargePrimaryButton";
+import { Play } from "../../common/icons/sm/Play";
+import { joinSession } from "../../../lib/mutations/joinSession";
+import { queryClient } from "../../../lib/queryClient";
+import { queryKey as getSessionQueryKey } from "../../../lib/queries/getSession";
 import { Session } from "@midishare/common";
-import { useStore } from "../../lib/store";
-import { Routes } from "../routes";
-import { InlineErrorMessage } from "../common/InlineErrorMessage";
+import { useStore } from "../../../lib/store";
+import { Routes } from "../../routes";
+import { InlineErrorMessage } from "../../common/InlineErrorMessage";
 
 export const SessionJoinPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
@@ -36,10 +36,7 @@ export const SessionJoinPage: React.FC = () => {
 
   const handleJoinSession = async () => {
     const session = await joinSessionMutation.mutateAsync();
-
-    useStore.getState().setSession(session);
     useStore.getState().initializeRuntime();
-
     history.push(Routes.SESSION.replace(/:id/, session.id));
   };
 

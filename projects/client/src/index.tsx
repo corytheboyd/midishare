@@ -7,18 +7,9 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Routes } from "./views/routes";
 import { HomePage } from "./views/pages/HomePage";
-import { SessionIndexPage } from "./views/pages/SessionIndexPage";
-import { SessionPage } from "./views/pages/SessionPage";
-import { SessionJoinPage } from "./views/pages/SessionJoinPage";
-
-// TODO MOVE THIS WS STUFF OUTTA HERE
-const ws = new WebSocket(process.env.WS_URL as string);
-ws.addEventListener("message", function (event) {
-  console.debug("WS MESSAGE", event.data);
-});
-ws.addEventListener("open", function () {
-  console.debug("WS OPEN", this);
-});
+import { SessionIndexPage } from "./views/pages/Sessions/Index/SessionIndexPage";
+import { SessionPage } from "./views/pages/Sessions/Show/SessionPage";
+import { SessionJoinPage } from "./views/pages/Sessions/SessionJoinPage";
 
 render(
   <QueryClientProvider client={queryClient}>

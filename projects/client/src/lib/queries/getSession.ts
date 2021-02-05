@@ -1,5 +1,6 @@
 import { Session } from "@midishare/common";
 import { Queries } from "../queryClient";
+import { NotFoundError } from "../NotFoundError";
 
 export function queryKey(id: string): string[] {
   return [Queries.SESSIONS, id];
@@ -15,7 +16,7 @@ export async function getSession(id: string): Promise<Session> {
   });
 
   if (response.status === 404) {
-    throw new Error("Session not found");
+    throw new NotFoundError();
   } else if (!response.ok) {
     throw new Error("Something went wrong fetching session");
   }

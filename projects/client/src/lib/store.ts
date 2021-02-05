@@ -4,7 +4,6 @@ import { Input } from "webmidi";
 import produce from "immer";
 import { createRuntime, Runtime } from "@midishare/keyboard";
 import { PROTECTED_CDN_URL } from "./constants";
-import { Session } from "@midishare/common";
 
 export type State = {
   /**
@@ -29,12 +28,6 @@ export type State = {
    * */
   activeMidiInputDeviceId: string | null;
   setActiveMidiInputDeviceId: (inputId: string) => void;
-
-  /**
-   * The active session, as returned by the server
-   * */
-  session?: Session;
-  setSession: (session: Session) => void;
 
   /**
    * The active runtime components, as used on the session page
@@ -78,12 +71,6 @@ export const store = create<State>((set, get) => ({
         state.activeMidiInputDeviceId = inputId;
       })
     ),
-  setSession: (session) =>
-    set(
-      produce(get(), (state) => {
-        state.session = session;
-      })
-    ),
   initializeRuntime: () =>
     set(
       produce(get(), (state) => {
@@ -93,6 +80,7 @@ export const store = create<State>((set, get) => ({
               assetPath: PROTECTED_CDN_URL,
               keyPressedColor: "blue",
             }),
+
             remoteKeyboardRuntime: createRuntime({
               assetPath: PROTECTED_CDN_URL,
               keyPressedColor: "yellow",

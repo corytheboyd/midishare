@@ -1,23 +1,23 @@
 import React from "react";
-import { Chrome, MaxWidthContent } from "../Chrome";
-import { Play } from "../common/icons/sm/Play";
+import { Chrome, MaxWidthContent } from "../../../Chrome";
+import { Play } from "../../../common/icons/sm/Play";
 import { Helmet } from "react-helmet";
 import { useMutation, useQuery } from "react-query";
 import { useHistory } from "react-router-dom";
-import { Routes } from "../routes";
-import { useStore } from "../../lib/store";
+import { Routes } from "../../../routes";
+import { useStore } from "../../../../lib/store";
 import { Session } from "@midishare/common";
-import { queryClient } from "../../lib/queryClient";
-import { createSession } from "../../lib/mutations/createSession";
-import { queryKey as getSessionQueryKey } from "../../lib/queries/getSession";
-import { LargePrimaryButton } from "../common/buttons/LargePrimaryButton";
-import { InlineErrorMessage } from "../common/InlineErrorMessage";
+import { queryClient } from "../../../../lib/queryClient";
+import { createSession } from "../../../../lib/mutations/createSession";
+import { queryKey as getSessionQueryKey } from "../../../../lib/queries/getSession";
+import { LargePrimaryButton } from "../../../common/buttons/LargePrimaryButton";
+import { InlineErrorMessage } from "../../../common/InlineErrorMessage";
 import {
   getAllSessions,
   queryKey as getAllSessionsQueryKey,
-} from "../../lib/queries/getAllSessions";
-import { deleteSession } from "../../lib/mutations/deleteSession";
-import { SmallSecondaryButton } from "../common/buttons/SmallSecondaryButton";
+} from "../../../../lib/queries/getAllSessions";
+import { deleteSession } from "../../../../lib/mutations/deleteSession";
+import { SmallSecondaryButton } from "../../../common/buttons/SmallSecondaryButton";
 
 export const SessionIndexPage: React.FC = () => {
   const history = useHistory();
@@ -30,6 +30,7 @@ export const SessionIndexPage: React.FC = () => {
   const createSessionMutation = useMutation<Session, Error>(createSession, {
     onSuccess: (data) => {
       queryClient.setQueryData(getSessionQueryKey(data.id), data);
+      // return queryClient.invalidateQueries(getAllSessionsQueryKey());
     },
   });
 
@@ -53,9 +54,6 @@ export const SessionIndexPage: React.FC = () => {
   };
 
   const navigateToSession = (session: Session) => {
-    // TODO move entirely to react-query for data loading
-    useStore.getState().setSession(session);
-
     useStore.getState().initializeRuntime();
     history.push(Routes.SESSION.replace(/:id/, session.id));
   };

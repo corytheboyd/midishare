@@ -5,19 +5,16 @@ import { Routes } from "../routes";
 import { CopyTextInput } from "../common/CopyTextInput";
 import { CopyTextButton } from "../common/CopyTextButton";
 
-export const InviteGuestPrompt: React.FC = () => {
-  const sessionId = useStore((state) => state.session?.id);
+type InviteGuestPromptProps = {
+  sessionId: string;
+};
 
+export const InviteGuestPrompt: React.FC<InviteGuestPromptProps> = (props) => {
   const joinUrl = useMemo(() => {
-    if (!sessionId) {
-      return "";
-    }
-
     const url = new URL(process.env.PUBLIC_URL as string);
-    url.pathname = Routes.SESSION_JOIN.replace(/:id/, sessionId);
-
+    url.pathname = Routes.SESSION_JOIN.replace(/:id/, props.sessionId);
     return url.toString();
-  }, [sessionId]);
+  }, [props.sessionId]);
 
   return (
     <div className="flex items-center space-x-1">
