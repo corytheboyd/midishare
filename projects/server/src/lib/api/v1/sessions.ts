@@ -1,18 +1,16 @@
 import { Router } from "express";
-import { attemptSilentLogin, requiresAuth } from "express-openid-connect";
-import { v4 as uuid } from "uuid";
+import { requiresAuth } from "express-openid-connect";
 import { fromRequest } from "../../getOpenIdContext";
 import { getSession } from "../../state/getSession";
-import { saveSession } from "../../state/saveSession";
-import { Session } from "@midishare/common";
 import { getCurrentUserId } from "../../getCurrentUserId";
 import { addGuestToSession } from "../../state/addGuestToSession";
+import { createSession } from "../../state/createSession";
 
 export const sessions = (): Router => {
   const router = Router();
 
-  router.get("/:id", (req, res) => {
-    const session = getSession(req.params.id);
+  router.get("/:id", async (req, res) => {
+    const session = await getSession(req.params.id);
 
     if (!session) {
       res.status(404);
@@ -23,16 +21,14 @@ export const sessions = (): Router => {
     res.send(session);
   });
 
-  router.post("/", requiresAuth(), (req, res) => {
+  router.post("/", requiresAuth(), async (req, res) => {
     const context = fromRequest(req);
 
-    const session: Session = {
-      id: uuid(),
+    const session = await createSession({
       participants: {
         host: context.user!.sub,
       },
-    };
-    saveSession(session);
+    });
 
     res.status(201);
     res.send(session);
@@ -41,8 +37,8 @@ export const sessions = (): Router => {
   router.post(
     "/:id/join",
     requiresAuth(() => false),
-    (req, res) => {
-      let session = getSession(req.params.id);
+    async (req, res) => {
+      let session = await getSession(req.params.id);
 
       if (!session) {
         res.status(404);
@@ -54,7 +50,7 @@ export const sessions = (): Router => {
       addGuestToSession(session.id, userId);
 
       // Re-fetch after update
-      session = getSession(req.params.id);
+      session = await getSession(req.params.id);
 
       res.send(session);
     }
