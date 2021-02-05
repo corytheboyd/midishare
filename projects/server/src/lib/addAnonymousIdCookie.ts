@@ -15,7 +15,7 @@ export const addAnonymousIdCookie = () => (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   if (!req.signedCookies[ANONYMOUS_ID_COOKIE_NAME]) {
     const anonymousId = `anonymous|${uuid()}`;
     res.cookie(ANONYMOUS_ID_COOKIE_NAME, anonymousId, {

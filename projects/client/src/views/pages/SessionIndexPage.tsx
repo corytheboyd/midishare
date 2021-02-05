@@ -115,7 +115,13 @@ export const SessionIndexPage: React.FC = () => {
                 />
               )}
 
-              <div className="w-full mt-3">
+              <div className="w-full mt-3 space-y-1.5">
+                {deleteSessionMutation.isError && (
+                  <InlineErrorMessage
+                    message={deleteSessionMutation.error!.message}
+                  />
+                )}
+
                 {getAllSessionsQuery.isLoading && <span>Loading...</span>}
 
                 {!getAllSessionsQuery.isLoading &&
