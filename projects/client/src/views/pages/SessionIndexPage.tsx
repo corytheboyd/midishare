@@ -1,7 +1,7 @@
 import React from "react";
 import { Chrome, MaxWidthContent } from "../Chrome";
 import { Play } from "../common/icons/sm/Play";
-import { Button } from "../common/Button";
+import { BaseButton } from "../common/buttons/BaseButton";
 import { Helmet } from "react-helmet";
 import { useMutation } from "react-query";
 import { ExclamationCircle } from "../common/icons/sm/ExclamationCircle";
@@ -11,13 +11,15 @@ import { useStore } from "../../lib/store";
 import { Session } from "@midishare/common";
 import { Queries, queryClient } from "../../lib/queryClient";
 import { createSession } from "../../lib/mutations/createSession";
+import { queryKey as getSessionQueryKey } from "../../lib/queries/getSession";
+import { LargePrimaryButton } from "../common/buttons/LargePrimaryButton";
 
 export const SessionIndexPage: React.FC = () => {
   const history = useHistory();
 
   const mutation = useMutation<Session, Error>(createSession, {
     onSuccess: (data) => {
-      queryClient.setQueryData([Queries.SESSIONS, data.id], data);
+      queryClient.setQueryData(getSessionQueryKey(data.id), data);
     },
   });
 
@@ -60,10 +62,9 @@ export const SessionIndexPage: React.FC = () => {
               </div>
             )}
 
-            <Button
+            <LargePrimaryButton
               disabled={mutation.isLoading}
               onClick={handleCreateSession}
-              className="flex w-48 items-center justify-center space-x-1 px-2 py-1 rounded text-white bg-green-500 transition hover:shadow-md"
             >
               <div className="w-6 h-6">
                 <Play />
@@ -71,7 +72,7 @@ export const SessionIndexPage: React.FC = () => {
               <span className="text-lg">
                 {mutation.isLoading ? "Starting..." : "Start Session"}
               </span>
-            </Button>
+            </LargePrimaryButton>
           </div>
         </MaxWidthContent>
       </div>

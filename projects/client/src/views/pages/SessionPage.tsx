@@ -21,14 +21,7 @@ const localColor = "blue";
 const remoteColor = "yellow";
 
 export const SessionPage: React.FC = () => {
-  const urlParams = useParams<{
-    /**
-     * The ID of the Session.
-     *
-     * @see projects/client/src/views/routes.ts
-     * */
-    id: string;
-  }>();
+  const urlParams = useParams<{ id: string }>();
 
   // TODO maybe don't need? react-query is making this way easier!!
   const session = useStore((state) => state.session);
@@ -37,6 +30,7 @@ export const SessionPage: React.FC = () => {
   const runtime = useStore((state) => state.runtime);
 
   const userQuery = useQuery(userProfileQueryKey(), getCurrentUser);
+
   const sessionQuery = useQuery<Session>(
     sessionQueryKey(urlParams.id),
     () => getSession(urlParams.id),
@@ -69,9 +63,6 @@ export const SessionPage: React.FC = () => {
 
   const isLoading = userQuery.isLoading || sessionQuery.isLoading;
 
-  console.debug("isCurrentUserHost", isCurrentUserHost);
-  console.debug("isLoading", isLoading);
-
   return (
     <Chrome hideFooter={true}>
       <Helmet>
@@ -81,27 +72,32 @@ export const SessionPage: React.FC = () => {
       {isLoading && <span>Loading...</span>}
 
       {!isLoading && (
-        <>
-          {session && runtime && (
-            <div className="flex flex-col h-full w-full space-y-2 p-2">
-              {/* Remote Peer */}
-              <PeerLane
-                runtime={runtime.remoteKeyboardRuntime}
-                color={remoteColor}
-                keyboardDisabled={!session.participants.guest}
-                disabledMessageContent={<InviteGuestPrompt />}
-              />
-
-              {/* Local Peer */}
-              <PeerLane
-                runtime={runtime.localKeyboardRuntime}
-                color={localColor}
-                keyboardDisabled={!activeMidiInputDeviceId}
-                disabledMessageContent={<AttachMidiPrompt />}
-              />
-            </div>
+        <div className="flex flex-col h-full w-full space-y-2 p-2">
+          {/* Remote Peer, Host mode */}
+          {isCurrentUserHost === true && (
+            <PeerLane
+              runtime={runtime!.remoteKeyboardRuntime}
+              color={remoteColor}
+              keyboardDisabled={!sessionQuery.data!.participants.guest}
+              disabledMessageContent={<InviteGuestPrompt />}
+            />
           )}
-        </>
+
+          {isCurrentUserHost === false && (
+            <PeerLane
+              runtime={runtime!.remoteKeyboardRuntime}
+              color={remoteColor}
+            />
+          )}
+
+          {/* Local Peer */}
+          <PeerLane
+            runtime={runtime!.localKeyboardRuntime}
+            color={localColor}
+            keyboardDisabled={!activeMidiInputDeviceId}
+            disabledMessageContent={<AttachMidiPrompt />}
+          />
+        </div>
       )}
     </Chrome>
   );

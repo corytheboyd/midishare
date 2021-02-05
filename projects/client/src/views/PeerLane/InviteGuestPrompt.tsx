@@ -14,8 +14,7 @@ export const InviteGuestPrompt: React.FC = () => {
     }
 
     const url = new URL(process.env.PUBLIC_URL as string);
-    url.pathname = Routes.SESSION.replace(/:id/, sessionId);
-    url.searchParams.append("join", "1");
+    url.pathname = Routes.SESSION_JOIN.replace(/:id/, sessionId);
 
     return url.toString();
   }, [sessionId]);

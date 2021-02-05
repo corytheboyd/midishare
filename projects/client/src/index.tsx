@@ -9,6 +9,7 @@ import { Routes } from "./views/routes";
 import { HomePage } from "./views/pages/HomePage";
 import { SessionIndexPage } from "./views/pages/SessionIndexPage";
 import { SessionPage } from "./views/pages/SessionPage";
+import { SessionJoinPage } from "./views/pages/SessionJoinPage";
 
 // TODO MOVE THIS WS STUFF OUTTA HERE
 const ws = new WebSocket(process.env.WS_URL as string);
@@ -27,6 +28,9 @@ render(
     </Helmet>
     <Router>
       <Switch>
+        <Route path={Routes.SESSION_JOIN}>
+          <SessionJoinPage />
+        </Route>
         <Route path={Routes.SESSION}>
           <SessionPage />
         </Route>

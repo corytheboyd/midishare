@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState } from "react";
 import { ExclamationCircle } from "../common/icons/sm/ExclamationCircle";
-import { Button } from "../common/Button";
+import { BaseButton } from "../common/buttons/BaseButton";
 import { Plus } from "../common/icons/sm/Plus";
 import { getMidiAccess } from "../../lib/getMidiAccess";
 import { useStore } from "../../lib/store";
@@ -11,7 +11,7 @@ const GetAccessButton: React.FC = () => {
   };
 
   return (
-    <Button
+    <BaseButton
       className="flex items-center bg-white text-black px-2 py-1 rounded"
       onClick={handleAttachMidiKeyboard}
     >
@@ -19,7 +19,7 @@ const GetAccessButton: React.FC = () => {
         <Plus />
       </div>
       <span>Attach MIDI Keyboard</span>
-    </Button>
+    </BaseButton>
   );
 };
 

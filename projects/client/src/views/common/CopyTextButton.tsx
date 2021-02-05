@@ -3,7 +3,7 @@ import ClipboardJS from "clipboard";
 import { ClipboardCopy } from "./icons/md/ClipboardCopy";
 import { Check } from "./icons/sm/Check";
 import { ExclamationCircle } from "./icons/sm/ExclamationCircle";
-import { Button } from "./Button";
+import { BaseButton } from "./buttons/BaseButton";
 
 export const CopyTextButton: React.FC<{
   /**
@@ -50,7 +50,7 @@ export const CopyTextButton: React.FC<{
   }
 
   return (
-    <Button
+    <BaseButton
       ref={buttonRef}
       className="flex items-center text-sm space-x-0.5"
       disabled={status !== "default"}
@@ -63,6 +63,6 @@ export const CopyTextButton: React.FC<{
       >
         {icon}
       </div>
-    </Button>
+    </BaseButton>
   );
 };

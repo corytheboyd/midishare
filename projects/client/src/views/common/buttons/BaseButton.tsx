@@ -13,11 +13,13 @@ type ButtonProps = {
   to?: string;
 };
 
-export const Button = forwardRef<
+export type BaseButtonProps = ButtonProps &
+  React.ButtonHTMLAttributes<HTMLButtonElement> &
+  React.AnchorHTMLAttributes<HTMLAnchorElement>;
+
+export const BaseButton = forwardRef<
   HTMLButtonElement | HTMLAnchorElement,
-  ButtonProps &
-    React.ButtonHTMLAttributes<HTMLButtonElement> &
-    React.AnchorHTMLAttributes<HTMLAnchorElement>
+  BaseButtonProps
 >(({ to, href, ...props }, ref) => {
   if (to) {
     return (
@@ -41,4 +43,4 @@ export const Button = forwardRef<
     </button>
   );
 });
-Button.displayName = "Button";
+BaseButton.displayName = "Button";
