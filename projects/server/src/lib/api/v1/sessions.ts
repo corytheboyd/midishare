@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { requiresAuth } from "express-openid-connect";
+import { attemptSilentLogin, requiresAuth } from "express-openid-connect";
 import { v4 as uuid } from "uuid";
 import { fromRequest } from "../../getOpenIdContext";
 import { getSession } from "../../state/getSession";
 import { saveSession } from "../../state/saveSession";
 import { Session } from "@midishare/common";
+import { getCurrentUserId } from "../../getCurrentUserId";
+import { addGuestToSession } from "../../state/addGuestToSession";
 
 export const sessions = (): Router => {
   const router = Router();
@@ -36,7 +38,7 @@ export const sessions = (): Router => {
     res.send(session);
   });
 
-  router.post("/:id/join", (req, res) => {
+  router.post("/:id/join", attemptSilentLogin(), (req, res) => {
     const session = getSession(req.params.id);
 
     if (!session) {
@@ -45,7 +47,8 @@ export const sessions = (): Router => {
       return;
     }
 
-    // addGuestToSession();
+    const userId = getCurrentUserId(req);
+    addGuestToSession(session.id, userId);
 
     res.send({});
   });

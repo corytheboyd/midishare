@@ -1,5 +1,6 @@
 import { store } from "./store";
+import { UserId } from "@midishare/common";
 
-export function addGuestToSession(sessionId: string, guestSub: string): void {
-  store.getState().addGuestToSession(sessionId, guestSub);
+export function addGuestToSession(sessionId: string, userId: UserId): void {
+  store.getState().addGuestToSession(sessionId, userId);
 }

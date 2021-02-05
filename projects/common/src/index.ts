@@ -3,7 +3,7 @@
  *
  * @see https://openid.net/specs/openid-connect-core-1_0.html#IDToken
  * */
-type UserId = string;
+export type UserId = string;
 
 export type UserProfile = {
   sub: UserId;

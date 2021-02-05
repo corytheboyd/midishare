@@ -1,12 +1,11 @@
 import create from "zustand/vanilla";
 import produce from "immer";
-import { Session } from "@midishare/common";
-import { getSession } from "./getSession";
+import { Session, UserId } from "@midishare/common";
 
 type AppState = {
   sessions: Record<string, Session>;
   addSession: (session: Session) => void;
-  addGuestToSession: (sessionId: string, guestSub: string) => void;
+  addGuestToSession: (sessionId: string, userId: UserId) => void;
 };
 
 /**
@@ -27,10 +26,10 @@ export const store = create<AppState>((set, get) => ({
         state.sessions[session.id] = session;
       })
     ),
-  addGuestToSession: (sessionId, guestSub) =>
+  addGuestToSession: (sessionId, userId) =>
     set(
       produce(get(), (state) => {
-        state.sessions[sessionId].participants.guest = guestSub;
+        state.sessions[sessionId].participants.guest = userId;
       })
     ),
 }));
