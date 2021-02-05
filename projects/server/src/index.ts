@@ -62,6 +62,7 @@ const corsConfig: CorsOptions = {
     authConfig.issuerBaseURL as string,
   ],
   credentials: true,
+  methods: ["GET", "POST", "PATCH", "DELETE"],
 };
 
 const port = parseInt(process.env.PORT as string, 10);

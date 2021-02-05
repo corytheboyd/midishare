@@ -14,7 +14,10 @@ export async function deleteSession(session: Session): Promise<void> {
     redisClient
       .multi()
       .hdel(SESSIONS_HASH_NAME, session.id)
-      .del(SESSION_IDS_BY_USER_ID_SET_NAME(session.participants.host))
+      .srem(
+        SESSION_IDS_BY_USER_ID_SET_NAME(session.participants.host),
+        session.id
+      )
       .exec((err) => {
         if (err) {
           reject(err);

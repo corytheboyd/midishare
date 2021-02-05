@@ -17,7 +17,6 @@ import {
   queryKey as getAllSessionsQueryKey,
 } from "../../lib/queries/getAllSessions";
 import { deleteSession } from "../../lib/mutations/deleteSession";
-import { BaseButton } from "../common/buttons/BaseButton";
 import { SmallSecondaryButton } from "../common/buttons/SmallSecondaryButton";
 
 export const SessionIndexPage: React.FC = () => {
@@ -27,7 +26,6 @@ export const SessionIndexPage: React.FC = () => {
     getAllSessionsQueryKey(),
     () => getAllSessions()
   );
-  console.debug("allSessionsQuery", allSessionsQuery);
 
   const createSessionMutation = useMutation<Session, Error>(createSession, {
     onSuccess: (data) => {
@@ -35,16 +33,30 @@ export const SessionIndexPage: React.FC = () => {
     },
   });
 
-  const deleteSessionMutation = useMutation(deleteSession, {
-    onSuccess: () => queryClient.invalidateQueries(getAllSessionsQueryKey()),
-  });
+  const deleteSessionMutation = useMutation<Session, Error, { id: string }>(
+    ({ id }) => deleteSession(id),
+    {
+      onSuccess: (session, variables) => {
+        queryClient.removeQueries(getSessionQueryKey(variables.id));
+        return queryClient.invalidateQueries(getAllSessionsQueryKey());
+      },
+    }
+  );
 
   const handleCreateSession = async () => {
     const session = await createSessionMutation.mutateAsync();
+    navigateToSession(session);
+  };
 
+  const handleDeleteSession = async (id: string) => {
+    deleteSessionMutation.mutate({ id });
+  };
+
+  const navigateToSession = (session: Session) => {
+    // TODO move entirely to react-query for data loading
     useStore.getState().setSession(session);
-    useStore.getState().initializeRuntime();
 
+    useStore.getState().initializeRuntime();
     history.push(Routes.SESSION.replace(/:id/, session.id));
   };
 
@@ -87,7 +99,7 @@ export const SessionIndexPage: React.FC = () => {
               </LargePrimaryButton>
             </div>
 
-            {!allSessionsQuery.isLoading && (
+            {!allSessionsQuery.isLoading && allSessionsQuery.data!.length > 0 && (
               <div className="pt-3">
                 <h1 className="text-xl font-bold font-serif">Sessions</h1>
 
@@ -107,7 +119,12 @@ export const SessionIndexPage: React.FC = () => {
                         <SmallSecondaryButton color="green">
                           Join
                         </SmallSecondaryButton>
-                        <SmallSecondaryButton color="red">
+
+                        <SmallSecondaryButton
+                          color="red"
+                          disabled={deleteSessionMutation.isLoading}
+                          onClick={() => handleDeleteSession(session.id)}
+                        >
                           Delete
                         </SmallSecondaryButton>
                       </div>

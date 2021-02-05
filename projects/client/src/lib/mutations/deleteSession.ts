@@ -1,6 +1,4 @@
-import { Session } from "@midishare/common";
-
-export async function deleteSession(id: string): Promise<Session> {
+export async function deleteSession(id: string): Promise<void> {
   const url = new URL(process.env.SERVER_URL as string);
   url.pathname = `/api/v1/sessions/${id}`;
 
@@ -15,6 +13,4 @@ export async function deleteSession(id: string): Promise<Session> {
   } else if (!response.ok) {
     throw new Error("Something went wrong deleting session");
   }
-
-  return response.json();
 }

@@ -15,7 +15,12 @@ export async function getAllSessions(userId: UserId): Promise<Session[]> {
           return;
         }
 
-        redisClient.hmget(SESSIONS_HASH_NAME, ...members, (err, values) => {
+        if (members.length === 0) {
+          resolve([]);
+          return;
+        }
+
+        redisClient.hmget(SESSIONS_HASH_NAME, members, (err, values) => {
           if (err) {
             reject(err);
             return;
