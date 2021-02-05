@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import React from "react";
 import { useMutation, useQuery } from "react-query";
 import { getSession, queryKey } from "../../lib/queries/getSession";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { LargePrimaryButton } from "../common/buttons/LargePrimaryButton";
 import { Play } from "../common/icons/sm/Play";
 import { joinSession } from "../../lib/mutations/joinSession";
@@ -11,9 +11,12 @@ import { queryClient } from "../../lib/queryClient";
 import { queryKey as getSessionQueryKey } from "../../lib/queries/getSession";
 import { Session } from "@midishare/common";
 import { useStore } from "../../lib/store";
+import { Routes } from "../routes";
+import { ExclamationCircle } from "../common/icons/sm/ExclamationCircle";
 
 export const SessionJoinPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
+  const history = useHistory();
 
   const getSessionQuery = useQuery(queryKey(urlParams.id), () =>
     getSession(urlParams.id)
@@ -25,6 +28,9 @@ export const SessionJoinPage: React.FC = () => {
       onSuccess: (data) => {
         queryClient.setQueryData(getSessionQueryKey(data.id), data);
       },
+      onError: (error) => {
+        console.error(error);
+      },
     }
   );
 
@@ -32,7 +38,12 @@ export const SessionJoinPage: React.FC = () => {
     const session = await joinSessionMutation.mutateAsync();
 
     useStore.getState().setSession(session);
+
+    history.push(Routes.SESSION.replace(/id/, session.id));
   };
+
+  const joinDisabled =
+    getSessionQuery.isLoading || joinSessionMutation.isLoading;
 
   return (
     <Chrome hideFooter={true}>
@@ -49,9 +60,22 @@ export const SessionJoinPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="mt-2">
+          <div className={`mt-2 ${joinDisabled && "opacity-50"}`}>
+            {joinSessionMutation.isError && (
+              <div className="text-red-500 mb-1.5">
+                <div className="flex space-x-2 items-center">
+                  <div className="w-5 h-5">
+                    <ExclamationCircle />
+                  </div>
+                  <p className="text-sm">
+                    Something went wrong with your request, try again shortly!
+                  </p>
+                </div>
+              </div>
+            )}
+
             <LargePrimaryButton
-              disabled={joinSessionMutation.isLoading}
+              disabled={joinDisabled}
               onClick={handleJoinSession}
             >
               <div className="w-6 h-6">

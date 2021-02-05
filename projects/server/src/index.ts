@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Express } from "express";
 import { createServer, ServerOptions } from "https";
 import { readFileSync } from "fs";
 import helmet from "helmet";
@@ -7,6 +7,9 @@ import { auth, ConfigParams as AuthConfigParams } from "express-openid-connect";
 import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
 import { Server as WebSocketServer } from "ws";
+import { ServerResponse } from "http";
+import { addAnonymousIdCookie } from "./lib/addAnonymousIdCookie";
+import cookieParser from "cookie-parser";
 
 const authConfig: AuthConfigParams = {
   issuerBaseURL: "https://midishare.us.auth0.com",
@@ -64,16 +67,32 @@ const corsConfig: CorsOptions = {
 const port = parseInt(process.env.PORT as string, 10);
 const address = process.env.ADDRESS as string;
 
-const app = express();
-const logger = morgan("combined");
+const app = express() as Express & {
+  /**
+   * For some reason this is missing from the types. Maybe should contribute
+   * to the types hah, but for now leaving it alone.
+   *
+   * The handle function was seen in the wild in this example:
+   * https://github.com/adamjmcgrath/eoidc-testing-example/blob/ws/index.js
+   *
+   * @todo Add missing types to @types/express
+   * */
+  handle: (
+    req: Request,
+    res: Response | ServerResponse,
+    handler: () => void
+  ) => void;
+};
 
 // Third-party middlewares
-app.use(logger);
+app.use(morgan("combined"));
 app.use(helmet());
 app.use(cors(corsConfig));
 app.use(auth(authConfig));
+app.use(cookieParser(process.env.AUTH_SECRET as string));
 
 // Application middlewares
+app.use(addAnonymousIdCookie());
 app.use("/api/v1", api());
 
 const httpServer = createServer(serverConfig, app);
@@ -101,9 +120,19 @@ webSocketServer.on("connection", (ws) => {
 });
 
 httpServer.on("upgrade", (req, socket, head) => {
-  webSocketServer.handleUpgrade(req, socket, head, (ws) => {
-    logger(req, socket, () => {});
-    webSocketServer.emit("connection", ws);
+  const res = new ServerResponse(req);
+  res.assignSocket(socket);
+  res.on("finish", () => res.socket?.destroy());
+  app.handle(req, res, () => {
+    // const context = fromRequest(req);
+    // if (!context.isAuthenticated()) {
+    //   socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+    //   socket.destroy();
+    //   return;
+    // }
+    webSocketServer.handleUpgrade(req, socket, head, (ws) => {
+      webSocketServer.emit("connection", ws);
+    });
   });
 });
 

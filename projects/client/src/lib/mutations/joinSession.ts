@@ -10,9 +10,7 @@ export async function joinSession(id: string): Promise<Session> {
     credentials: "include",
   });
 
-  if (response.status !== 201) {
-    throw new Error("Failed to create session");
-  } else if (!response.ok) {
+  if (!response.ok) {
     throw new Error("Something went wrong creating session");
   }
 
