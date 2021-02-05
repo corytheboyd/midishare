@@ -1,9 +1,12 @@
 let ws: WebSocket;
 
-export function initializeDataWebSocket(): void {
+export function initializeSessionDataWebSocket(sessionId: string): void {
   if (!ws) {
     try {
-      ws = new WebSocket(process.env.WS_URL as string);
+      const url = new URL(process.env.WS_URL as string);
+      url.searchParams.append("type", "sessionData");
+      url.searchParams.append("sessionId", sessionId);
+      ws = new WebSocket(url.toString());
       registerEventListeners(ws);
     } catch (error) {
       return;

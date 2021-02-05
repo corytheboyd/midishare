@@ -10,6 +10,9 @@ import { Server as WebSocketServer } from "ws";
 import { ServerResponse } from "http";
 import { addAnonymousIdCookie } from "./lib/addAnonymousIdCookie";
 import cookieParser from "cookie-parser";
+import { fromRequest } from "./lib/getOpenIdContext";
+import { getCurrentUserId } from "./lib/getCurrentUserId";
+import { getSession } from "./lib/state/getSession";
 
 const authConfig: AuthConfigParams = {
   issuerBaseURL: "https://midishare.us.auth0.com",
@@ -93,7 +96,6 @@ app.use(auth(authConfig));
 app.use(cookieParser(process.env.AUTH_SECRET as string));
 
 // Application middlewares
-app.use(addAnonymousIdCookie());
 app.use("/api/v1", api());
 
 const httpServer = createServer(serverConfig, app);
@@ -124,13 +126,41 @@ httpServer.on("upgrade", (req, socket, head) => {
   const res = new ServerResponse(req);
   res.assignSocket(socket);
   res.on("finish", () => res.socket?.destroy());
-  app.handle(req, res, () => {
-    // const context = fromRequest(req);
-    // if (!context.isAuthenticated()) {
-    //   socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-    //   socket.destroy();
-    //   return;
-    // }
+  app.handle(req, res, async () => {
+    const unauthorized = () => {
+      socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+      socket.destroy();
+    };
+
+    // Require that incoming WebSocket connections specify a type and optional
+    // arguments as query parameters.
+    const { type: wsType, ...wsArgs } = req.query;
+    if (!wsType) {
+      return unauthorized();
+    }
+
+    // If the request has no userId, that means they have never been assigned
+    // our userId cookie, so just reject the websocket upgrade. Do this before
+    // we even touch Redis to mitigate abuse vectors.
+    const userId = getCurrentUserId(req);
+    if (!userId) {
+      return unauthorized();
+    }
+
+    if (wsType === "sessionData") {
+      // Make sure the session exists, and that the user is actually a member of
+      // it.
+      const session = await getSession(wsArgs.sessionId);
+      if (
+        session.participants.host !== userId &&
+        session.participants.guest !== userId
+      ) {
+        return unauthorized();
+      }
+    } else {
+      return unauthorized();
+    }
+
     webSocketServer.handleUpgrade(req, socket, head, (ws) => {
       webSocketServer.emit("connection", ws);
     });

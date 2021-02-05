@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Chrome } from "../../../Chrome";
 import { Helmet } from "react-helmet";
 import { useStore } from "../../../../lib/store";
@@ -9,6 +9,7 @@ import {
   queryKey as sessionQueryKey,
 } from "../../../../lib/queries/getSession";
 import { PeerLaneController } from "./PeerLaneController";
+import { initializeSessionDataWebSocket } from "../../../../lib/initializeSessionDataWebSocket";
 
 export const SessionPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
@@ -22,6 +23,15 @@ export const SessionPage: React.FC = () => {
       },
     }
   );
+
+  useEffect(() => {
+    /**
+     * Note: the user must be added to the session in order for the WebSocket
+     * connection to authenticate! If you're moving code around and the
+     * connection broke, that may be why.
+     * */
+    initializeSessionDataWebSocket(urlParams.id);
+  }, []);
 
   return (
     <Chrome hideFooter={true}>
