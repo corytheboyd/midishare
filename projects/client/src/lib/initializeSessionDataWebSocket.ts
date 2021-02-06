@@ -1,6 +1,10 @@
 let ws: WebSocket;
 
-export function initializeSessionDataWebSocket(sessionId: string): void {
+type UnsubscribeFunction = () => void;
+
+export function initializeSessionDataWebSocket(
+  sessionId: string
+): UnsubscribeFunction {
   if (!ws) {
     try {
       const url = new URL(process.env.WS_URL as string);
@@ -9,8 +13,9 @@ export function initializeSessionDataWebSocket(sessionId: string): void {
       ws = new WebSocket(url.toString());
       registerEventListeners(ws);
     } catch (error) {
-      return;
+      ws.close();
     }
+    return () => ws.close();
   }
 }
 

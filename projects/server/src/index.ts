@@ -1,4 +1,4 @@
-import express, { Express } from "express";
+import express, { Express, Request, Response } from "express";
 import { createServer, ServerOptions } from "https";
 import { readFileSync } from "fs";
 import helmet from "helmet";
@@ -7,12 +7,9 @@ import { auth, ConfigParams as AuthConfigParams } from "express-openid-connect";
 import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
 import { Server as WebSocketServer } from "ws";
-import { ServerResponse } from "http";
-import { addAnonymousIdCookie } from "./lib/addAnonymousIdCookie";
 import cookieParser from "cookie-parser";
-import { fromRequest } from "./lib/getOpenIdContext";
-import { getCurrentUserId } from "./lib/getCurrentUserId";
-import { getSession } from "./lib/state/getSession";
+import { register } from "./lib/api/v1/ws/register";
+import { ServerResponse } from "http";
 
 const authConfig: AuthConfigParams = {
   issuerBaseURL: "https://midishare.us.auth0.com",
@@ -104,68 +101,7 @@ const webSocketServer = new WebSocketServer({
   noServer: true,
 });
 
-webSocketServer.on("connection", (ws) => {
-  console.debug("CONNECTED");
-
-  ws.on("message", (data) => {
-    console.debug("MESSAGE", data);
-  });
-
-  const intervalId = setInterval(() => {
-    ws.ping(null, false, (error) => {
-      if (error) {
-        console.debug("PING FAIL, CLOSE CONNECTION");
-        ws.close();
-        clearInterval(intervalId);
-      }
-    });
-  }, 1000);
-});
-
-httpServer.on("upgrade", (req, socket, head) => {
-  const res = new ServerResponse(req);
-  res.assignSocket(socket);
-  res.on("finish", () => res.socket?.destroy());
-  app.handle(req, res, async () => {
-    const unauthorized = () => {
-      socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-      socket.destroy();
-    };
-
-    // Require that incoming WebSocket connections specify a type and optional
-    // arguments as query parameters.
-    const { type: wsType, ...wsArgs } = req.query;
-    if (!wsType) {
-      return unauthorized();
-    }
-
-    // If the request has no userId, that means they have never been assigned
-    // our userId cookie, so just reject the websocket upgrade. Do this before
-    // we even touch Redis to mitigate abuse vectors.
-    const userId = getCurrentUserId(req);
-    if (!userId) {
-      return unauthorized();
-    }
-
-    if (wsType === "sessionData") {
-      // Make sure the session exists, and that the user is actually a member of
-      // it.
-      const session = await getSession(wsArgs.sessionId);
-      if (
-        session.participants.host !== userId &&
-        session.participants.guest !== userId
-      ) {
-        return unauthorized();
-      }
-    } else {
-      return unauthorized();
-    }
-
-    webSocketServer.handleUpgrade(req, socket, head, (ws) => {
-      webSocketServer.emit("connection", ws);
-    });
-  });
-});
+register(httpServer, webSocketServer, app);
 
 httpServer.listen(port, address, () => {
   console.log(`Listening on https://${address}:${port}`);
