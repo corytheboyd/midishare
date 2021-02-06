@@ -1,15 +1,14 @@
-import { WSSubType } from "../types";
 import WebSocket from "ws";
 import { connectionMap } from "./index";
-import { UserId } from "@midishare/common";
 import { keepAlive } from "./keepAlive";
 import { remove } from "./remove";
+import { UserId, WebSocketSubType } from "@midishare/common";
 
 /**
  * Keep an eye on add/remove event listener memory leaks
  * */
 export function add(
-  subType: WSSubType,
+  subType: WebSocketSubType,
   userId: UserId,
   socket: WebSocket
 ): void {

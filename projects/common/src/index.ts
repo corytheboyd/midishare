@@ -46,3 +46,17 @@ export enum WebSocketCloseCode {
   TRY_AGAIN_LATER = 1013,
   BAD_GATEWAY = 1014,
 }
+
+export enum WebSocketSubType {
+  SESSION_DATA = "sessionData",
+}
+
+export interface WebSocketSubTypeArgs
+  extends Record<string | number | symbol, unknown> {
+  type: WebSocketSubType;
+}
+
+export interface SessionDataWebSocketArgs extends WebSocketSubTypeArgs {
+  type: WebSocketSubType.SESSION_DATA;
+  sessionId: string;
+}

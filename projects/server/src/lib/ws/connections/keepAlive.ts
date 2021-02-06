@@ -1,12 +1,11 @@
-import { WSSubType } from "../types";
 import WebSocket from "ws";
-import { UserId } from "@midishare/common";
 import { remove } from "./remove";
+import { UserId, WebSocketSubType } from "@midishare/common";
 
 const WS_KEEPALIVE_TIMEOUT_MS = 1000;
 
 export function keepAlive(
-  subType: WSSubType,
+  subType: WebSocketSubType,
   userId: UserId,
   socket: WebSocket
 ): void {

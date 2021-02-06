@@ -4,8 +4,12 @@ import { getCurrentUserId } from "../getCurrentUserId";
 import { getSession } from "../state/getSession";
 import { Server as WebSocketServer } from "ws";
 import { Express, Request, Response } from "express";
-import { WSSubData } from "./types";
 import { add } from "./connections/add";
+import {
+  SessionDataWebSocketArgs,
+  WebSocketSubType,
+  WebSocketSubTypeArgs,
+} from "@midishare/common";
 
 export function register(
   httpServer: HttpServer,
@@ -30,7 +34,7 @@ export function register(
   webSocketServer.on("connection", (ws, req) => {
     const userId = getCurrentUserId(req as Request);
     const query = (req as Request).query;
-    const { type } = query as WSSubData;
+    const { type } = query as WebSocketSubTypeArgs;
     add(type, userId, ws);
   });
 
@@ -46,8 +50,8 @@ export function register(
 
       // Require that incoming WebSocket connections specify a type and optional
       // arguments as query parameters.
-      const { type: wsType, ...wsArgs } = req.query as WSSubData;
-      if (!wsType) {
+      const { type } = req.query as WebSocketSubTypeArgs;
+      if (!type) {
         return unauthorized();
       }
 
@@ -59,12 +63,14 @@ export function register(
         return unauthorized();
       }
 
-      if (wsType === "sessionData") {
+      if (type === WebSocketSubType.SESSION_DATA) {
+        const { sessionId } = req.query as SessionDataWebSocketArgs;
+
         // Make sure the session exists, and that the user is actually a member
         // of it.
         // Note: this is interacting with Redis, which is why it's the final
         // check.
-        const session = await getSession(wsArgs.sessionId!);
+        const session = await getSession(sessionId);
         if (
           session.participants.host !== userId &&
           session.participants.guest !== userId

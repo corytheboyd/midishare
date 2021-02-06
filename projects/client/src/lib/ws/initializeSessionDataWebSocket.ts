@@ -2,55 +2,81 @@ import { queryClient } from "../queryClient";
 import { Session, WebSocketCloseCode } from "@midishare/common";
 import { queryKey } from "../queries/getSession";
 
-type UnsubscribeFunction = () => void;
-
 const DATA_WS_MAX_RETRY_CONNECT_ATTEMPTS = 5;
+const DATA_WS_INITIAL_RETRY_DELAY = 2000;
 const DATA_WS_RETRY_DELAY_MS = (attempts: number) => (2 ** attempts - 1) * 1000;
+
+let deferredWs: Promise<WebSocket> | null;
+
+type ReturnContext = {
+  close: () => void;
+  ws: typeof deferredWs;
+};
+
+const buildReturnContext = (): ReturnContext => ({
+  close: () => deferredWs?.then((ws) => ws.close()),
+  ws: deferredWs,
+});
 
 /**
  * @throws Error When failed to open on create
  * */
 export function initializeSessionDataWebSocket(
   sessionId: string
-): [UnsubscribeFunction, Promise<WebSocket>] {
+): ReturnContext {
+  if (deferredWs) {
+    console.warn("DATA WS: already initialized");
+    return buildReturnContext();
+  }
+
   const url = new URL(process.env.WS_URL as string);
   url.searchParams.append("type", "sessionData");
   url.searchParams.append("sessionId", sessionId);
 
-  const deferredWs = new Promise<WebSocket>((resolve, reject) => {
+  deferredWs = new Promise<WebSocket>((resolve, reject) => {
     const ws = new WebSocket(url.toString());
     ws.onopen = () => resolve(ws);
     ws.onerror = () =>
-      reject(new Error(`Failed to open WebSocket: ${url.toString()}`));
+      reject(new Error(`DATA WS: initial open failed: ${url.toString()}`));
   });
 
   deferredWs
-    .then((ws) => registerEventListeners(ws, sessionId))
+    .then(() => registerEventListeners(sessionId))
     .catch((error) => console.error(error));
 
-  return [() => deferredWs.then((ws) => ws.close()), deferredWs];
+  return buildReturnContext();
 }
 
-function registerEventListeners(ws: WebSocket, sessionId: string): void {
-  console.debug("REGISTER EVENT LISTENERS");
+async function reset() {
+  const ws = await deferredWs;
+  if (!ws) {
+    console.warn("DATA WS: not initialized");
+    return;
+  }
+  ws.onopen = ws.onerror = ws.onclose = ws.onmessage = null;
+  deferredWs = null;
+}
 
-  ws.onopen = function () {
-    console.info("DATA WS OPEN", this);
-  };
+async function registerEventListeners(sessionId: string): Promise<void> {
+  const ws = await deferredWs;
+  if (!ws) {
+    console.warn("DATA WS: not initialized");
+    return;
+  }
 
   ws.onerror = function (event) {
-    console.error("DATA WS ERROR", this, event);
-    // TODO maybe initiate retry here too... but be careful
+    console.error("DATA WS: error", this, event);
   };
 
-  ws.onclose = function (event) {
+  ws.onclose = async function (event) {
     console.warn(
-      `DATA WS CLOSE [code="${event.code}", reason="${event.reason}"]`
+      `DATA WS: closed [code="${event.code}", reason="${event.reason}"]`
     );
-    ws.onopen = ws.onerror = ws.onclose = ws.onmessage = null;
+
+    await reset();
 
     if (event.code === WebSocketCloseCode.SERVICE_RESTART) {
-      console.debug("Closed because of server restart, attempt reconnection");
+      console.debug("DATA WS: close reason is server restart");
 
       const sleep = (duration: number): Promise<void> =>
         new Promise((resolve) => {
@@ -58,38 +84,37 @@ function registerEventListeners(ws: WebSocket, sessionId: string): void {
         });
 
       const reconnect = async (retries = 0): Promise<void> => {
-        console.debug("TRY RECONNECT");
+        console.info(`DATA WS: reconnect [retries="${retries}"]`);
 
         await sleep(DATA_WS_RETRY_DELAY_MS(retries));
-        const [, deferredWs] = initializeSessionDataWebSocket(sessionId);
-
+        const { ws } = initializeSessionDataWebSocket(sessionId);
         try {
-          await deferredWs;
-          console.debug("RECONNECT SUCCESS");
+          await ws;
+          console.info("DATA WS: reconnected");
         } catch (error) {
           if (retries === DATA_WS_MAX_RETRY_CONNECT_ATTEMPTS) {
-            throw new Error(
-              `Data WebSocket Failed to reconnect after ${retries} attempts`
-            );
+            throw new Error(`DATA WS: reconnect timeout [retries=${retries}]`);
           }
           await reconnect(retries + 1);
         }
       };
 
-      setTimeout(reconnect, 2000);
+      setTimeout(reconnect, DATA_WS_INITIAL_RETRY_DELAY);
     } else {
-      console.warn("DATA WS CLOSE: Unhandled code", event.code, event.reason);
+      console.warn(
+        `DATA WS: unhandled close code [code="${event.code}", reason="${event.reason}"]`
+      );
     }
   };
 
   ws.onmessage = function (event) {
-    console.debug("DATA WS MESSAGE", this, event.data);
+    console.debug("DATA WS: message", event.data);
 
     let session: Session;
     try {
       session = JSON.parse(event.data);
     } catch (error) {
-      console.warn("WS FAILED TO PARSE MESSAGE", this, event.data);
+      console.warn("DATA WS: failed to parse message", event.data);
       return;
     }
 

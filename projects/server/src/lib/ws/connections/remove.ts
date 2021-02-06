@@ -1,10 +1,9 @@
-import { WSSubType } from "../types";
 import WebSocket from "ws";
 import { connectionMap } from "./index";
-import { UserId } from "@midishare/common";
+import { UserId, WebSocketSubType } from "@midishare/common";
 
 export function remove(
-  subType: WSSubType,
+  subType: WebSocketSubType,
   userId: UserId,
   socket: WebSocket
 ): void {

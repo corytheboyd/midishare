@@ -1,7 +1,10 @@
-import { WSSubType } from "../types";
-import { UserId, WebSocketCloseCode } from "@midishare/common";
 import { connectionMap } from "./index";
 import WebSocket from "ws";
+import {
+  UserId,
+  WebSocketCloseCode,
+  WebSocketSubType,
+} from "@midishare/common";
 
 /**
  * TODO and a BIG one! close sockets on server restart with appropriate codes
@@ -12,7 +15,7 @@ import WebSocket from "ws";
 export function close(
   code: WebSocketCloseCode,
   reason?: string,
-  subType?: WSSubType,
+  subType?: WebSocketSubType,
   userId?: UserId
 ): void {
   if (subType && userId) {

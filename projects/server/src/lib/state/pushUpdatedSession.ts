@@ -1,4 +1,4 @@
-import { Session, UserId } from "@midishare/common";
+import { Session, UserId, WebSocketSubType } from "@midishare/common";
 import { send } from "../ws/connections/send";
 
 /**
@@ -16,5 +16,5 @@ export function pushUpdatedSession(userId: UserId, session: Session): void {
     return;
   }
 
-  send("sessionData", targetUserId, JSON.stringify(session));
+  send(WebSocketSubType.SESSION_DATA, targetUserId, JSON.stringify(session));
 }
