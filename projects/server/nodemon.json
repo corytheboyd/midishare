@@ -1,0 +1,7 @@
+{
+  "restartable": false,
+  "watch": [
+    ".",
+    "/code/common/"
+  ]
+}

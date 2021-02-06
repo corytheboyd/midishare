@@ -19,4 +19,4 @@ RUN npm link @midishare/common
 COPY projects/server /code/app
 COPY projects/common /code/common
 
-ENTRYPOINT ["./node_modules/.bin/ts-node-dev", "src/index.ts"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
