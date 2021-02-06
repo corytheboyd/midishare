@@ -112,7 +112,7 @@ httpServer.listen(port, address, () => {
  * TODO Expand on this, rethink when doing production
  * */
 process.once("SIGUSR2", async () => {
-  console.log("Restart signal received, shutting down");
+  console.log("Restart signal received, shutting down"); ///
   try {
     await handleShutdown("SIGUSR2");
   } catch (err) {

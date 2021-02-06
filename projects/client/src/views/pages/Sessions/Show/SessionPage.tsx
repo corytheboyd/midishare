@@ -9,7 +9,7 @@ import {
   queryKey as sessionQueryKey,
 } from "../../../../lib/queries/getSession";
 import { PeerLaneController } from "./PeerLaneController";
-import { initializeSessionDataWebSocket } from "../../../../lib/initializeSessionDataWebSocket";
+import { initializeSessionDataWebSocket } from "../../../../lib/ws/initializeSessionDataWebSocket";
 
 export const SessionPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();

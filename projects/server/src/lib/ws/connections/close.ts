@@ -1,7 +1,6 @@
 import { WSSubType } from "../types";
-import { UserId } from "@midishare/common";
+import { UserId, WebSocketCloseCode } from "@midishare/common";
 import { connectionMap } from "./index";
-import { CloseCode } from "./types";
 import WebSocket from "ws";
 
 /**
@@ -11,7 +10,7 @@ import WebSocket from "ws";
  * @see https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#status_codes
  * */
 export function close(
-  code: CloseCode,
+  code: WebSocketCloseCode,
   reason?: string,
   subType?: WSSubType,
   userId?: UserId
