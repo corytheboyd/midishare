@@ -8,8 +8,9 @@ import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
 import { Server as WebSocketServer } from "ws";
 import cookieParser from "cookie-parser";
-import { register } from "./lib/api/v1/ws/register";
+import { register } from "./lib/ws/register";
 import { ServerResponse } from "http";
+import { handleShutdown } from "./lib/handleShutdown";
 
 const authConfig: AuthConfigParams = {
   issuerBaseURL: "https://midishare.us.auth0.com",
@@ -105,4 +106,18 @@ register(httpServer, webSocketServer, app);
 
 httpServer.listen(port, address, () => {
   console.log(`Listening on https://${address}:${port}`);
+});
+
+/**
+ * TODO Expand on this, rethink when doing production
+ * */
+process.once("SIGUSR2", async () => {
+  console.log("Restart signal received, shutting down");
+  try {
+    await handleShutdown("SIGUSR2");
+  } catch (err) {
+    console.error("SHUTDOWN HANDLER ERROR", err);
+  } finally {
+    process.kill(process.pid, "SIGUSR2");
+  }
 });

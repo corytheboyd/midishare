@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { v4 as uuid } from "uuid";
+import { URL } from "url";
 
 export const ANONYMOUS_ID_COOKIE_NAME = "anonymousId";
 

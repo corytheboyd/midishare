@@ -1,5 +1,5 @@
 import { Session, UserId } from "@midishare/common";
-import { send } from "../api/v1/ws/connections";
+import { send } from "../ws/connections/send";
 
 /**
  * Publishes Session delta as patch to clients to update their local states.

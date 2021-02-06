@@ -1,11 +1,11 @@
 import { Server as HttpServer } from "https";
 import { ServerResponse } from "http";
-import { getCurrentUserId } from "../../../getCurrentUserId";
-import { getSession } from "../../../state/getSession";
+import { getCurrentUserId } from "../getCurrentUserId";
+import { getSession } from "../state/getSession";
 import { Server as WebSocketServer } from "ws";
 import { Express, Request, Response } from "express";
-import { add } from "./connections";
 import { WSSubData } from "./types";
+import { add } from "./connections/add";
 
 export function register(
   httpServer: HttpServer,
