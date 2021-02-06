@@ -1,5 +1,4 @@
-import { Queries, queryClient } from "./queryClient";
-import { QueryClient } from "react-query";
+import { queryClient } from "./queryClient";
 import { Session } from "@midishare/common";
 import { queryKey } from "./queries/getSession";
 
@@ -47,6 +46,5 @@ function registerEventListeners(ws: WebSocket): void {
     }
 
     queryClient.setQueryData(queryKey(session.id), session);
-    console.debug("UPDATED DATA", queryClient.getQueryCache());
   };
 }

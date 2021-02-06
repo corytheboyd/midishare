@@ -5,4 +5,11 @@ export enum Queries {
   SESSIONS = "SESSIONS",
 }
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // TODO consider adding this again? production only?
+      refetchOnWindowFocus: false,
+    },
+  },
+});

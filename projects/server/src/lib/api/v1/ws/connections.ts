@@ -15,6 +15,8 @@ const connectionMap: Record<WSSubType, Record<UserId, WebSocket[]>> = {
   sessionData: {},
 };
 
+console.debug("WS CONNECTION MAP", connectionMap);
+
 export function add(
   subType: WSSubType,
   userId: UserId,
@@ -50,14 +52,20 @@ export function kill(
   userId: UserId,
   socket: WebSocket
 ): void {
-  if (connectionMap[subType][userId].indexOf(socket) === -1) {
-    console.warn("WebSocket not registered", userId, subType);
-    return;
+  if (!connectionMap[subType][userId]) {
+    connectionMap[subType][userId] = [];
   }
-  socket.close();
   connectionMap[subType][userId] = connectionMap[subType][userId].filter(
     (ws) => ws !== socket
   );
+  socket.close();
+
+  // Prevent memory leak of empty list after killing all sockets for this
+  // subtype/user. Instead, rely on lazily creating the array.
+  if (connectionMap[subType][userId].length === 0) {
+    delete connectionMap[subType][userId];
+  }
+
   console.debug("WS KILL", subType, userId, connectionMap);
 }
 
@@ -83,4 +91,39 @@ function keepAlive(
       }
     });
   }, WS_KEEPALIVE_TIMEOUT_MS);
+}
+
+/**
+ * TODO and a BIG one! close sockets on server restart with appropriate codes
+ *  to signal that the client should or should not attempt a reconnect.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#status_codes
+ * */
+export function close(
+  code: number,
+  subType?: WSSubType,
+  userId?: UserId
+): void {
+  if (subType && userId) {
+    if (!connectionMap[subType][userId]) {
+      return;
+    }
+    for (const socket of connectionMap[subType][userId]) {
+      socket.close();
+    }
+  } else if (subType) {
+    for (const socket of Array.prototype.concat.apply(
+      [],
+      Object.values(connectionMap[subType])
+    )) {
+      socket.close();
+    }
+  } else {
+    for (const socket of Array.prototype.concat.apply(
+      [],
+      Object.values(Object.values(connectionMap))
+    )) {
+      socket.close();
+    }
+  }
 }
