@@ -30,7 +30,8 @@ export const SessionPage: React.FC = () => {
      * connection to authenticate! If you're moving code around and the
      * connection broke, that may be why.
      * */
-    initializeSessionDataWebSocket(urlParams.id);
+    const [close] = initializeSessionDataWebSocket(urlParams.id);
+    return close;
   }, []);
 
   return (
