@@ -14,7 +14,10 @@ type ReturnContext = {
 };
 
 const buildReturnContext = (): ReturnContext => ({
-  close: () => deferredWs?.then((ws) => ws.close()),
+  close: (
+    code: WebSocketCloseCode = WebSocketCloseCode.NORMAL_CLOSURE,
+    reason?: string
+  ) => deferredWs?.then((ws) => ws.close(code, reason)),
   ws: deferredWs,
 });
 
@@ -35,13 +38,21 @@ export function initializeSessionDataWebSocket(
 
   deferredWs = new Promise<WebSocket>((resolve, reject) => {
     const ws = new WebSocket(url.toString());
-    ws.onopen = () => resolve(ws);
-    ws.onerror = () =>
+    ws.onopen = () => {
+      resolve(ws);
+      ws.onopen = ws.onerror = ws.onclose = null;
+    };
+    ws.onclose = ws.onerror = () => {
+      ws.onopen = ws.onerror = ws.onclose = null;
       reject(new Error(`DATA WS: initial open failed: ${url.toString()}`));
+    };
   });
 
   deferredWs
-    .then(() => registerEventListeners(sessionId))
+    .then(() => {
+      console.info("DATA WS: connected");
+      return registerEventListeners(sessionId);
+    })
     .catch((error) => console.error(error));
 
   return buildReturnContext();
