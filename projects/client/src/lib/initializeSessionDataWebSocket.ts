@@ -1,22 +1,20 @@
-let ws: WebSocket;
-
 type UnsubscribeFunction = () => void;
 
 export function initializeSessionDataWebSocket(
   sessionId: string
 ): UnsubscribeFunction {
-  if (!ws) {
-    try {
-      const url = new URL(process.env.WS_URL as string);
-      url.searchParams.append("type", "sessionData");
-      url.searchParams.append("sessionId", sessionId);
-      ws = new WebSocket(url.toString());
-      registerEventListeners(ws);
-    } catch (error) {
-      ws.close();
-    }
-    return () => ws.close();
+  let ws: WebSocket;
+  try {
+    const url = new URL(process.env.WS_URL as string);
+    url.searchParams.append("type", "sessionData");
+    url.searchParams.append("sessionId", sessionId);
+    ws = new WebSocket(url.toString());
+  } catch (error) {
+    console.error("WS INIT FAILED", error);
+    return () => {};
   }
+  registerEventListeners(ws);
+  return () => ws.close();
 }
 
 function registerEventListeners(ws: WebSocket): void {

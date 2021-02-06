@@ -28,6 +28,7 @@ export function add(
     console.warn(`WS CLOSE EVENT [code=${code}, reason=${reason}]`);
     kill(subType, userId, socket);
   });
+
   socket.on("error", (error) => {
     console.warn(`WS ERROR EVENT [code=${error.message}]`, error);
     kill(subType, userId, socket);
