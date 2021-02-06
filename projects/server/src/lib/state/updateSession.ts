@@ -1,7 +1,8 @@
-import { Session } from "@midishare/common";
+import { Session, UserId } from "@midishare/common";
 import deepmerge from "deepmerge";
 import { SESSIONS_HASH_NAME } from "./createSession";
 import { redisClient } from "./redisClient";
+import { pushUpdatedSession } from "./pushUpdatedSession";
 
 /**
  * Shamelessly stolen from StackOverflow
@@ -26,6 +27,7 @@ const UPDATE_LOCK_TIMEOUT_SECONDS = 3;
  * */
 export async function updateSession(
   id: string,
+  userId: UserId,
   partial: Omit<RecursivePartial<Session>, "id" | "createdAt" | "updatedAt">
 ): Promise<Session> {
   return new Promise((resolve, reject) => {
@@ -81,6 +83,7 @@ export async function updateSession(
             return;
           }
 
+          pushUpdatedSession(userId, updatedSession);
           resolve(updatedSession);
         });
     });

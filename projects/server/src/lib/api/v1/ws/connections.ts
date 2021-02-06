@@ -37,7 +37,12 @@ export function add(
   keepAlive(subType, userId, socket);
 
   connectionMap[subType][userId].push(socket);
-  console.debug("WS ADD", subType, userId, connectionMap);
+  console.debug(
+    `WS ADD [type=${subType}, userId=${userId}]`,
+    subType,
+    userId,
+    connectionMap
+  );
 }
 
 export function kill(
@@ -45,8 +50,8 @@ export function kill(
   userId: UserId,
   socket: WebSocket
 ): void {
-  if (!connectionMap[subType][userId]) {
-    console.warn("User does not have a WebSocket registered", userId, subType);
+  if (connectionMap[subType][userId].indexOf(socket) === -1) {
+    console.warn("WebSocket not registered", userId, subType);
     return;
   }
   socket.close();
@@ -54,6 +59,15 @@ export function kill(
     (ws) => ws !== socket
   );
   console.debug("WS KILL", subType, userId, connectionMap);
+}
+
+export function send(subType: WSSubType, userId: UserId, data: string): void {
+  if (!connectionMap[subType][userId]) {
+    connectionMap[subType][userId] = [];
+  }
+  for (const socket of connectionMap[subType][userId]) {
+    socket.send(data);
+  }
 }
 
 function keepAlive(

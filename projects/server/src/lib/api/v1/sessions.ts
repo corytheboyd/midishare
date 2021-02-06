@@ -60,7 +60,7 @@ export const sessions = (): Router => {
       }
 
       const userId = getCurrentUserId(req);
-      const updatedSession = await updateSession(session.id, {
+      const updatedSession = await updateSession(session.id, userId, {
         participants: {
           guest: userId,
         },
