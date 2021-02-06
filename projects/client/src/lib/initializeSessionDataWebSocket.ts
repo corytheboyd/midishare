@@ -1,3 +1,8 @@
+import { Queries, queryClient } from "./queryClient";
+import { QueryClient } from "react-query";
+import { Session } from "@midishare/common";
+import { queryKey } from "./queries/getSession";
+
 type UnsubscribeFunction = () => void;
 
 export function initializeSessionDataWebSocket(
@@ -32,5 +37,16 @@ function registerEventListeners(ws: WebSocket): void {
 
   ws.onmessage = function (event) {
     console.debug("DATA WS MESSAGE", this, event.data);
+
+    let session: Session;
+    try {
+      session = JSON.parse(event.data);
+    } catch (error) {
+      console.warn("WS FAILED TO PARSE MESSAGE", this, event.data);
+      return;
+    }
+
+    queryClient.setQueryData(queryKey(session.id), session);
+    console.debug("UPDATED DATA", queryClient.getQueryCache());
   };
 }
