@@ -31,7 +31,7 @@ export const SessionShowPage: React.FC = () => {
      * connection broke, that may be why.
      * */
     const { close } = initializeSessionDataWebSocket(urlParams.id);
-    return close;
+    return () => close();
   }, []);
 
   return (

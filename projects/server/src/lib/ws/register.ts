@@ -5,11 +5,7 @@ import { getSession } from "../state/getSession";
 import { Server as WebSocketServer } from "ws";
 import { Express, Request, Response } from "express";
 import { add } from "./connections/add";
-import {
-  SessionDataWebSocketArgs,
-  WebSocketSubType,
-  WebSocketSubTypeArgs,
-} from "@midishare/common";
+import { SessionDataWebSocketArgs, WebSocketSubType } from "@midishare/common";
 
 export function register(
   httpServer: HttpServer,
@@ -34,7 +30,7 @@ export function register(
   webSocketServer.on("connection", (ws, req) => {
     const userId = getCurrentUserId(req as Request);
     const query = (req as Request).query;
-    const { type } = query as WebSocketSubTypeArgs;
+    const { type } = query as { type: WebSocketSubType };
     add(type, userId, ws);
   });
 
@@ -50,7 +46,7 @@ export function register(
 
       // Require that incoming WebSocket connections specify a type and optional
       // arguments as query parameters.
-      const { type } = req.query as WebSocketSubTypeArgs;
+      const { type } = req.query as { type: WebSocketSubType };
       if (!type) {
         console.warn("WS UNAUTHORIZED: malformed sub type args");
         return unauthorized();

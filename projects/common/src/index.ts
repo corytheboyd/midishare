@@ -51,12 +51,9 @@ export enum WebSocketSubType {
   SESSION_DATA = "sessionData",
 }
 
-export interface WebSocketSubTypeArgs
-  extends Record<string | number | symbol, unknown> {
-  type: WebSocketSubType;
-}
-
-export interface SessionDataWebSocketArgs extends WebSocketSubTypeArgs {
-  type: WebSocketSubType.SESSION_DATA;
+export type SessionDataWebSocketArgs = Record<
+  string | number | symbol,
+  unknown
+> & {
   sessionId: string;
-}
+};
