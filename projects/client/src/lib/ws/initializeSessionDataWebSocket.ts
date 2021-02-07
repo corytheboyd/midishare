@@ -17,7 +17,13 @@ const buildReturnContext = (): ReturnContext => ({
   close: (
     code: WebSocketCloseCode = WebSocketCloseCode.NORMAL_CLOSURE,
     reason?: string
-  ) => deferredWs?.then((ws) => ws.close(code, reason)),
+  ) => {
+    console.info("DATA WS: close return context function called");
+    deferredWs?.then((ws) => {
+      ws.close(code, reason);
+      return reset();
+    });
+  },
   ws: deferredWs,
 });
 
