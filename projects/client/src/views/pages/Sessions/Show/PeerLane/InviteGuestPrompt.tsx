@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
-import { UserAdd } from "../common/icons/sm/UserAdd";
-import { useStore } from "../../lib/store";
-import { Routes } from "../routes";
-import { CopyTextInput } from "../common/CopyTextInput";
-import { CopyTextButton } from "../common/CopyTextButton";
+import { UserAdd } from "../../../../common/icons/sm/UserAdd";
+import { useStore } from "../../../../../lib/store";
+import { Routes } from "../../../../routes";
+import { CopyTextInput } from "../../../../common/CopyTextInput";
+import { CopyTextButton } from "../../../../common/CopyTextButton";
 
 type InviteGuestPromptProps = {
   sessionId: string;

@@ -1,9 +1,9 @@
 import React, { ChangeEvent, useState } from "react";
-import { ExclamationCircle } from "../common/icons/sm/ExclamationCircle";
-import { BaseButton } from "../common/buttons/BaseButton";
-import { Plus } from "../common/icons/sm/Plus";
-import { getMidiAccess } from "../../lib/getMidiAccess";
-import { useStore } from "../../lib/store";
+import { ExclamationCircle } from "../../../../common/icons/sm/ExclamationCircle";
+import { BaseButton } from "../../../../common/buttons/BaseButton";
+import { Plus } from "../../../../common/icons/sm/Plus";
+import { getMidiAccess } from "../../../../../lib/getMidiAccess";
+import { useStore } from "../../../../../lib/store";
 
 const GetAccessButton: React.FC = () => {
   const handleAttachMidiKeyboard = () => {

@@ -11,7 +11,7 @@ import {
 import { PeerLaneController } from "./PeerLaneController";
 import { initializeSessionDataWebSocket } from "../../../../lib/ws/initializeSessionDataWebSocket";
 
-export const SessionPage: React.FC = () => {
+export const SessionShowPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
 
   const sessionQuery = useQuery(
@@ -40,11 +40,15 @@ export const SessionPage: React.FC = () => {
         <title>Midishare • Session</title>
       </Helmet>
 
-      {sessionQuery.isLoading && <span>Loading...</span>}
+      <div className="flex flex-col h-full">
+        <div className="flex-grow">
+          {sessionQuery.isLoading && <span>Loading...</span>}
 
-      {!sessionQuery.isLoading && (
-        <PeerLaneController session={sessionQuery.data!} />
-      )}
+          {!sessionQuery.isLoading && (
+            <PeerLaneController session={sessionQuery.data!} />
+          )}
+        </div>
+      </div>
     </Chrome>
   );
 };

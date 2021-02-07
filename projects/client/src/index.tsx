@@ -8,7 +8,7 @@ import { Helmet } from "react-helmet";
 import { Routes } from "./views/routes";
 import { HomePage } from "./views/pages/HomePage";
 import { SessionIndexPage } from "./views/pages/Sessions/Index/SessionIndexPage";
-import { SessionPage } from "./views/pages/Sessions/Show/SessionPage";
+import { SessionShowPage } from "./views/pages/Sessions/Show";
 import { SessionJoinPage } from "./views/pages/Sessions/SessionJoinPage";
 
 render(
@@ -23,7 +23,7 @@ render(
           <SessionJoinPage />
         </Route>
         <Route path={Routes.SESSION}>
-          <SessionPage />
+          <SessionShowPage />
         </Route>
         <Route path={Routes.SESSIONS}>
           <SessionIndexPage />

@@ -1,6 +1,6 @@
-import { PeerLane } from "../../../PeerLane";
-import { InviteGuestPrompt } from "../../../PeerLane/InviteGuestPrompt";
-import { AttachMidiPrompt } from "../../../PeerLane/AttachMidiPrompt";
+import { PeerLane } from "./PeerLane";
+import { InviteGuestPrompt } from "./PeerLane/InviteGuestPrompt";
+import { AttachMidiPrompt } from "./PeerLane/AttachMidiPrompt";
 import React, { useMemo } from "react";
 import { useStore } from "../../../../lib/store";
 import { Session } from "@midishare/common";
