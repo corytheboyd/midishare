@@ -23,13 +23,19 @@ export function initializeWebSocket<T = undefined>(
   subType: WebSocketSubType,
   args?: T
 ): ReturnContext {
+  if (webSocketMap[subType]) {
+    console.info(`WS[type="${subType}"] already initialized`);
+    return buildReturnContext(subType);
+  }
+
   const url = wsSubTypeUrl(subType, args);
+  console.info(`WS[type="${subType}"]: request initialization`, url);
 
   webSocketMap[subType] = new Promise<WebSocket>((resolve, reject) => {
     const ws = new WebSocket(url);
 
     ws.onopen = () => {
-      console.info(`WS[type="${subType}"]: connected`);
+      console.info(`WS[type="${subType}"]: connected`, url);
       ws.onopen = ws.onerror = ws.onclose = null;
       resolve(ws);
     };
@@ -53,7 +59,7 @@ export function initializeWebSocket<T = undefined>(
 
 function wsSubTypeUrl<T>(subType: WebSocketSubType, args: T): string {
   const url = new URL(process.env.WS_URL as string);
-  url.searchParams.append("type", WebSocketSubType.SESSION_DATA);
+  url.searchParams.append("type", subType);
 
   if (subType === WebSocketSubType.SESSION_DATA) {
     const { sessionId } = args as SessionDataWebSocketArgs;
@@ -110,14 +116,12 @@ async function registerEventListeners<T>(
 ): Promise<void> {
   const ws = await webSocketMap[subType];
   if (!ws) {
-    console.error(`WS[type="${subType}"] failed to build return context`);
+    console.info(`WS[type="${subType}"] failed to build return context`);
     return;
   }
 
-  console.debug("registerEventListeners", subType, args);
-
   ws.onmessage = function (event) {
-    console.debug(`WS[type="${subType}"]: message received`, event.data);
+    console.info(`WS[type="${subType}"]: message received`, event.data);
 
     if (subType === WebSocketSubType.SESSION_DATA) {
       handleSessionDataMessage(event.data);
@@ -130,11 +134,11 @@ async function registerEventListeners<T>(
   };
 
   ws.onerror = function (event) {
-    console.error(`WS[type="${subType}"]: error`, event);
+    console.info(`WS[type="${subType}"]: error`, event);
   };
 
   ws.onclose = async function (event) {
-    console.warn(
+    console.info(
       `WS[type="${subType}"]: closed [code="${event.code}", reason="${event.reason}"]`
     );
 
@@ -163,7 +167,7 @@ async function registerEventListeners<T>(
       await reset(subType);
       setTimeout(reconnect, WS_INITIAL_RETRY_DELAY);
     } else {
-      console.warn(
+      console.info(
         `WS[type="${subType}"]: unhandled close code [code="${event.code}", reason="${event.reason}"]`
       );
     }
