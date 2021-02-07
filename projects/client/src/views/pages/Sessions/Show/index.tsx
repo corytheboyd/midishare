@@ -10,6 +10,7 @@ import {
 } from "../../../../lib/queries/getSession";
 import { PeerLaneController } from "./PeerLaneController";
 import { initializeSessionDataWebSocket } from "../../../../lib/ws/initializeSessionDataWebSocket";
+import { initializeSignalingWebSocket } from "../../../../lib/ws/initializeSignalingWebSocket";
 
 export const SessionShowPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
@@ -30,8 +31,16 @@ export const SessionShowPage: React.FC = () => {
      * connection to authenticate! If you're moving code around and the
      * connection broke, that may be why.
      * */
-    const { close } = initializeSessionDataWebSocket(urlParams.id);
-    return () => close();
+    const { close: closeSessionDataSocket } = initializeSessionDataWebSocket(
+      urlParams.id
+    );
+
+    const { close: closeSignalingSocket } = initializeSignalingWebSocket();
+
+    return () => {
+      closeSessionDataSocket();
+      closeSignalingSocket();
+    };
   }, []);
 
   return (

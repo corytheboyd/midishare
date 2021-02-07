@@ -61,7 +61,11 @@ export function register(
         return unauthorized();
       }
 
-      if (type === WebSocketSubType.SESSION_DATA) {
+      if (type === WebSocketSubType.SIGNALING) {
+        // TODO Just make sure the user is in a session, we don't need to add
+        //  the overhead of a specific session. For now just let anyone create
+        //  a signaling socket.
+      } else if (type === WebSocketSubType.SESSION_DATA) {
         const { sessionId } = req.query as SessionDataWebSocketArgs;
 
         // Make sure the session exists, and that the user is actually a member
@@ -79,7 +83,7 @@ export function register(
           return unauthorized();
         }
       } else {
-        console.warn("WS UNAUTHORIZED: unhandled sub type");
+        console.warn("WS UNAUTHORIZED: unhandled socket subType");
         return unauthorized();
       }
 

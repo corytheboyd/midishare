@@ -49,6 +49,7 @@ export enum WebSocketCloseCode {
 
 export enum WebSocketSubType {
   SESSION_DATA = "sessionData",
+  SIGNALING = "signaling",
 }
 
 export type SessionDataWebSocketArgs = Record<

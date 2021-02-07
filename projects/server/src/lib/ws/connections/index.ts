@@ -13,5 +13,6 @@ export const connectionMap: Record<
   Record<UserId, WebSocket[]>
 > = {
   sessionData: {},
+  signaling: {},
 };
 console.debug("WS CONNECTION MAP", connectionMap);

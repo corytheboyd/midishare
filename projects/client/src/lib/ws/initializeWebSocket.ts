@@ -16,6 +16,7 @@ const WS_RETRY_DELAY_MS = (attempts: number) => (2 ** attempts - 1) * 1000;
 
 const webSocketMap: Record<WebSocketSubType, Promise<WebSocket> | null> = {
   sessionData: null,
+  signaling: null,
 };
 
 export function initializeWebSocket<T = undefined>(
