@@ -52,6 +52,7 @@ export function register(
       // arguments as query parameters.
       const { type } = req.query as WebSocketSubTypeArgs;
       if (!type) {
+        console.warn("WS UNAUTHORIZED: malformed sub type args");
         return unauthorized();
       }
 
@@ -60,6 +61,7 @@ export function register(
       // we even touch Redis to mitigate abuse vectors.
       const userId = getCurrentUserId(req);
       if (!userId) {
+        console.warn("WS UNAUTHORIZED: missing user id");
         return unauthorized();
       }
 
@@ -75,9 +77,13 @@ export function register(
           session.participants.host !== userId &&
           session.participants.guest !== userId
         ) {
+          console.warn(
+            `WS UNAUTHORIZED: not member of session [userId="${userId}", sessionId="${sessionId}"]`
+          );
           return unauthorized();
         }
       } else {
+        console.warn("WS UNAUTHORIZED: unhandled sub type");
         return unauthorized();
       }
 

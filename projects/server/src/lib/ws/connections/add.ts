@@ -17,12 +17,12 @@ export function add(
   }
 
   socket.on("close", (code, reason) => {
-    console.warn(`WS CLOSE EVENT [code=${code}, reason=${reason}]`);
+    console.warn(`WS CLOSE [code=${code}, reason=${reason}]`);
     remove(subType, userId, socket);
   });
 
   socket.on("error", (error) => {
-    console.warn(`WS ERROR EVENT [code=${error.message}]`, error);
+    console.warn(`WS ERROR [code=${error.message}]`, error);
     remove(subType, userId, socket);
   });
 

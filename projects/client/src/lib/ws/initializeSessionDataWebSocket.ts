@@ -68,6 +68,12 @@ async function reset() {
   deferredWs = null;
 }
 
+async function sleep(duration: number): Promise<void> {
+  new Promise((resolve) => {
+    setTimeout(resolve, duration);
+  });
+}
+
 async function registerEventListeners(sessionId: string): Promise<void> {
   const ws = await deferredWs;
   if (!ws) {
@@ -84,18 +90,13 @@ async function registerEventListeners(sessionId: string): Promise<void> {
       `DATA WS: closed [code="${event.code}", reason="${event.reason}"]`
     );
 
-    await reset();
-
     if (event.code === WebSocketCloseCode.SERVICE_RESTART) {
       console.debug("DATA WS: close reason is server restart");
 
-      const sleep = (duration: number): Promise<void> =>
-        new Promise((resolve) => {
-          setTimeout(resolve, duration);
-        });
+      await reset();
 
       const reconnect = async (retries = 0): Promise<void> => {
-        console.info(`DATA WS: reconnect [retries="${retries}"]`);
+        console.info(`DATA WS: retry connection [retries="${retries}"]`);
 
         await sleep(DATA_WS_RETRY_DELAY_MS(retries));
         const { ws } = initializeSessionDataWebSocket(sessionId);
@@ -106,10 +107,10 @@ async function registerEventListeners(sessionId: string): Promise<void> {
           if (retries === DATA_WS_MAX_RETRY_CONNECT_ATTEMPTS) {
             throw new Error(`DATA WS: reconnect timeout [retries=${retries}]`);
           }
+          await reset();
           await reconnect(retries + 1);
         }
       };
-
       setTimeout(reconnect, DATA_WS_INITIAL_RETRY_DELAY);
     } else {
       console.warn(

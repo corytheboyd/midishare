@@ -24,7 +24,6 @@ export const addAnonymousIdCookie = () => (
         const url = new URL(process.env.CLIENT_URL as string);
         return url.hostname;
       })(),
-      maxAge: 12 * 60 * 60, // 12 hours
       signed: true,
     });
   }
