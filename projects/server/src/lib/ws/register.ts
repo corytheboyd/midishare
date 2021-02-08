@@ -76,6 +76,10 @@ export function register(
         // Note: this is interacting with Redis, which is why it's the final
         // check.
         const session = await getSession(sessionId);
+        if (!session) {
+          console.warn(`WS[type="${args.type}"] session not found`);
+          return unauthorized();
+        }
         if (
           session.participants.host !== userId &&
           session.participants.guest !== userId

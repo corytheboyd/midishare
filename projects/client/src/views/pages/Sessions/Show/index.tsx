@@ -42,11 +42,13 @@ export const SessionShowPage: React.FC = () => {
      * connection to authenticate! If you're moving code around and the
      * connection broke, that may be why.
      * */
-    const { close: closeSessionDataSocket } = initializeSessionDataWebSocket(
-      urlParams.id
-    );
+    const { close: closeSessionDataSocket } = initializeSessionDataWebSocket({
+      sessionId: urlParams.id,
+    });
 
-    const { close: closeSignalingSocket } = initializeSignalingWebSocket();
+    const { close: closeSignalingSocket } = initializeSignalingWebSocket({
+      sessionId: urlParams.id,
+    });
 
     const { start, close: closePeerConnection } = usePeerConnection();
 

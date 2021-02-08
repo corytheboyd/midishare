@@ -1,9 +1,11 @@
-import { WebSocketSubType } from "@midishare/common";
+import { WebSocketSignalingArgs, WebSocketSubType } from "@midishare/common";
 import { create, ReturnContext } from "./connections/create";
 
-export function initializeSignalingWebSocket(sessionId: string): ReturnContext {
+export function initializeSignalingWebSocket(
+  args: WebSocketSignalingArgs
+): ReturnContext {
   return create({
     type: WebSocketSubType.SIGNALING,
-    sessionId,
+    ...args,
   });
 }
