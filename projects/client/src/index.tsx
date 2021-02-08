@@ -7,10 +7,10 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Routes } from "./views/routes";
 import { HomePage } from "./views/pages/HomePage";
-import { SessionIndexPage } from "./views/pages/Sessions/Index/SessionIndexPage";
 import { SessionShowPage } from "./views/pages/Sessions/Show";
 import { SessionJoinPage } from "./views/pages/Sessions/SessionJoinPage";
 import { NotFound } from "./views/pages/NotFound";
+import { SessionIndexPage } from "./views/pages/Sessions/Index";
 
 render(
   <QueryClientProvider client={queryClient}>
