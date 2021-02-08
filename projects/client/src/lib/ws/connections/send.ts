@@ -1,9 +1,9 @@
 import { WebSocketSubType } from "@midishare/common";
 import { webSocketMap } from "./index";
 
-export async function send<TMessage>(
+export async function send(
   subType: WebSocketSubType,
-  message: TMessage
+  data: string
 ): Promise<void> {
   const ws = await webSocketMap[subType];
   if (!ws) {
@@ -13,5 +13,5 @@ export async function send<TMessage>(
     return;
   }
   console.info(`WS[type="${subType}"] message sent`);
-  ws.send(JSON.stringify(message));
+  ws.send(data);
 }

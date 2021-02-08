@@ -77,7 +77,13 @@ function registerEventHandlers(pc: RTCPeerConnection): void {
   };
 
   pc.onicecandidate = (event) => {
+    if (!event.candidate) {
+      return;
+    }
     console.debug("RTC: has ice candidate", event.candidate);
+    sendSignalingMessage({
+      candidate: event.candidate,
+    });
   };
 
   pc.onsignalingstatechange = () => {

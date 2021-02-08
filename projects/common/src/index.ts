@@ -66,5 +66,6 @@ export type WebSocketSubTypeArgs = { type: WebSocketSubType } & (
 );
 
 export type SignalingMessage = {
-  description: RTCSessionDescription;
+  description?: RTCSessionDescription;
+  candidate?: RTCIceCandidate;
 };
