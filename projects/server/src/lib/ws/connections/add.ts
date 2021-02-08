@@ -5,7 +5,6 @@ import { remove } from "./remove";
 import {
   SignalingMessage,
   UserId,
-  WebSocketSignalingArgs,
   WebSocketSubType,
   WebSocketSubTypeArgs,
 } from "@midishare/common";
@@ -50,7 +49,7 @@ export function add(
         );
         return;
       }
-      handleSignalingMessage(args, message);
+      handleSignalingMessage(userId, args, message);
     }
   });
 
