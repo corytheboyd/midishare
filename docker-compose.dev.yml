@@ -21,6 +21,7 @@ services:
   cdn:
     container_name: cdn
     image: nginx:1.19.6
+    init: true
     ports:
       - "9000:443"
     environment:

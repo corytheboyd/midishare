@@ -28,6 +28,9 @@ const webSocketMap: Record<
   signaling: null,
 };
 
+/**
+ * This is probably the flakiest logic right now... keep an eye on it.
+ * */
 export function initializeWebSocket<T = undefined>(
   subType: WebSocketSubType,
   args?: T

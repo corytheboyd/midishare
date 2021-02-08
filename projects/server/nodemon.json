@@ -3,5 +3,8 @@
   "watch": [
     ".",
     "/code/common/"
-  ]
+  ],
+  "execMap": {
+    "ts": "./node_modules/.bin/ts-node"
+  }
 }
