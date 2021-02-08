@@ -46,11 +46,6 @@ export async function handleSignalingMessage(
     try {
       await peerConnection.addIceCandidate(candidate);
     } catch (err) {
-      console.warn(
-        `WS[type="${WebSocketSubType.SIGNALING}"]: failed to add ICE candidate`,
-        args,
-        candidate
-      );
       if (!negotiationState.ignoreOffer) {
         throw err;
       }
@@ -87,7 +82,6 @@ export async function handleSignalingMessage(
     }
 
     await peerConnection.setRemoteDescription(description);
-
     if (description.type === "offer") {
       // TODO fix setLocalDescription typing
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

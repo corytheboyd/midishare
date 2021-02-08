@@ -10,8 +10,18 @@ import { send } from "./connections/send";
 export async function handleSignalingMessage(
   sender: UserId,
   args: WebSocketSignalingArgs,
-  message: SignalingMessage
+  data: string
 ): Promise<void> {
+  let message: SignalingMessage;
+  try {
+    message = JSON.parse(data.toString()) as SignalingMessage;
+  } catch (err) {
+    console.error(
+      `WS[type="${WebSocketSubType.SIGNALING}"] failed to parse signaling message`
+    );
+    return;
+  }
+
   const { sessionId } = args;
   if (!sessionId) {
     console.warn(`WS[type="${WebSocketSubType.SIGNALING}"] missing sessionId`);

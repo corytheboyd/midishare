@@ -12,6 +12,6 @@ export async function send(
     );
     return;
   }
-  console.info(`WS[type="${subType}"] message sent`);
+  console.info(`WS[type="${subType}"] message sent`, data);
   ws.send(data);
 }

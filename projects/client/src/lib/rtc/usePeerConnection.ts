@@ -40,7 +40,9 @@ function start() {
 
 function create() {
   console.info("RTC: create new peer connection");
-  peerConnection = new RTCPeerConnection();
+  peerConnection = new RTCPeerConnection({
+    iceServers: [{ urls: ["stun:stun.l.google.com:19302"] }],
+  });
   registerEventHandlers(peerConnection);
   return peerConnection;
 }

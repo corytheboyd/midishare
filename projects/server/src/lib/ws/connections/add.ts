@@ -35,21 +35,11 @@ export function add(
   socket.on("message", (data) => {
     console.debug(
       `WS[type="${args.type}", userId="${userId}"] message received`,
-      socket.url,
       data
     );
 
     if (args.type === WebSocketSubType.SIGNALING) {
-      let message: SignalingMessage;
-      try {
-        message = JSON.parse(data.toString()) as SignalingMessage;
-      } catch (err) {
-        console.error(
-          `WS[type="${args.type}"] failed to parse signaling message`
-        );
-        return;
-      }
-      handleSignalingMessage(userId, args, message);
+      handleSignalingMessage(userId, args, data.toString());
     }
   });
 
