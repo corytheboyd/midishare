@@ -7,14 +7,23 @@ import { handleSessionDataMessage } from "./handleSessionDataMessage";
 
 export type ReturnContext = {
   close: (code?: WebSocketCloseCode, reason?: string) => void;
-  ws: Promise<WebSocket>;
+
+  /**
+   * Resolves to null if there was an error creating the WebSocket
+   * */
+  ws: Promise<WebSocket | null>;
 };
 
-const WS_MAX_RETRY_CONNECT_ATTEMPTS = 5;
+const WS_MAX_RETRY_CONNECT_ATTEMPTS = 4;
 const WS_INITIAL_RETRY_DELAY = 2000;
-const WS_RETRY_DELAY_MS = (attempts: number) => (2 ** attempts - 1) * 1000;
+const WS_RETRY_DELAY_MS = (attempts: number) => 2 ** (attempts - 1) * 1000;
 
-const webSocketMap: Record<WebSocketSubType, Promise<WebSocket> | null> = {
+// Initial state is null, and promise resolves to null if the WebSocket could
+// not be created.
+const webSocketMap: Record<
+  WebSocketSubType,
+  Promise<WebSocket | null> | null
+> = {
   sessionData: null,
   signaling: null,
 };
@@ -24,14 +33,14 @@ export function initializeWebSocket<T = undefined>(
   args?: T
 ): ReturnContext {
   if (webSocketMap[subType]) {
-    console.info(`WS[type="${subType}"] already initialized`);
     return buildReturnContext(subType);
   }
 
   const url = wsSubTypeUrl(subType, args);
-  console.info(`WS[type="${subType}"]: request initialization`, url);
+  // console.info(`WS[type="${subType}"]: request initialization`, url);
 
-  webSocketMap[subType] = new Promise<WebSocket>((resolve, reject) => {
+  webSocketMap[subType] = new Promise<WebSocket | null>((resolve) => {
+    // Note: using try/catch on this has no effect. I tried, but go ahead.
     const ws = new WebSocket(url);
 
     ws.onopen = () => {
@@ -42,17 +51,17 @@ export function initializeWebSocket<T = undefined>(
 
     ws.onclose = ws.onerror = () => {
       ws.onopen = ws.onerror = ws.onclose = null;
-      reject(
-        new Error(
-          `WS[type="${subType}"]: initial open failed: ${url.toString()}`
-        )
-      );
+      resolve(null);
     };
   });
 
-  webSocketMap[subType]!.then(() =>
-    registerEventListeners<T>(subType, args)
-  ).catch((error) => console.error(error));
+  webSocketMap[subType]!.then((ws) => {
+    if (!ws) {
+      console.error(`WS[type="${subType}"] failed to create`);
+      return;
+    }
+    return registerEventListeners<T>(subType, args);
+  });
 
   return buildReturnContext(subType);
 }
@@ -70,13 +79,6 @@ function wsSubTypeUrl<T>(subType: WebSocketSubType, args: T): string {
 }
 
 function buildReturnContext(subType: WebSocketSubType): ReturnContext {
-  const deferredWs = webSocketMap[subType];
-
-  if (!deferredWs) {
-    // If this happens, it's bad enough to throw and crash the app.
-    throw new Error(`WS[type="${subType}"] failed to build return context`);
-  }
-
   return {
     close: (
       code: WebSocketCloseCode = WebSocketCloseCode.NORMAL_CLOSURE,
@@ -85,28 +87,27 @@ function buildReturnContext(subType: WebSocketSubType): ReturnContext {
       console.info(
         `WS[type="${subType}"]: close return context function called`
       );
-      deferredWs.then((ws) => {
-        ws.close(code, reason);
+      const deferredWs = webSocketMap[subType];
+      deferredWs?.then((ws) => {
+        ws?.close(code, reason);
         return reset(subType);
       });
     },
-    ws: deferredWs,
+    ws: webSocketMap[subType] ?? Promise.resolve(null),
   };
 }
 
 async function reset(subType: WebSocketSubType): Promise<void> {
   const ws = await webSocketMap[subType];
-  if (!ws) {
-    console.warn("DATA WS: not initialized");
-    return;
+  if (ws) {
+    ws.onopen = ws.onerror = ws.onclose = ws.onmessage = null;
   }
-  ws.onopen = ws.onerror = ws.onclose = ws.onmessage = null;
   webSocketMap[subType] = null;
 }
 
-async function sleep(duration: number): Promise<void> {
-  new Promise((resolve) => {
-    setTimeout(resolve, duration);
+function sleep(duration: number): Promise<void> {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => resolve(), duration);
   });
 }
 
@@ -146,28 +147,27 @@ async function registerEventListeners<T>(
       console.info(
         `WS[type="${subType}"]: retry connection [retries="${retries}"]`
       );
+      await reset(subType);
       await sleep(WS_RETRY_DELAY_MS(retries));
       const { ws } = initializeWebSocket<T>(subType, args);
-      try {
-        await ws;
-        console.info(`WS[type="${subType}"]: reconnected`);
-      } catch (error) {
+      if (!(await ws)) {
         if (retries === WS_MAX_RETRY_CONNECT_ATTEMPTS) {
-          throw new Error(
+          console.warn(
             `WS[type="${subType}"]: reconnect timeout [retries=${retries}]`
           );
+          return;
+        } else {
+          console.info(`WS[type="${subType}"] retry reconnect`);
+          await reset(subType);
+          await reconnect(retries + 1);
         }
-        await reset(subType);
-        await reconnect(retries + 1);
       }
     };
 
     if (event.code === WebSocketCloseCode.SERVICE_RESTART) {
-      console.debug(`WS[type="${subType}"]: close reason is server restart`);
-      await reset(subType);
       setTimeout(reconnect, WS_INITIAL_RETRY_DELAY);
     } else {
-      console.info(
+      console.warn(
         `WS[type="${subType}"]: unhandled close code [code="${event.code}", reason="${event.reason}"]`
       );
     }
