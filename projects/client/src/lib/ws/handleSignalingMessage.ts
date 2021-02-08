@@ -9,7 +9,7 @@ import { negotiationState, peerConnection } from "../rtc/usePeerConnection";
 import { queryClient } from "../queryClient";
 import { queryKey as currentUserQueryKey } from "../queries/getCurrentUser";
 import { queryKey as getSessionQueryKey } from "../queries/getSession";
-import { send } from "./connections/send";
+import { sendSignalingMessage } from "./sendSignalingMessage";
 
 /**
  * Implements last half of perfect negotiation
@@ -57,11 +57,6 @@ export async function handleSignalingMessage(
       message.description
     );
 
-    const offerCollision =
-      description.type === "offer" &&
-      (negotiationState.makingOffer ||
-        peerConnection.signalingState !== "stable");
-
     const user = queryClient.getQueryData<UserProfile>(currentUserQueryKey());
     const session = queryClient.getQueryData<Session>(
       getSessionQueryKey(args.sessionId)
@@ -74,7 +69,13 @@ export async function handleSignalingMessage(
       );
       return;
     }
+
     const polite = user && user.sub === session.participants.host;
+
+    const offerCollision =
+      description.type === "offer" &&
+      (negotiationState.makingOffer ||
+        peerConnection.signalingState !== "stable");
 
     negotiationState.ignoreOffer = !polite && offerCollision;
     if (negotiationState.ignoreOffer) {
@@ -87,10 +88,9 @@ export async function handleSignalingMessage(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       await peerConnection.setLocalDescription();
-      send(
-        WebSocketSubType.SIGNALING,
-        JSON.stringify(peerConnection.localDescription!)
-      );
+      sendSignalingMessage({
+        description: JSON.stringify(peerConnection.localDescription!),
+      });
     }
   }
 }
