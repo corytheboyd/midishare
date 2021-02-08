@@ -11,6 +11,7 @@ import {
 import { PeerLaneController } from "./PeerLaneController";
 import { initializeSessionDataWebSocket } from "../../../../lib/ws/initializeSessionDataWebSocket";
 import { initializeSignalingWebSocket } from "../../../../lib/ws/initializeSignalingWebSocket";
+import { NotFound } from "../../NotFound";
 
 export const SessionShowPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
@@ -26,6 +27,15 @@ export const SessionShowPage: React.FC = () => {
   );
 
   useEffect(() => {
+    if (sessionQuery.isLoading) {
+      return;
+    }
+
+    if (!sessionQuery.data) {
+      console.debug("Session not found, skip WebSocket initialization");
+      return;
+    }
+
     /**
      * Note: the user must be added to the session in order for the WebSocket
      * connection to authenticate! If you're moving code around and the
@@ -41,7 +51,11 @@ export const SessionShowPage: React.FC = () => {
       closeSessionDataSocket();
       closeSignalingSocket();
     };
-  }, []);
+  }, [sessionQuery.isLoading, sessionQuery.data]);
+
+  if (!sessionQuery.isLoading && !sessionQuery.data) {
+    return <NotFound message="Session does not exist" />;
+  }
 
   return (
     <Chrome hideFooter={true}>

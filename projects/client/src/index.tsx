@@ -10,6 +10,7 @@ import { HomePage } from "./views/pages/HomePage";
 import { SessionIndexPage } from "./views/pages/Sessions/Index/SessionIndexPage";
 import { SessionShowPage } from "./views/pages/Sessions/Show";
 import { SessionJoinPage } from "./views/pages/Sessions/SessionJoinPage";
+import { NotFound } from "./views/pages/NotFound";
 
 render(
   <QueryClientProvider client={queryClient}>
@@ -28,8 +29,11 @@ render(
         <Route path={Routes.SESSIONS}>
           <SessionIndexPage />
         </Route>
-        <Route path={Routes.HOME}>
+        <Route exact path={Routes.HOME}>
           <HomePage />
+        </Route>
+        <Route path="*">
+          <NotFound />
         </Route>
       </Switch>
     </Router>
