@@ -5,7 +5,7 @@ import { getSession } from "../state/getSession";
 import { Server as WebSocketServer } from "ws";
 import { Express, Request, Response } from "express";
 import { add } from "./connections/add";
-import { SessionDataWebSocketArgs, WebSocketSubType } from "@midishare/common";
+import { WebSocketSubType, WebSocketSubTypeArgs } from "@midishare/common";
 
 export function register(
   httpServer: HttpServer,
@@ -30,8 +30,8 @@ export function register(
   webSocketServer.on("connection", (ws, req) => {
     const userId = getCurrentUserId(req as Request);
     const query = (req as Request).query;
-    const { type } = query as { type: WebSocketSubType };
-    add(type, userId, ws);
+    const args = query as WebSocketSubTypeArgs;
+    add(args, userId, ws);
   });
 
   httpServer.on("upgrade", (req, socket, head) => {
@@ -46,8 +46,8 @@ export function register(
 
       // Require that incoming WebSocket connections specify a type and optional
       // arguments as query parameters.
-      const { type } = req.query as { type: WebSocketSubType };
-      if (!type) {
+      const args = req.query as WebSocketSubTypeArgs;
+      if (!args.type) {
         console.warn("WS UNAUTHORIZED: malformed sub type args");
         return unauthorized();
       }
@@ -57,16 +57,19 @@ export function register(
       // we even touch Redis to mitigate abuse vectors.
       const userId = getCurrentUserId(req);
       if (!userId) {
-        console.warn("WS UNAUTHORIZED: missing user id");
+        console.warn(`WS[type="${args.type}"]: missing user id`);
         return unauthorized();
       }
 
-      if (type === WebSocketSubType.SIGNALING) {
-        // TODO Just make sure the user is in a session, we don't need to add
-        //  the overhead of a specific session. For now just let anyone create
-        //  a signaling socket.
-      } else if (type === WebSocketSubType.SESSION_DATA) {
-        const { sessionId } = req.query as SessionDataWebSocketArgs;
+      if (
+        args.type === WebSocketSubType.SESSION_DATA ||
+        args.type === WebSocketSubType.SIGNALING
+      ) {
+        const { sessionId } = args;
+        if (!sessionId) {
+          console.warn(`WS[type="${args.type}"] missing sessionId arg`);
+          return unauthorized();
+        }
 
         // Make sure the session exists, and that the user is actually a member
         // of it.
@@ -78,7 +81,9 @@ export function register(
           session.participants.guest !== userId
         ) {
           console.warn(
-            `WS UNAUTHORIZED: not member of session [userId="${userId}", sessionId="${sessionId}"]`
+            `WS[type="${args.type}"]: user not member of session`,
+            userId,
+            sessionId
           );
           return unauthorized();
         }

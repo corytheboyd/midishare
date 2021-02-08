@@ -1,9 +1,17 @@
 import {
-  SessionDataWebSocketArgs,
   WebSocketCloseCode,
+  WebSocketSessionDataArgs,
+  WebSocketSignalingArgs,
   WebSocketSubType,
+  WebSocketSubTypeArgs,
 } from "@midishare/common";
-import { handleSessionDataMessage } from "./handleSessionDataMessage";
+import {
+  webSocketMap,
+  WS_INITIAL_RETRY_DELAY,
+  WS_MAX_RETRY_CONNECT_ATTEMPTS,
+  WS_RETRY_DELAY_MS,
+} from "./index";
+import { handleSessionDataMessage } from "../handleSessionDataMessage";
 
 export type ReturnContext = {
   close: (code?: WebSocketCloseCode, reason?: string) => void;
@@ -14,40 +22,23 @@ export type ReturnContext = {
   ws: Promise<WebSocket | null>;
 };
 
-const WS_MAX_RETRY_CONNECT_ATTEMPTS = 4;
-const WS_INITIAL_RETRY_DELAY = 2000;
-const WS_RETRY_DELAY_MS = (attempts: number) => 2 ** (attempts - 1) * 1000;
-
-// Initial state is null, and promise resolves to null if the WebSocket could
-// not be created.
-const webSocketMap: Record<
-  WebSocketSubType,
-  Promise<WebSocket | null> | null
-> = {
-  sessionData: null,
-  signaling: null,
-};
-
 /**
  * This is probably the flakiest logic right now... keep an eye on it.
  * */
-export function initializeWebSocket<T = undefined>(
-  subType: WebSocketSubType,
-  args?: T
-): ReturnContext {
-  if (webSocketMap[subType]) {
-    return buildReturnContext(subType);
+export function create(args: WebSocketSubTypeArgs): ReturnContext {
+  if (webSocketMap[args.type]) {
+    return buildReturnContext(args.type);
   }
 
-  const url = wsSubTypeUrl(subType, args);
-  // console.info(`WS[type="${subType}"]: request initialization`, url);
+  const url = wsSubTypeUrl(args);
+  // console.info(`WS[type="${args.type}"]: request initialization`, url);
 
-  webSocketMap[subType] = new Promise<WebSocket | null>((resolve) => {
+  webSocketMap[args.type] = new Promise<WebSocket | null>((resolve) => {
     // Note: using try/catch on this has no effect. I tried, but go ahead.
     const ws = new WebSocket(url);
 
     ws.onopen = () => {
-      console.info(`WS[type="${subType}"]: connected`, url);
+      console.info(`WS[type="${args.type}"]: connected`, url);
       ws.onopen = ws.onerror = ws.onclose = null;
       resolve(ws);
     };
@@ -58,23 +49,26 @@ export function initializeWebSocket<T = undefined>(
     };
   });
 
-  webSocketMap[subType]!.then((ws) => {
+  webSocketMap[args.type]!.then((ws) => {
     if (!ws) {
-      console.error(`WS[type="${subType}"] failed to create`);
+      console.error(`WS[type="${args.type}"] failed to create`);
       return;
     }
-    return registerEventListeners<T>(subType, args);
+    return registerEventListeners(args);
   });
 
-  return buildReturnContext(subType);
+  return buildReturnContext(args.type);
 }
 
-function wsSubTypeUrl<T>(subType: WebSocketSubType, args: T): string {
+function wsSubTypeUrl(args: WebSocketSubTypeArgs): string {
   const url = new URL(process.env.WS_URL as string);
-  url.searchParams.append("type", subType);
+  url.searchParams.append("type", args.type);
 
-  if (subType === WebSocketSubType.SESSION_DATA) {
-    const { sessionId } = args as SessionDataWebSocketArgs;
+  if (args.type === WebSocketSubType.SESSION_DATA) {
+    const { sessionId } = args as WebSocketSessionDataArgs;
+    url.searchParams.append("sessionId", sessionId);
+  } else if (args.type === WebSocketSubType.SIGNALING) {
+    const { sessionId } = args as WebSocketSignalingArgs;
     url.searchParams.append("sessionId", sessionId);
   }
 
@@ -114,54 +108,53 @@ function sleep(duration: number): Promise<void> {
   });
 }
 
-async function registerEventListeners<T>(
-  subType: WebSocketSubType,
-  args?: T
+async function registerEventListeners(
+  args: WebSocketSubTypeArgs
 ): Promise<void> {
-  const ws = await webSocketMap[subType];
+  const ws = await webSocketMap[args.type];
   if (!ws) {
-    console.info(`WS[type="${subType}"] failed to build return context`);
+    console.info(`WS[type="${args.type}"] failed to build return context`);
     return;
   }
 
   ws.onmessage = function (event) {
-    console.info(`WS[type="${subType}"]: message received`, event.data);
+    console.info(`WS[type="${args.type}"]: message received`, event.data);
 
-    if (subType === WebSocketSubType.SESSION_DATA) {
+    if (args.type === WebSocketSubType.SESSION_DATA) {
       handleSessionDataMessage(event.data);
     } else {
       console.warn(
-        `WS[type="${subType}"]: unhandled subtype message received`,
+        `WS[type="${args.type}"]: unhandled subtype message received`,
         event.data
       );
     }
   };
 
   ws.onerror = function (event) {
-    console.info(`WS[type="${subType}"]: error`, event);
+    console.info(`WS[type="${args.type}"]: error`, event);
   };
 
   ws.onclose = async function (event) {
     console.info(
-      `WS[type="${subType}"]: closed [code="${event.code}", reason="${event.reason}"]`
+      `WS[type="${args.type}"]: closed [code="${event.code}", reason="${event.reason}"]`
     );
 
     const reconnect = async (retries = 0): Promise<void> => {
       console.info(
-        `WS[type="${subType}"]: retry connection [retries="${retries}"]`
+        `WS[type="${args.type}"]: retry connection [retries="${retries}"]`
       );
-      await reset(subType);
+      await reset(args.type);
       await sleep(WS_RETRY_DELAY_MS(retries));
-      const { ws } = initializeWebSocket<T>(subType, args);
+      const { ws } = create(args);
       if (!(await ws)) {
         if (retries === WS_MAX_RETRY_CONNECT_ATTEMPTS) {
           console.warn(
-            `WS[type="${subType}"]: reconnect timeout [retries=${retries}]`
+            `WS[type="${args.type}"]: reconnect timeout [retries=${retries}]`
           );
           return;
         } else {
-          console.info(`WS[type="${subType}"] retry reconnect`);
-          await reset(subType);
+          console.info(`WS[type="${args.type}"] retry reconnect`);
+          await reset(args.type);
           await reconnect(retries + 1);
         }
       }
@@ -171,7 +164,7 @@ async function registerEventListeners<T>(
       setTimeout(reconnect, WS_INITIAL_RETRY_DELAY);
     } else {
       console.warn(
-        `WS[type="${subType}"]: unhandled close code [code="${event.code}", reason="${event.reason}"]`
+        `WS[type="${args.type}"]: unhandled close code [code="${event.code}", reason="${event.reason}"]`
       );
     }
   };

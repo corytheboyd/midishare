@@ -12,6 +12,7 @@ import { PeerLaneController } from "./PeerLaneController";
 import { initializeSessionDataWebSocket } from "../../../../lib/ws/initializeSessionDataWebSocket";
 import { initializeSignalingWebSocket } from "../../../../lib/ws/initializeSignalingWebSocket";
 import { NotFound } from "../../NotFound";
+import { usePeerConnection } from "../../../../lib/rtc/usePeerConnection";
 
 export const SessionShowPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
@@ -47,9 +48,14 @@ export const SessionShowPage: React.FC = () => {
 
     const { close: closeSignalingSocket } = initializeSignalingWebSocket();
 
+    const { start, close: closePeerConnection } = usePeerConnection();
+
+    start();
+
     return () => {
       closeSessionDataSocket();
       closeSignalingSocket();
+      closePeerConnection();
     };
   }, [sessionQuery.isLoading, sessionQuery.data]);
 

@@ -2,36 +2,64 @@ import WebSocket from "ws";
 import { connectionMap } from "./index";
 import { keepAlive } from "./keepAlive";
 import { remove } from "./remove";
-import { UserId, WebSocketSubType } from "@midishare/common";
+import {
+  SignalingMessage,
+  UserId,
+  WebSocketSignalingArgs,
+  WebSocketSubType,
+  WebSocketSubTypeArgs,
+} from "@midishare/common";
+import { handleSignalingMessage } from "../handleSignalingMessage";
 
 /**
  * Keep an eye on add/remove event listener memory leaks
  * */
 export function add(
-  subType: WebSocketSubType,
+  args: WebSocketSubTypeArgs,
   userId: UserId,
   socket: WebSocket
 ): void {
-  if (!connectionMap[subType][userId]) {
-    connectionMap[subType][userId] = [];
+  if (!connectionMap[args.type][userId]) {
+    connectionMap[args.type][userId] = [];
   }
 
   socket.on("close", (code, reason) => {
     console.warn(`WS CLOSE [code=${code}, reason=${reason}]`);
-    remove(subType, userId, socket);
+    remove(args.type, userId, socket);
   });
 
   socket.on("error", (error) => {
     console.warn(`WS ERROR [code=${error.message}]`, error);
-    remove(subType, userId, socket);
+    remove(args.type, userId, socket);
   });
 
-  keepAlive(subType, userId, socket);
+  socket.on("message", (data) => {
+    console.debug(
+      `WS[type="${args.type}", userId="${userId}"] message received`,
+      socket.url,
+      data
+    );
 
-  connectionMap[subType][userId].push(socket);
+    if (args.type === WebSocketSubType.SIGNALING) {
+      let message: SignalingMessage;
+      try {
+        message = JSON.parse(data.toString()) as SignalingMessage;
+      } catch (err) {
+        console.error(
+          `WS[type="${args.type}"] failed to parse signaling message`
+        );
+        return;
+      }
+      handleSignalingMessage(args, message);
+    }
+  });
+
+  keepAlive(args.type, userId, socket);
+
+  connectionMap[args.type][userId].push(socket);
   console.debug(
-    `WS ADD [type=${subType}, userId=${userId}]`,
-    subType,
+    `WS ADD [type=${args.type}, userId=${userId}]`,
+    args.type,
     userId,
     connectionMap
   );

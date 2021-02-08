@@ -52,9 +52,19 @@ export enum WebSocketSubType {
   SIGNALING = "signaling",
 }
 
-export type SessionDataWebSocketArgs = Record<
-  string | number | symbol,
-  unknown
-> & {
+export type WebSocketSessionDataArgs = {
   sessionId: string;
+};
+
+export type WebSocketSignalingArgs = {
+  sessionId: string;
+};
+
+export type WebSocketSubTypeArgs = { type: WebSocketSubType } & (
+  | WebSocketSessionDataArgs
+  | WebSocketSignalingArgs
+);
+
+export type SignalingMessage = {
+  description: RTCSessionDescription;
 };
