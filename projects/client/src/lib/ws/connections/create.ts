@@ -1,4 +1,5 @@
 import {
+  UserId,
   WebSocketCloseCode,
   WebSocketSessionDataArgs,
   WebSocketSignalingArgs,
@@ -12,6 +13,7 @@ import {
   WS_RETRY_DELAY_MS,
 } from "./index";
 import { handleSessionDataMessage } from "../handleSessionDataMessage";
+import { handleSignalingMessage } from "../handleSignalingMessage";
 
 export type ReturnContext = {
   close: (code?: WebSocketCloseCode, reason?: string) => void;
@@ -122,6 +124,8 @@ async function registerEventListeners(
 
     if (args.type === WebSocketSubType.SESSION_DATA) {
       handleSessionDataMessage(event.data);
+    } else if (args.type === WebSocketSubType.SIGNALING) {
+      handleSignalingMessage(args, event.data);
     } else {
       console.warn(
         `WS[type="${args.type}"]: unhandled subtype message received`,

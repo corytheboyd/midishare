@@ -1,6 +1,6 @@
 import { sendSignalingMessage } from "../ws/sendSignalingMessage";
 
-let peerConnection: RTCPeerConnection | null = null;
+export let peerConnection: RTCPeerConnection | null = null;
 
 let localMidiDataChannel: RTCDataChannel;
 
@@ -53,13 +53,20 @@ function close() {
   peerConnection = null;
 }
 
-let makingOffer = false;
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Perfect_negotiation
+ * */
+export const negotiationState = {
+  makingOffer: false,
+  ignoreOffer: false,
+};
+
 function registerEventHandlers(pc: RTCPeerConnection): void {
   pc.onnegotiationneeded = async () => {
     console.debug("RTC: negotiation needed");
 
     try {
-      makingOffer = true;
+      negotiationState.makingOffer = true;
 
       // TODO fix typing forcing a description argument
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -67,12 +74,12 @@ function registerEventHandlers(pc: RTCPeerConnection): void {
       await pc.setLocalDescription();
 
       sendSignalingMessage({
-        description: pc.localDescription!,
+        description: JSON.stringify(pc.localDescription),
       });
     } catch (err) {
       console.error("RTC: error sending initial offer", err);
     } finally {
-      makingOffer = false;
+      negotiationState.makingOffer = false;
     }
   };
 
@@ -82,7 +89,7 @@ function registerEventHandlers(pc: RTCPeerConnection): void {
     }
     console.debug("RTC: has ice candidate", event.candidate);
     sendSignalingMessage({
-      candidate: event.candidate,
+      candidate: JSON.stringify(event.candidate),
     });
   };
 

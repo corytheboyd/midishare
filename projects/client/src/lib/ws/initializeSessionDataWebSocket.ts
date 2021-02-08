@@ -1,5 +1,9 @@
 import { create, ReturnContext } from "./connections/create";
-import { WebSocketSessionDataArgs, WebSocketSubType } from "@midishare/common";
+import {
+  UserId,
+  WebSocketSessionDataArgs,
+  WebSocketSubType,
+} from "@midishare/common";
 
 export function initializeSessionDataWebSocket(
   args: WebSocketSessionDataArgs

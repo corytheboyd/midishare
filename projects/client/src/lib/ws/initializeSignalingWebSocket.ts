@@ -1,4 +1,8 @@
-import { WebSocketSignalingArgs, WebSocketSubType } from "@midishare/common";
+import {
+  UserId,
+  WebSocketSignalingArgs,
+  WebSocketSubType,
+} from "@midishare/common";
 import { create, ReturnContext } from "./connections/create";
 
 export function initializeSignalingWebSocket(
