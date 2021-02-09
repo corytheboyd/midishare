@@ -8,7 +8,7 @@ import { KeyboardState } from "./types";
  * TODO would need to change if playback speed is adjustable! it could no
  *  longer be static.
  * */
-const NEED_RENDER_DELAY = 250;
+const NEED_RENDER_DELAY = 1000;
 
 export function createStore(): StoreApi<KeyboardState> {
   storeLogger("createStore()");
