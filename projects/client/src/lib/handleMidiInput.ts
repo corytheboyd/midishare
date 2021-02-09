@@ -8,23 +8,19 @@
 import { InputEvents } from "webmidi";
 import { store } from "./store";
 import { getKeyNameFromIndex } from "@midishare/keyboard";
+import { sendMidiData } from "./rtc/sendMidiData";
 
 // Restrict allowable event types to prevent registering something new that
 // we don't yet know how to handle. Let's goooo strong types!
-type AllowedInputEventTypes = "noteon" | "noteoff" | "controlchange";
+export type AllowedInputEventTypes = "noteon" | "noteoff" | "controlchange";
 
 export function handleMidiInput(
-  inputId: string,
   type: Extract<keyof InputEvents, AllowedInputEventTypes>,
   data: Uint8Array,
   timestamp: number
 ): void {
   // Play the local keyboard
-  if (
-    (store.getState().activeMidiInputDeviceId === inputId &&
-      type === "noteon") ||
-    type === "noteoff"
-  ) {
+  if (type === "noteon" || type === "noteoff") {
     const [, note, velocity] = data;
     const keyName = getKeyNameFromIndex(note - 21);
 
@@ -34,4 +30,7 @@ export function handleMidiInput(
       store.getState().runtime?.localKeyboardRuntime.keyOff(keyName);
     }
   }
+
+  // Send data to remote peer
+  sendMidiData(data, timestamp);
 }

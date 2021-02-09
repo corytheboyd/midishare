@@ -1,8 +1,10 @@
 import { sendSignalingMessage } from "../ws/sendSignalingMessage";
+import { handleMidiData } from "./handleMidiData";
 
 export let peerConnection: RTCPeerConnection | null = null;
+export let remoteMidiDataChannel: RTCDataChannel | null = null;
 
-let localMidiDataChannel: RTCDataChannel;
+let localMidiDataChannel: RTCDataChannel | null = null;
 
 type UsePeerConnectionReturnContext = {
   peerConnection: RTCPeerConnection | null;
@@ -35,7 +37,13 @@ function start() {
     console.warn("RTC: peer connection not created");
     return;
   }
-  localMidiDataChannel = peerConnection.createDataChannel("MIDI");
+  localMidiDataChannel = peerConnection.createDataChannel("MIDI", {
+    ordered: false,
+    priority: "high",
+  });
+  localMidiDataChannel.onmessage = (event) => {
+    handleMidiData(event.data);
+  };
 }
 
 function create() {
@@ -101,5 +109,13 @@ function registerEventHandlers(pc: RTCPeerConnection): void {
 
   pc.onconnectionstatechange = () => {
     console.debug("RTC: connection state change", pc.connectionState);
+  };
+
+  pc.ondatachannel = (event) => {
+    console.debug("RTC: data channel added to connection", event.channel.label);
+
+    if (event.channel.label === "MIDI") {
+      remoteMidiDataChannel = event.channel;
+    }
   };
 }

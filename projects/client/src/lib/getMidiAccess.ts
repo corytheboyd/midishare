@@ -1,4 +1,9 @@
-import WebMidi, { InputEvents } from "webmidi";
+import WebMidi, {
+  InputEventControlchange,
+  InputEventNoteoff,
+  InputEventNoteon,
+  InputEvents,
+} from "webmidi";
 import { store } from "./store";
 import { handleMidiInput } from "./handleMidiInput";
 
@@ -20,30 +25,18 @@ export function getMidiAccess(): void {
       }
       store.getState().addMidiInputDevice(event.port);
 
-      event.port.addListener("noteon", "all", (event) => {
-        handleMidiInput(
-          event.target.id,
-          event.type,
-          event.data,
-          event.timestamp
-        );
-      });
-      event.port.addListener("noteoff", "all", (event) => {
-        handleMidiInput(
-          event.target.id,
-          event.type,
-          event.data,
-          event.timestamp
-        );
-      });
-      event.port.addListener("controlchange", "all", (event) => {
-        handleMidiInput(
-          event.target.id,
-          event.type,
-          event.data,
-          event.timestamp
-        );
-      });
+      const eventListenerCallback = (
+        event: InputEventNoteon | InputEventNoteoff | InputEventControlchange
+      ) => {
+        if (store.getState().activeMidiInputDeviceId !== event.target.id) {
+          return;
+        }
+        handleMidiInput(event.type, event.data, event.timestamp);
+      };
+
+      event.port.addListener("noteon", "all", eventListenerCallback);
+      event.port.addListener("noteoff", "all", eventListenerCallback);
+      event.port.addListener("controlchange", "all", eventListenerCallback);
     });
 
     WebMidi.addListener("disconnected", (event) => {

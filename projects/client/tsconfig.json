@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "jsx": "react",
-    "lib": ["dom"]
+    "lib": ["dom"],
+    "target": "ES2015"
   }
 }
