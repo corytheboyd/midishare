@@ -97,7 +97,6 @@ function registerEventHandlers(pc: RTCPeerConnection): void {
     if (!event.candidate) {
       return;
     }
-    console.debug("RTC: has ice candidate", event.candidate);
     sendSignalingMessage({
       candidate: JSON.stringify(event.candidate),
     });
