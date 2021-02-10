@@ -6,6 +6,7 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import {
   getSession,
+  queryKey,
   queryKey as sessionQueryKey,
 } from "../../../../lib/queries/getSession";
 import { PeerLaneController } from "./PeerLaneController";
@@ -17,6 +18,7 @@ import {
 } from "../../../../lib/queries/getCurrentUser";
 import { useSocket } from "../../../../lib/ws/useSocket";
 import { WebSocketSubType } from "@midishare/common";
+import { queryClient } from "../../../../lib/queryClient";
 
 export const SessionShowPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
@@ -32,17 +34,20 @@ export const SessionShowPage: React.FC = () => {
     }
   );
 
+  const connection = usePeerConnection(urlParams.id);
+
   const sessionDataSocket = useSocket({
     type: WebSocketSubType.SESSION_DATA,
     sessionId: urlParams.id,
   });
-  // useEffect(() => {
-  //   sessionDataSocket.onMessage((data) => {
-  //     console.debug("session data updated", data);
-  //   });
-  // }, []);
 
-  const connection = usePeerConnection(urlParams.id);
+  useEffect(() => {
+    sessionDataSocket.onMessage((data) => {
+      // TODO this is very naive, and will quickly lead to data clobbering
+      //  issues if session data grows to contain more things.
+      queryClient.setQueryData(queryKey(urlParams.id), JSON.parse(data));
+    });
+  }, []);
 
   useEffect(() => {
     if (!sessionQuery.data || !userQuery.data) {

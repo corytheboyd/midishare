@@ -103,7 +103,17 @@ export class PeerConnection {
     };
 
     pc.ondatachannel = (event) => {
-      console.debug("RTC: remote peer added data channel", event.channel);
+      console.debug(
+        "PeerConnection: remote peer added data channel",
+        event.channel
+      );
+    };
+
+    pc.onconnectionstatechange = () => {
+      console.debug(
+        "PeerConnection: connection state change",
+        pc.connectionState
+      );
     };
 
     return pc;
