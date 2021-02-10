@@ -4,8 +4,7 @@ import { Socket } from "../ws/Socket";
 export class PeerConnection {
   private static _instance: PeerConnection | null;
 
-  private readonly pc: RTCPeerConnection;
-
+  private pc: RTCPeerConnection | null = null;
   private midiDataChannel: RTCDataChannel | null = null;
   private polite: boolean | null = null;
   private onMidiDataCallbacks: ((data: number[]) => void)[] = [];
@@ -21,8 +20,13 @@ export class PeerConnection {
     return this._instance;
   }
 
+  /**
+   * TODO this will not work when using more than one instance of the
+   *  userPeerConnection hook. Need to only destroy instance if the last hook
+   *  is going away.
+   * */
   public static destroy(): void {
-    this._instance?.pc.close();
+    this._instance?.pc?.close();
     this._instance = null;
   }
 
@@ -78,24 +82,45 @@ export class PeerConnection {
   }
 
   private addMidiDataChannelToConnection(): void {
-    if (!this.midiDataChannel) {
-      this.midiDataChannel = this.pc.createDataChannel("MIDI", {
-        id: 0,
-        negotiated: true,
-        ordered: false,
-      });
+    if (!this.pc) {
+      throw new Error("PeerConnection: pc not set");
+    }
+    if (this.midiDataChannel) {
+      throw new Error("PeerConnection: midi data channel already added");
     }
 
-    this.midiDataChannel.onopen = () => {
+    const dc = this.pc.createDataChannel("MIDI", {
+      id: 0,
+      negotiated: true,
+      ordered: false,
+    });
+    this.midiDataChannel = dc;
+
+    dc.onopen = () => {
       console.debug("PeerConnection: midi data channel open");
     };
 
-    this.midiDataChannel.onclose = () => {
+    dc.onclose = () => {
       console.debug("PeerConnection: midi data channel closed, destroying");
+
+      dc.onopen = null;
+      dc.onclose = null;
+      dc.onmessage = null;
       this.midiDataChannel = null;
+
+      if (this.pc) {
+        this.pc.onnegotiationneeded = null;
+        this.pc.onicecandidate = null;
+        this.pc.oniceconnectionstatechange = null;
+        this.pc.onconnectionstatechange = null;
+        this.pc = null;
+      }
+
+      this.pc = this.createPeerConnection();
+      this.start();
     };
 
-    this.midiDataChannel.onmessage = (event) => {
+    dc.onmessage = (event) => {
       this.onMidiDataCallbacks.forEach((cb) => cb(event.data));
     };
   }
@@ -130,6 +155,20 @@ export class PeerConnection {
       });
     };
 
+    pc.oniceconnectionstatechange = () => {
+      console.debug(
+        "PeerConnection: ice connection state change",
+        pc.iceConnectionState
+      );
+
+      // See: https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/restartIce
+      // TODO actually test to figure out if it works first
+      // TODO fix types
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      // this.pc.restartIce();
+    };
+
     pc.onconnectionstatechange = () => {
       console.debug(
         "PeerConnection: connection state change",
@@ -138,6 +177,7 @@ export class PeerConnection {
 
       if (pc.connectionState === "closed") {
         console.debug("PeerConnection: closed");
+        this.pc = null;
       }
 
       if (pc.connectionState === "connecting") {
@@ -145,7 +185,6 @@ export class PeerConnection {
           console.debug(
             "PeerConnection: reconnected, recreate midi data channel"
           );
-          this.addMidiDataChannelToConnection();
         }
       }
     };
@@ -162,9 +201,13 @@ export class PeerConnection {
   }
 
   private async processSignaling(message: SignalingMessage): Promise<void> {
+    if (!this.pc) {
+      throw new Error("PeerConnection: pc not set");
+    }
     if (!this.signaling) {
       throw new Error("PeerConnection: signaling socket not set");
     }
+
     console.debug("PeerConnection: received signaling", message);
 
     if (message.candidate) {
