@@ -29,7 +29,7 @@ export class PeerConnection {
     for (const value of data) {
       message.push(value);
     }
-    this.instance().midiDataChannel?.send(message.join(","));
+    this._instance?.midiDataChannel?.send(message.join(","));
   }
 
   private constructor() {
