@@ -6,14 +6,19 @@ import {
   WebSocketSubTypeArgs,
 } from "@midishare/common";
 
+/**
+ * TODO there is a race condition where signaling is sent before the websocket
+ *  is opened. should be easier to fix now that things are less of a mess.
+ * */
 export class Socket {
   private static instanceMap: {
-    [WebSocketSubType.SIGNALING]?: Socket;
-    [WebSocketSubType.SESSION_DATA]?: Socket;
-  } = {};
+    [T in WebSocketSubType]: Socket | null;
+  } = {
+    [WebSocketSubType.SIGNALING]: null,
+    [WebSocketSubType.SESSION_DATA]: null,
+  };
 
   private ws?: WebSocket;
-
   private readonly args: WebSocketSubTypeArgs;
   private readonly onMessageCallbacks: ((data: string) => void)[];
 
@@ -45,6 +50,7 @@ export class Socket {
   public static destroy(type: WebSocketSubType): void {
     const instance = this.instanceMap[type];
     instance?.close(WebSocketCloseCode.NORMAL_CLOSURE);
+    this.instanceMap[type] = null;
   }
 
   private static buildUrl(args: WebSocketSubTypeArgs): string {
