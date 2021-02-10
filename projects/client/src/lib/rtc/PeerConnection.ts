@@ -7,6 +7,7 @@ export class PeerConnection {
   private pc: RTCPeerConnection | null = null;
   private midiDataChannel: RTCDataChannel | null = null;
   private polite: boolean | null = null;
+  private originalPolite: boolean | null = null;
   private onMidiDataCallbacks: ((data: number[]) => void)[] = [];
 
   private signaling?: Socket;
@@ -26,21 +27,26 @@ export class PeerConnection {
    *  is going away.
    * */
   public static destroy(): void {
-    this._instance?.pc?.close();
+    this._instance?.resetPeerConnection(false);
     this._instance = null;
   }
 
+  /**
+   * Sends MIDI data to other peer through the underlying PeerConnection
+   * singleton.
+   *
+   * If we're in a reconnection like state where the underlying data channel
+   * doesn't exist yet, the message is simply dropped. It doesn't really make
+   * a whole lot of sense to queue up and replay realtime data.
+   * */
   public static sendMidiData(data: Uint8Array, timestamp: number): void {
     const message: (string | number)[] = [timestamp];
     for (const value of data) {
       message.push(value);
     }
-    console.debug(
-      "PeerConnection: send midi data",
-      this._instance?.midiDataChannel,
-      message
-    );
-    this._instance?.midiDataChannel?.send(message.join(","));
+    if (this._instance?.midiDataChannel?.readyState === "open") {
+      this._instance?.midiDataChannel?.send(message.join(","));
+    }
   }
 
   private constructor() {
@@ -51,10 +57,15 @@ export class PeerConnection {
     if (this.polite === null) {
       throw new Error("PeerConnection: failed to start, must call setPolite");
     }
+    console.debug("PeerConnection: start");
     this.addMidiDataChannelToConnection();
   }
 
   public setPolite(value: boolean): void {
+    if (this.originalPolite === null) {
+      this.originalPolite = value;
+    }
+    console.debug("PeerConnection: set polite", value);
     this.polite = value;
   }
 
@@ -100,24 +111,12 @@ export class PeerConnection {
       console.debug("PeerConnection: midi data channel open");
     };
 
-    dc.onclose = () => {
+    dc.onclose = async () => {
       console.debug("PeerConnection: midi data channel closed, destroying");
 
-      dc.onopen = null;
-      dc.onclose = null;
-      dc.onmessage = null;
-      this.midiDataChannel = null;
-
-      if (this.pc) {
-        this.pc.onnegotiationneeded = null;
-        this.pc.onicecandidate = null;
-        this.pc.oniceconnectionstatechange = null;
-        this.pc.onconnectionstatechange = null;
-        this.pc = null;
-      }
-
-      this.pc = this.createPeerConnection();
-      this.start();
+      // TODO this likely isn't the right place to put it, what if there were
+      //  more data channels?
+      this.resetPeerConnection();
     };
 
     dc.onmessage = (event) => {
@@ -125,12 +124,44 @@ export class PeerConnection {
     };
   }
 
+  private resetPeerConnection(create = true): void {
+    console.debug("PeerConnection: restart");
+
+    if (this.midiDataChannel) {
+      this.midiDataChannel.close();
+      this.midiDataChannel.onopen = null;
+      this.midiDataChannel.onclose = null;
+      this.midiDataChannel.onmessage = null;
+    }
+    this.midiDataChannel = null;
+
+    if (this.pc) {
+      this.pc.close();
+      this.pc.onnegotiationneeded = null;
+      this.pc.onicecandidate = null;
+      this.pc.oniceconnectionstatechange = null;
+      this.pc.onconnectionstatechange = null;
+    }
+    this.pc = null;
+
+    // If this was the impolite peer, and it is restarting, temporarily switch to polite to accept the offer
+    if (!this.polite) {
+      this.setPolite(true);
+    }
+
+    if (create) {
+      this.pc = this.createPeerConnection();
+      this.start();
+    }
+  }
+
   private createPeerConnection(): RTCPeerConnection {
     const pc = new RTCPeerConnection();
 
     pc.onnegotiationneeded = async () => {
-      this.makingOffer = true;
+      console.debug("PeerConnection: negotiation needed");
 
+      this.makingOffer = true;
       try {
         await (pc as typeof pc & {
           setLocalDescription: () => Promise<void>;
@@ -155,6 +186,13 @@ export class PeerConnection {
       });
     };
 
+    pc.onsignalingstatechange = () => {
+      console.debug(
+        "PeerConnection: signaling state change",
+        pc.signalingState
+      );
+    };
+
     pc.oniceconnectionstatechange = () => {
       console.debug(
         "PeerConnection: ice connection state change",
@@ -175,16 +213,10 @@ export class PeerConnection {
         pc.connectionState
       );
 
-      if (pc.connectionState === "closed") {
-        console.debug("PeerConnection: closed");
-        this.pc = null;
-      }
-
       if (pc.connectionState === "connecting") {
-        if (!this.midiDataChannel) {
-          console.debug(
-            "PeerConnection: reconnected, recreate midi data channel"
-          );
+        if (this.polite !== this.originalPolite) {
+          console.debug("PeerConnection: reverting polite after reconnect");
+          this.setPolite(this.originalPolite!);
         }
       }
     };
