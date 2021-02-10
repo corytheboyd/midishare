@@ -50,13 +50,13 @@ export const SessionShowPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!sessionQuery.data || !userQuery.data) {
+    if (!sessionQuery.data) {
       return;
     }
     connection.setPolite(
-      userQuery.data &&
-        userQuery.data.sub === sessionQuery.data.participants.host
+      userQuery.data?.sub === sessionQuery.data.participants.host
     );
+    connection.start();
   }, [sessionQuery.isSuccess, userQuery.isSuccess]);
 
   if (!sessionQuery.isLoading && !sessionQuery.data) {

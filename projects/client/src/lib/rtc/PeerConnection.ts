@@ -5,10 +5,10 @@ export class PeerConnection {
   private static _instance: PeerConnection | null;
 
   private readonly pc: RTCPeerConnection;
-  private readonly midiDataChannel: RTCDataChannel;
 
+  private midiDataChannel?: RTCDataChannel;
   private signaling?: Socket;
-  private polite?: boolean;
+  private polite: boolean | null = null;
   private makingOffer = false;
   private ignoreOffer = false;
 
@@ -29,11 +29,17 @@ export class PeerConnection {
     for (const value of data) {
       message.push(value);
     }
-    this.instance().midiDataChannel.send(message.join(","));
+    this.instance().midiDataChannel?.send(message.join(","));
   }
 
   private constructor() {
     this.pc = this.createPeerConnection();
+  }
+
+  public start(): void {
+    if (this.polite === null) {
+      throw new Error("PeerConnection: failed to start, must call setPolite");
+    }
     this.midiDataChannel = this.createMidiDataChannel();
   }
 
@@ -63,11 +69,10 @@ export class PeerConnection {
       priority: "high",
     });
 
-    // TODO PeerConnection#onMidiData functionality, register it where the
-    //  hook is called.
-    // dc.onmessage = (event) => {
-    //   // this.onMidiMessage(event.data);
-    // };
+    dc.onmessage = (event) => {
+      console.debug("PeerConnection: midi data received", event.data);
+      // this.onMidiMessage(event.data);
+    };
 
     return dc;
   }

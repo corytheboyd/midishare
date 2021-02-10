@@ -6,10 +6,6 @@ import {
   WebSocketSubTypeArgs,
 } from "@midishare/common";
 
-/**
- * TODO there is a race condition where signaling is sent before the websocket
- *  is opened. should be easier to fix now that things are less of a mess.
- * */
 export class Socket {
   private static instanceMap: {
     [T in WebSocketSubType]: Socket | null;
