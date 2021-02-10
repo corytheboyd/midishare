@@ -9,12 +9,20 @@ export function usePeerConnection(sessionId: string): PeerConnection {
     sessionId,
   });
 
-  const connection = useMemo(() => PeerConnection.instance(), []);
+  const connection = useMemo(() => {
+    console.debug("usePeerConnection: get instance");
+    return PeerConnection.instance();
+  }, []);
 
   useEffect(() => {
+    console.debug("usePeerConnection: initialize", socket); ////
+
     connection.setSignaling(socket);
 
-    return () => PeerConnection.destroy();
+    return () => {
+      console.debug("usePeerConnection: cleanup");
+      PeerConnection.destroy();
+    };
   }, []);
 
   return connection;

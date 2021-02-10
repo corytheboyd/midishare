@@ -27,7 +27,6 @@ export const Scene: React.FC<SceneProps> = (props) => {
     modelRef.current = group;
 
     if (modelRef.current === null) {
-      console.debug("Model component was unmounted, clearing ref value");
       return;
     }
 

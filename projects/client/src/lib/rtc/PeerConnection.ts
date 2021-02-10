@@ -125,7 +125,7 @@ export class PeerConnection {
   }
 
   private resetPeerConnection(create = true): void {
-    console.debug("PeerConnection: restart");
+    console.debug("PeerConnection: restart", create);
 
     if (this.midiDataChannel) {
       this.midiDataChannel.close();

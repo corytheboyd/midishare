@@ -43,5 +43,15 @@ render(
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
-if (module.hot) module.hot.accept();
+if (module.hot) {
+  // @ts-ignore
+  module.hot.dispose((...args) => {
+    console.info("HMR: disposing component", args);
+  });
+
+  // @ts-ignore
+  module.hot.accept((...args) => {
+    console.info("HMR: accept updated component", args);
+  });
+}
 /* eslint-enable @typescript-eslint/ban-ts-comment */
