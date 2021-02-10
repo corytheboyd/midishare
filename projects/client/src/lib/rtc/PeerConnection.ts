@@ -2,9 +2,9 @@ import { SignalingMessage } from "@midishare/common";
 import { Socket } from "../ws/Socket";
 
 export class PeerConnection {
-  private static _instance: PeerConnection;
+  private static _instance: PeerConnection | null;
 
-  private readonly peerConnection: RTCPeerConnection;
+  private readonly pc: RTCPeerConnection;
   private readonly midiDataChannel: RTCDataChannel;
 
   private signaling?: Socket;
@@ -20,13 +20,8 @@ export class PeerConnection {
   }
 
   public static destroy(): void {
-    this._instance.peerConnection.close();
-  }
-
-  public static async processSignalingMessage(
-    message: SignalingMessage
-  ): Promise<void> {
-    return this._instance.processSignaling(message);
+    this._instance?.pc.close();
+    this._instance = null;
   }
 
   public static sendMidiData(data: Uint8Array, timestamp: number): void {
@@ -38,7 +33,7 @@ export class PeerConnection {
   }
 
   private constructor() {
-    this.peerConnection = this.createPeerConnection();
+    this.pc = this.createPeerConnection();
     this.midiDataChannel = this.createMidiDataChannel();
   }
 
@@ -48,19 +43,31 @@ export class PeerConnection {
 
   public setSignaling(socket: Socket): void {
     this.signaling = socket;
+
+    this.signaling.onMessage((data) => {
+      let message: SignalingMessage;
+      try {
+        message = JSON.parse(data);
+      } catch (error) {
+        return;
+      }
+      this.processSignaling(message);
+    });
   }
 
   private createMidiDataChannel(): RTCDataChannel {
-    const dc = this.peerConnection.createDataChannel("MIDI", {
+    const dc = this.pc.createDataChannel("MIDI", {
       id: 0,
       negotiated: true,
       ordered: false,
       priority: "high",
     });
 
-    dc.onmessage = (event) => {
-      // this.onMidiMessage(event.data);
-    };
+    // TODO PeerConnection#onMidiData functionality, register it where the
+    //  hook is called.
+    // dc.onmessage = (event) => {
+    //   // this.onMidiMessage(event.data);
+    // };
 
     return dc;
   }
@@ -80,7 +87,7 @@ export class PeerConnection {
           description: JSON.stringify(pc.localDescription),
         });
       } catch (err) {
-        console.error("RTC: error sending initial offer");
+        console.error("RTC: error sending initial offer", err);
       } finally {
         this.makingOffer = false;
       }
@@ -106,6 +113,7 @@ export class PeerConnection {
     if (!this.signaling) {
       throw new Error("PeerConnection: signaling socket not set");
     }
+    console.debug("PeerConnection: send signaling", message);
     this.signaling.send(JSON.stringify(message));
   }
 
@@ -113,11 +121,12 @@ export class PeerConnection {
     if (!this.signaling) {
       throw new Error("PeerConnection: signaling socket not set");
     }
+    console.debug("PeerConnection: received signaling", message);
 
     if (message.candidate) {
       const candidate: RTCIceCandidateInit = JSON.parse(message.candidate);
       try {
-        await this.peerConnection.addIceCandidate(candidate);
+        await this.pc.addIceCandidate(candidate);
       } catch (err) {
         if (!this.ignoreOffer) {
           throw err;
@@ -132,22 +141,22 @@ export class PeerConnection {
 
       const offerCollision =
         description.type === "offer" &&
-        (this.makingOffer || this.peerConnection.signalingState !== "stable");
+        (this.makingOffer || this.pc.signalingState !== "stable");
 
       this.ignoreOffer = !this.polite && offerCollision;
       if (this.ignoreOffer) {
         return;
       }
 
-      await this.peerConnection.setRemoteDescription(description);
+      await this.pc.setRemoteDescription(description);
       if (description.type === "offer") {
         // TODO fix setLocalDescription typing
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        await peerConnection.setLocalDescription();
+        await this.pc.setLocalDescription();
 
         this.sendSignaling({
-          description: JSON.stringify(this.peerConnection.localDescription),
+          description: JSON.stringify(this.pc.localDescription),
         });
       }
     }

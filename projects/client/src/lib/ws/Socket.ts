@@ -12,7 +12,8 @@ export class Socket {
     [WebSocketSubType.SESSION_DATA]?: Socket;
   } = {};
 
-  private readonly ws: WebSocket;
+  private ws?: WebSocket;
+
   private readonly args: WebSocketSubTypeArgs;
   private readonly onMessageCallbacks: ((data: string) => void)[];
 
@@ -22,17 +23,19 @@ export class Socket {
     }
 
     const ws = new WebSocket(this.buildUrl(args));
-    const instance = new this(ws, args);
+    const instance = new this(args);
+    this.instanceMap[args.type] = instance;
 
     const reset = () =>
       (ws.onclose = ws.onerror = ws.onopen = ws.onmessage = null);
 
-    ws.onopen = () => {
+    ws.onopen = (event) => {
       reset();
-      this.instanceMap[args.type] = instance;
+      instance.setWebSocket(event.target as WebSocket);
     };
 
     ws.onclose = ws.onerror = () => {
+      this.instanceMap[args.type] = instance;
       reset();
     };
 
@@ -59,14 +62,9 @@ export class Socket {
     return url.toString();
   }
 
-  private constructor(ws: WebSocket, args: WebSocketSubTypeArgs) {
-    this.ws = ws;
+  private constructor(args: WebSocketSubTypeArgs) {
     this.args = args;
     this.onMessageCallbacks = [];
-
-    ws.onmessage = (event) => {
-      this.onMessageCallbacks.forEach((cb) => cb(event.data));
-    };
   }
 
   public onMessage(callback: (data: string) => void): void {
@@ -74,10 +72,24 @@ export class Socket {
   }
 
   public send(data: string): void {
+    if (!this.ws) {
+      throw new Error("Socket: underlying ws missing");
+    }
     this.ws.send(data);
   }
 
+  private setWebSocket(ws: WebSocket): void {
+    this.ws = ws;
+
+    this.ws.onmessage = (event) => {
+      this.onMessageCallbacks.forEach((cb) => cb(event.data));
+    };
+  }
+
   private close(code: WebSocketCloseCode, reason?: string): void {
+    if (!this.ws) {
+      throw new Error("Socket: underlying ws missing");
+    }
     this.ws.close(code, reason);
   }
 }
