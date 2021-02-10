@@ -21,6 +21,7 @@ export class Socket {
   private ws?: WebSocket;
   private readonly args: WebSocketSubTypeArgs;
   private readonly onMessageCallbacks: ((data: string) => void)[];
+  private sendQueue: string[] = [];
 
   public static instance(args: WebSocketSubTypeArgs): Socket {
     if (this.instanceMap[args.type]) {
@@ -78,23 +79,35 @@ export class Socket {
   }
 
   public send(data: string): void {
-    if (!this.ws) {
-      throw new Error("Socket: underlying ws missing");
+    if (this.ws) {
+      this.ws.send(data);
+    } else {
+      this.sendQueue.push(data);
     }
-    this.ws.send(data);
   }
 
   private setWebSocket(ws: WebSocket): void {
+    if (this.ws) {
+      throw new Error(`Socket[${this.args.type}]: cannot only set socket once`);
+    }
     this.ws = ws;
-
     this.ws.onmessage = (event) => {
       this.onMessageCallbacks.forEach((cb) => cb(event.data));
     };
+
+    // Drain any queued messages received while waiting for socket to connect.
+    let data;
+    while (this.sendQueue.length > 0) {
+      data = this.sendQueue.pop();
+      if (data) {
+        this.ws.send(data);
+      }
+    }
   }
 
   private close(code: WebSocketCloseCode, reason?: string): void {
     if (!this.ws) {
-      throw new Error("Socket: underlying ws missing");
+      throw new Error(`Socket[${this.args.type}]: underlying ws missing`);
     }
     this.ws.close(code, reason);
   }

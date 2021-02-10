@@ -15,6 +15,8 @@ import {
   queryKey as currentUserQueryKey,
   getCurrentUser,
 } from "../../../../lib/queries/getCurrentUser";
+import { useSocket } from "../../../../lib/ws/useSocket";
+import { WebSocketSubType } from "@midishare/common";
 
 export const SessionShowPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
@@ -30,7 +32,15 @@ export const SessionShowPage: React.FC = () => {
     }
   );
 
-  // useSocket({ type: WebSocketSubType.SESSION_DATA, sessionId: urlParams.id });
+  const sessionDataSocket = useSocket({
+    type: WebSocketSubType.SESSION_DATA,
+    sessionId: urlParams.id,
+  });
+  // useEffect(() => {
+  //   sessionDataSocket.onMessage((data) => {
+  //     console.debug("session data updated", data);
+  //   });
+  // }, []);
 
   const connection = usePeerConnection(urlParams.id);
 
