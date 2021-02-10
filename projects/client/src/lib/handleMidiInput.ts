@@ -8,7 +8,7 @@
 import { InputEvents } from "webmidi";
 import { store } from "./store";
 import { getKeyNameFromIndex } from "@midishare/keyboard";
-import { sendMidiData } from "./rtc/sendMidiData";
+import { PeerConnection } from "./rtc/PeerConnection";
 
 // Restrict allowable event types to prevent registering something new that
 // we don't yet know how to handle. Let's goooo strong types!
@@ -31,6 +31,5 @@ export function handleMidiInput(
     }
   }
 
-  // Send data to remote peer
-  sendMidiData(data, timestamp);
+  PeerConnection.sendMidiData(data, timestamp);
 }

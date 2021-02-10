@@ -1,120 +1,33 @@
-import { sendSignalingMessage } from "../ws/sendSignalingMessage";
-import { handleMidiData } from "./handleMidiData";
+import { useEffect, useMemo } from "react";
+import { PeerConnection } from "./PeerConnection";
+import { useSocket } from "../ws/useSocket";
+import { SignalingMessage, WebSocketSubType } from "@midishare/common";
 
-export let peerConnection: RTCPeerConnection | null = null;
-export let remoteMidiDataChannel: RTCDataChannel | null = null;
-
-let localMidiDataChannel: RTCDataChannel | null = null;
-
-type UsePeerConnectionReturnContext = {
-  peerConnection: RTCPeerConnection | null;
-  start: () => void;
-  close: () => void;
-};
-
-/**
- * WIP, not sure if react hook convention is best yet
- * */
-export function usePeerConnection(): UsePeerConnectionReturnContext {
-  if (!peerConnection) {
-    peerConnection = create();
-  }
-  return {
-    peerConnection,
-    start: () => {
-      console.debug("RTC: start return context function called");
-      start();
-    },
-    close: () => {
-      console.debug("RTC: close return context function called");
-      close();
-    },
-  };
-}
-
-function start() {
-  if (!peerConnection) {
-    console.warn("RTC: peer connection not created");
-    return;
-  }
-  localMidiDataChannel = peerConnection.createDataChannel("MIDI", {
-    ordered: false,
-    priority: "high",
+export function usePeerConnection(sessionId: string): PeerConnection {
+  const socket = useSocket({
+    type: WebSocketSubType.SIGNALING,
+    sessionId,
   });
-  localMidiDataChannel.onmessage = (event) => {
-    handleMidiData(event.data);
-  };
-}
 
-function create() {
-  console.info("RTC: create new peer connection");
-  peerConnection = new RTCPeerConnection({
-    iceServers: [{ urls: ["stun:stun.l.google.com:19302"] }],
-  });
-  registerEventHandlers(peerConnection);
-  return peerConnection;
-}
+  const connection = useMemo(() => PeerConnection.instance(), []);
 
-function close() {
-  if (!peerConnection) {
-    console.warn("RTC: peer connection not created");
-  }
-  peerConnection?.close();
-  peerConnection = null;
-}
+  useEffect(() => {
+    console.debug("usePeerConnection hook called");
 
-/**
- * @see https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Perfect_negotiation
- * */
-export const negotiationState = {
-  makingOffer: false,
-  ignoreOffer: false,
-};
+    connection.setSignaling(socket);
 
-function registerEventHandlers(pc: RTCPeerConnection): void {
-  pc.onnegotiationneeded = async () => {
-    console.debug("RTC: negotiation needed");
-
-    try {
-      negotiationState.makingOffer = true;
-
-      // TODO fix typing forcing a description argument
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      await pc.setLocalDescription();
-
-      sendSignalingMessage({
-        description: JSON.stringify(pc.localDescription),
-      });
-    } catch (err) {
-      console.error("RTC: error sending initial offer", err);
-    } finally {
-      negotiationState.makingOffer = false;
-    }
-  };
-
-  pc.onicecandidate = (event) => {
-    if (!event.candidate) {
-      return;
-    }
-    sendSignalingMessage({
-      candidate: JSON.stringify(event.candidate),
+    socket.onMessage((data) => {
+      let message: SignalingMessage;
+      try {
+        message = JSON.parse(data);
+      } catch (error) {
+        return;
+      }
+      PeerConnection.processSignalingMessage(message);
     });
-  };
 
-  pc.onsignalingstatechange = () => {
-    console.debug("RTC: signaling state change", pc.signalingState);
-  };
+    return () => PeerConnection.destroy();
+  }, []);
 
-  pc.onconnectionstatechange = () => {
-    console.debug("RTC: connection state change", pc.connectionState);
-  };
-
-  pc.ondatachannel = (event) => {
-    console.debug("RTC: data channel added to connection", event.channel.label);
-
-    if (event.channel.label === "MIDI") {
-      remoteMidiDataChannel = event.channel;
-    }
-  };
+  return connection;
 }

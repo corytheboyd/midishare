@@ -9,14 +9,17 @@ import {
   queryKey as sessionQueryKey,
 } from "../../../../lib/queries/getSession";
 import { PeerLaneController } from "./PeerLaneController";
-import { initializeSessionDataWebSocket } from "../../../../lib/ws/initializeSessionDataWebSocket";
-import { initializeSignalingWebSocket } from "../../../../lib/ws/initializeSignalingWebSocket";
 import { NotFound } from "../../NotFound";
 import { usePeerConnection } from "../../../../lib/rtc/usePeerConnection";
+import {
+  queryKey as currentUserQueryKey,
+  getCurrentUser,
+} from "../../../../lib/queries/getCurrentUser";
 
 export const SessionShowPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
 
+  const userQuery = useQuery(currentUserQueryKey(), getCurrentUser);
   const sessionQuery = useQuery(
     sessionQueryKey(urlParams.id),
     () => getSession(urlParams.id),
@@ -27,39 +30,19 @@ export const SessionShowPage: React.FC = () => {
     }
   );
 
+  // useSocket({ type: WebSocketSubType.SESSION_DATA, sessionId: urlParams.id });
+
+  const connection = usePeerConnection(urlParams.id);
+
   useEffect(() => {
-    if (sessionQuery.isLoading) {
+    if (!sessionQuery.data || !userQuery.data) {
       return;
     }
-
-    if (!sessionQuery.data) {
-      console.debug("Session not found, skip WebSocket initialization");
-      return;
-    }
-
-    /**
-     * Note: the user must be added to the session in order for the WebSocket
-     * connection to authenticate! If you're moving code around and the
-     * connection broke, that may be why.
-     * */
-    const { close: closeSessionDataSocket } = initializeSessionDataWebSocket({
-      sessionId: urlParams.id,
-    });
-
-    const { close: closeSignalingSocket } = initializeSignalingWebSocket({
-      sessionId: urlParams.id,
-    });
-
-    const { start, close: closePeerConnection } = usePeerConnection();
-
-    start();
-
-    return () => {
-      closeSessionDataSocket();
-      closeSignalingSocket();
-      closePeerConnection();
-    };
-  }, [sessionQuery.isLoading, sessionQuery.data]);
+    connection.setPolite(
+      userQuery.data &&
+        userQuery.data.sub === sessionQuery.data.participants.host
+    );
+  }, [sessionQuery.isSuccess, userQuery.isSuccess]);
 
   if (!sessionQuery.isLoading && !sessionQuery.data) {
     return <NotFound message="Session does not exist" />;

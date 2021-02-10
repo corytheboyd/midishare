@@ -4,6 +4,5 @@
     "baseUrl": "./",
     "jsx": "react",
     "lib": ["dom"],
-    "target": "ES2015"
   }
 }
