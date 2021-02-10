@@ -6,9 +6,11 @@ export class PeerConnection {
 
   private readonly pc: RTCPeerConnection;
 
-  private midiDataChannel?: RTCDataChannel;
-  private signaling?: Socket;
+  private midiDataChannel: RTCDataChannel | null = null;
   private polite: boolean | null = null;
+  private onMidiDataCallbacks: ((data: number[]) => void)[] = [];
+
+  private signaling?: Socket;
   private makingOffer = false;
   private ignoreOffer = false;
 
@@ -25,10 +27,15 @@ export class PeerConnection {
   }
 
   public static sendMidiData(data: Uint8Array, timestamp: number): void {
-    const message: (string | number)[] = [timestamp.toFixed(3)];
+    const message: (string | number)[] = [timestamp];
     for (const value of data) {
       message.push(value);
     }
+    console.debug(
+      "PeerConnection: send midi data",
+      this._instance?.midiDataChannel,
+      message
+    );
     this._instance?.midiDataChannel?.send(message.join(","));
   }
 
@@ -40,13 +47,22 @@ export class PeerConnection {
     if (this.polite === null) {
       throw new Error("PeerConnection: failed to start, must call setPolite");
     }
-    this.midiDataChannel = this.createMidiDataChannel();
+    this.addMidiDataChannelToConnection();
   }
 
   public setPolite(value: boolean): void {
     this.polite = value;
   }
 
+  public onMidiData(cb: (data: number[]) => void): void {
+    this.onMidiDataCallbacks.push(cb);
+  }
+
+  /**
+   * While public, this shouldn't be interacted with. It's called by the
+   * usePeerConnection hook, which creates a signaling socket and assigns
+   * it with this function automatically.
+   * */
   public setSignaling(socket: Socket): void {
     this.signaling = socket;
 
@@ -61,20 +77,27 @@ export class PeerConnection {
     });
   }
 
-  private createMidiDataChannel(): RTCDataChannel {
-    const dc = this.pc.createDataChannel("MIDI", {
-      id: 0,
-      negotiated: true,
-      ordered: false,
-      priority: "high",
-    });
+  private addMidiDataChannelToConnection(): void {
+    if (!this.midiDataChannel) {
+      this.midiDataChannel = this.pc.createDataChannel("MIDI", {
+        id: 0,
+        negotiated: true,
+        ordered: false,
+      });
+    }
 
-    dc.onmessage = (event) => {
-      console.debug("PeerConnection: midi data received", event.data);
-      // this.onMidiMessage(event.data);
+    this.midiDataChannel.onopen = () => {
+      console.debug("PeerConnection: midi data channel open");
     };
 
-    return dc;
+    this.midiDataChannel.onclose = () => {
+      console.debug("PeerConnection: midi data channel closed, destroying");
+      this.midiDataChannel = null;
+    };
+
+    this.midiDataChannel.onmessage = (event) => {
+      this.onMidiDataCallbacks.forEach((cb) => cb(event.data));
+    };
   }
 
   private createPeerConnection(): RTCPeerConnection {
@@ -107,18 +130,24 @@ export class PeerConnection {
       });
     };
 
-    pc.ondatachannel = (event) => {
-      console.debug(
-        "PeerConnection: remote peer added data channel",
-        event.channel
-      );
-    };
-
     pc.onconnectionstatechange = () => {
       console.debug(
         "PeerConnection: connection state change",
         pc.connectionState
       );
+
+      if (pc.connectionState === "closed") {
+        console.debug("PeerConnection: closed");
+      }
+
+      if (pc.connectionState === "connecting") {
+        if (!this.midiDataChannel) {
+          console.debug(
+            "PeerConnection: reconnected, recreate midi data channel"
+          );
+          this.addMidiDataChannelToConnection();
+        }
+      }
     };
 
     return pc;

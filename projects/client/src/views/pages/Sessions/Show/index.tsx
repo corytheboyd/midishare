@@ -42,6 +42,10 @@ export const SessionShowPage: React.FC = () => {
   });
 
   useEffect(() => {
+    connection.onMidiData((data) => {
+      console.debug("MIDI DATA RECEIVED", data);
+    });
+
     sessionDataSocket.onMessage((data) => {
       // TODO this is very naive, and will quickly lead to data clobbering
       //  issues if session data grows to contain more things.
