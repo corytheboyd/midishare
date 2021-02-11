@@ -11,13 +11,22 @@ import cookieParser from "cookie-parser";
 import { register } from "./lib/ws/register";
 import { ServerResponse } from "http";
 import { handleShutdown } from "./lib/handleShutdown";
-import { db } from "./lib/state/db";
+import { db, dbOpen } from "./lib/state/db";
 
 (async () => {
   try {
-    await db;
+    await dbOpen;
   } catch (err) {
     console.error("Failed to open sqlite database", err);
+    process.kill(process.pid, "SIGTERM");
+  }
+
+  try {
+    await db.migrate({
+      migrationsPath: process.env.DB_MIGRATIONS_PATH,
+    });
+  } catch (err) {
+    console.error("Failed to run database migrations", err);
     process.kill(process.pid, "SIGTERM");
   }
 })();

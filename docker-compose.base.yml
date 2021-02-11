@@ -23,6 +23,7 @@ services:
       SSL_KEY_PATH:
       CLIENT_ORIGIN:
       SQLITE_DATABASE: /db/database.db
+      DB_MIGRATIONS_PATH: /db/migrations
     volumes:
       - "./db:/db"
     build:

@@ -1,10 +1,12 @@
 {
   "restartable": false,
   "watch": [
-    ".",
-    "/code/common/"
+    "**/*",
+    "/code/common/dist/**/*",
+    "/db/migrations/**/*"
   ],
   "execMap": {
     "ts": "./node_modules/.bin/ts-node"
-  }
+  },
+  "ext": "ts,js,sql"
 }
