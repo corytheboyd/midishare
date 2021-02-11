@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Chrome } from "../../../Chrome";
 import { Helmet } from "react-helmet";
-import { useStore } from "../../../../lib/store";
+import { store, useStore } from "../../../../lib/store";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import {
@@ -17,8 +17,13 @@ import {
   getCurrentUser,
 } from "../../../../lib/queries/getCurrentUser";
 import { useSocket } from "../../../../lib/ws/useSocket";
-import { WebSocketSubType } from "@midishare/common";
 import { queryClient } from "../../../../lib/queryClient";
+import { WebSocketSubType } from "../../../../../../common/src";
+import {
+  AllowedInputEventTypes,
+  handleMidiInput,
+} from "../../../../lib/handleMidiInput";
+import { playKeyboard } from "../../../../lib/playKeyboard";
 
 export const SessionShowPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
@@ -44,6 +49,28 @@ export const SessionShowPage: React.FC = () => {
   useEffect(() => {
     connection.onMidiData((data) => {
       console.debug("MIDI DATA RECEIVED", data);
+      const [timestamp, ...midi] = data;
+
+      let eventType: AllowedInputEventTypes | null = null;
+      if (midi[0] === 144) {
+        if (midi[2] > 0) {
+          eventType = "noteon";
+        } else {
+          eventType = "noteoff";
+        }
+      } else if (midi[0] === 128) {
+        eventType = "noteoff";
+      } else if (midi[0] === 176) {
+        eventType = "controlchange";
+      }
+
+      if (eventType) {
+        const runtime = store.getState().runtime?.remoteKeyboardRuntime;
+        if (!runtime) {
+          throw new Error("Runtime not initialized");
+        }
+        playKeyboard(eventType, timestamp, Uint8Array.from(midi), runtime);
+      }
     });
 
     sessionDataSocket.onMessage((data) => {

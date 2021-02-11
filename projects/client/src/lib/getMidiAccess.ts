@@ -31,7 +31,7 @@ export function getMidiAccess(): void {
         if (store.getState().activeMidiInputDeviceId !== event.target.id) {
           return;
         }
-        handleMidiInput(event.type, event.data, event.timestamp);
+        handleMidiInput(event.type, event.timestamp, event.data);
       };
 
       event.port.addListener("noteon", "all", eventListenerCallback);

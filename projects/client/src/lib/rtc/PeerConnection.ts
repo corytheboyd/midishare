@@ -120,7 +120,12 @@ export class PeerConnection {
     };
 
     dc.onmessage = (event) => {
-      this.onMidiDataCallbacks.forEach((cb) => cb(event.data));
+      const [timestamp, ...midi] = (event.data as string).split(",");
+      const parsed = [
+        parseFloat(timestamp),
+        ...midi.map((s) => parseInt(s, 10)),
+      ];
+      this.onMidiDataCallbacks.forEach((cb) => cb(parsed));
     };
   }
 

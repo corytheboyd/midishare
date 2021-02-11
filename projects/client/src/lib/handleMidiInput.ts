@@ -7,29 +7,22 @@
  * */
 import { InputEvents } from "webmidi";
 import { store } from "./store";
-import { getKeyNameFromIndex } from "@midishare/keyboard";
 import { PeerConnection } from "./rtc/PeerConnection";
+import { playKeyboard } from "./playKeyboard";
 
 // Restrict allowable event types to prevent registering something new that
 // we don't yet know how to handle. Let's goooo strong types!
 export type AllowedInputEventTypes = "noteon" | "noteoff" | "controlchange";
 
 export function handleMidiInput(
-  type: Extract<keyof InputEvents, AllowedInputEventTypes>,
-  data: Uint8Array,
-  timestamp: number
+  eventType: Extract<keyof InputEvents, AllowedInputEventTypes>,
+  timestamp: number,
+  data: Uint8Array
 ): void {
-  // Play the local keyboard
-  if (type === "noteon" || type === "noteoff") {
-    const [, note, velocity] = data;
-    const keyName = getKeyNameFromIndex(note - 21);
-
-    if (type === "noteon") {
-      store.getState().runtime?.localKeyboardRuntime.keyOn(keyName, velocity);
-    } else {
-      store.getState().runtime?.localKeyboardRuntime.keyOff(keyName);
-    }
+  const runtime = store.getState().runtime?.localKeyboardRuntime;
+  if (!runtime) {
+    throw new Error("Runtime not initialized");
   }
-
+  playKeyboard(eventType, timestamp, data, runtime);
   PeerConnection.sendMidiData(data, timestamp);
 }
