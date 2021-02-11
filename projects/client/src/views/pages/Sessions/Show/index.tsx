@@ -18,12 +18,9 @@ import {
 } from "../../../../lib/queries/getCurrentUser";
 import { useSocket } from "../../../../lib/ws/useSocket";
 import { queryClient } from "../../../../lib/queryClient";
-import { WebSocketSubType } from "../../../../../../common/src";
-import {
-  AllowedInputEventTypes,
-  handleMidiInput,
-} from "../../../../lib/handleMidiInput";
+import { AllowedInputEventTypes } from "../../../../lib/handleMidiInput";
 import { playKeyboard } from "../../../../lib/playKeyboard";
+import { WebSocketSubType } from "@midishare/common";
 
 export const SessionShowPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
@@ -41,10 +38,26 @@ export const SessionShowPage: React.FC = () => {
 
   const connection = usePeerConnection(urlParams.id);
 
+  useEffect(() => {
+    if (!sessionQuery.data) {
+      return;
+    }
+    connection.setPolite(
+      userQuery.data?.sub === sessionQuery.data.participants.host
+    );
+    connection.start();
+  }, [sessionQuery.isSuccess, userQuery.isSuccess]);
+
   const sessionDataSocket = useSocket({
     type: WebSocketSubType.SESSION_DATA,
     sessionId: urlParams.id,
   });
+
+  useEffect(() => {
+    sessionDataSocket.onMessage((data) => {
+      queryClient.setQueryData(queryKey(urlParams.id), JSON.parse(data));
+    });
+  }, []);
 
   useEffect(() => {
     connection.onMidiData((data) => {
@@ -71,23 +84,7 @@ export const SessionShowPage: React.FC = () => {
         playKeyboard(eventType, timestamp, Uint8Array.from(midi), runtime);
       }
     });
-
-    sessionDataSocket.onMessage((data) => {
-      // TODO this is very naive, and will quickly lead to data clobbering
-      //  issues if session data grows to contain more things.
-      queryClient.setQueryData(queryKey(urlParams.id), JSON.parse(data));
-    });
   }, []);
-
-  useEffect(() => {
-    if (!sessionQuery.data) {
-      return;
-    }
-    connection.setPolite(
-      userQuery.data?.sub === sessionQuery.data.participants.host
-    );
-    connection.start();
-  }, [sessionQuery.isSuccess, userQuery.isSuccess]);
 
   if (!sessionQuery.isLoading && !sessionQuery.data) {
     return <NotFound message="Session does not exist" />;
