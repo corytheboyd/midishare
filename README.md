@@ -29,7 +29,7 @@ Put together a prototype and tested it with my teacher, and it worked!
 | MIDI Inspector | Debugging application for MIDI inputs | https://localhost:3200 |
 | API | REST API and WebSocket for Midishare application | https://localhost:4000 |
 | CDN | A simple static file server for assets that will be hosted on a CDN | https://localhost:9000 |
-| Redis Commander | The Redis GUI, [read more](https://github.com/joeferner/redis-commander) | http://localhost:4100 | 
+| SQLite Web | A SQLite web GUI, [read more](https://github.com/coleifer/sqlite-web) | http://localhost:4100 | 
 
 **Update: I removed that script, it was distracting. TODO Update this section!**
 
