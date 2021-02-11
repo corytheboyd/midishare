@@ -48,7 +48,6 @@ export const SessionShowPage: React.FC = () => {
 
   useEffect(() => {
     connection.onMidiData((data) => {
-      console.debug("MIDI DATA RECEIVED", data);
       const [timestamp, ...midi] = data;
 
       let eventType: AllowedInputEventTypes | null = null;
