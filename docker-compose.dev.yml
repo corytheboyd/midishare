@@ -6,17 +6,16 @@ volumes:
   inspector_parcel-cache:
 
 services:
-  redis-commander:
-    image: rediscommander/redis-commander
-    container_name: redis-commander
+  sqlite-web:
+    image: coleifer/sqlite-web # https://github.com/coleifer/sqlite-web
+    container_name: sqlite-web
     init: true
     ports:
-      - "4100:4100"
+      - "4100:8080"
+    volumes:
+      - "./db:/data"
     environment:
-      HOST: localhost
-      PORT: 4100
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      SQLITE_DATABASE: database.db
 
   cdn:
     container_name: cdn

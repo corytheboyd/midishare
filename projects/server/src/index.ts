@@ -11,6 +11,16 @@ import cookieParser from "cookie-parser";
 import { register } from "./lib/ws/register";
 import { ServerResponse } from "http";
 import { handleShutdown } from "./lib/handleShutdown";
+import { db } from "./lib/state/db";
+
+(async () => {
+  try {
+    await db;
+  } catch (err) {
+    console.error("Failed to open sqlite database", err);
+    process.kill(process.pid, "SIGTERM");
+  }
+})();
 
 const authConfig: AuthConfigParams = {
   issuerBaseURL: "https://midishare.us.auth0.com",

@@ -1,13 +1,6 @@
 version: "3.8"
 
 services:
-  redis:
-    container_name: redis
-    init: true
-    image: library/redis:6.0
-    expose:
-      - 6379
-
   client:
     container_name: client
     init: true
@@ -25,11 +18,13 @@ services:
     container_name: server
     init: true
     environment:
-      REDIS_URL: redis://redis:6379
       BASE_URL:
       SSL_CERT_PATH:
       SSL_KEY_PATH:
       CLIENT_ORIGIN:
+      SQLITE_DATABASE: /db/database.db
+    volumes:
+      - "./db:/db"
     build:
       context: .
       dockerfile: projects/server/Dockerfile

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -euo pipefail
+
+DOCKER_ENV=sqlite3 bin/dcp run sqlite3 "$@"

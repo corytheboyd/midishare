@@ -24,3 +24,7 @@ Thumbs.db
 **/build/*
 **/.cache/*
 **/node_modules
+
+# Development database. Only the initial version is checked into source, all
+# local changes after that are ignored.
+db/database.db
