@@ -1,15 +1,21 @@
-import { redisClient } from "./redisClient";
-import { SESSIONS_HASH_NAME } from "./createSession";
 import { Session } from "@midishare/common";
+import { db } from "./db";
+import { SessionRow } from "./types";
 
-export function getSession(id: string): Promise<Session> {
-  return new Promise((resolve, reject) => {
-    redisClient.hget(SESSIONS_HASH_NAME, id, (error, value) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(JSON.parse(value));
-      }
-    });
-  });
+export async function getSession(id: string): Promise<Session> {
+  const data = await db.get<
+    Required<Pick<SessionRow, "uuid" | "hostId" | "guestId">>
+  >("SELECT uuid, hostId, guestId FROM Sessions WHERE uuid = ?", id);
+
+  if (!data) {
+    throw new Error("Session does not exist");
+  }
+
+  return {
+    id: data.uuid,
+    participants: {
+      host: data.hostId,
+      guest: data.guestId,
+    },
+  };
 }

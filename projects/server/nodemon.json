@@ -6,7 +6,7 @@
     "/db/migrations/**/*"
   ],
   "execMap": {
-    "ts": "./node_modules/.bin/ts-node"
+    "ts": "node -r ts-node/register --trace-warnings --inspect=0.0.0.0:9229"
   },
   "ext": "ts,js,sql"
 }

@@ -1,34 +1,24 @@
 import { Session, UserId } from "@midishare/common";
-import { redisClient } from "./redisClient";
-import {
-  SESSION_IDS_BY_USER_ID_SET_NAME,
-  SESSIONS_HASH_NAME,
-} from "./createSession";
+import { db } from "./db";
+import { SessionRow } from "./types";
 
 export async function getAllSessions(userId: UserId): Promise<Session[]> {
-  return new Promise((resolve, reject) => {
-    redisClient.smembers(
-      SESSION_IDS_BY_USER_ID_SET_NAME(userId),
-      (err, members) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+  const data = await db.all<
+    Required<Pick<SessionRow, "uuid" | "hostId" | "guestId">>[]
+  >(
+    "SELECT uuid, hostId, guestId FROM Sessions WHERE hostId = :userId OR guestId = :userId",
+    { ":userId": userId }
+  );
 
-        if (members.length === 0) {
-          resolve([]);
-          return;
-        }
+  if (!data) {
+    return [];
+  }
 
-        redisClient.hmget(SESSIONS_HASH_NAME, members, (err, values) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-
-          resolve(values.map((value) => JSON.parse(value)));
-        });
-      }
-    );
-  });
+  return data.map((d) => ({
+    id: d.uuid,
+    participants: {
+      host: d.hostId,
+      guest: d.guestId,
+    },
+  }));
 }

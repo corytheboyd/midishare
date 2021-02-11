@@ -90,6 +90,7 @@ services:
     env_file: projects/server/.env
     ports:
       - "4000:4000"
+      - "9229:9229" # node --inspect
     environment:
       ADDRESS: server
       PORT: 4000

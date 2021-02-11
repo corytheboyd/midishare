@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { requiresAuth } from "express-openid-connect";
-import { fromRequest } from "../../getOpenIdContext";
 import { getSession } from "../../state/getSession";
 import { getCurrentUserId } from "../../getCurrentUserId";
 import { createSession } from "../../state/createSession";
-import { updateSession } from "../../state/updateSession";
+import { addGuestToSession } from "../../state/addGuestToSession";
 import { getAllSessions } from "../../state/getAllSessions";
 import { deleteSession } from "../../state/deleteSession";
+import { send } from "../../ws/connections/send";
+import { WebSocketSubType } from "@midishare/common";
 
 export const sessions = (): Router => {
   const router = Router();
@@ -34,14 +35,8 @@ export const sessions = (): Router => {
   });
 
   router.post("/", requiresAuth(), async (req, res) => {
-    const context = fromRequest(req);
-
     const userId = getCurrentUserId(req);
-    const session = await createSession(userId, {
-      participants: {
-        host: context.user!.sub,
-      },
-    });
+    const session = await createSession(userId);
 
     res.status(201);
     res.send(session);
@@ -51,21 +46,18 @@ export const sessions = (): Router => {
     "/:id/join",
     requiresAuth(() => false),
     async (req, res) => {
-      const session = await getSession(req.params.id);
-
-      if (!session) {
-        res.status(404);
-        res.end();
-        return;
-      }
-
       const userId = getCurrentUserId(req);
-      const updatedSession = await updateSession(session.id, userId, {
-        participants: {
-          guest: userId,
-        },
-      });
-      res.send(updatedSession);
+      await addGuestToSession(userId, req.params.id);
+
+      // Send updated session to host
+      const session = await getSession(req.params.id);
+      send(
+        WebSocketSubType.SESSION_DATA,
+        session.participants.host,
+        JSON.stringify(session)
+      );
+
+      res.send(session);
     }
   );
 

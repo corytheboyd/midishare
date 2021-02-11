@@ -5,11 +5,6 @@
  * */
 export type UserId = string;
 
-/**
- * ISO8601 DateTime string
- * */
-export type DateTime = string;
-
 export type UserProfile = {
   sub: UserId;
   name: string;
@@ -19,8 +14,6 @@ export type UserProfile = {
 
 export type Session = {
   id: string;
-  createdAt: DateTime;
-  updatedAt: DateTime;
   participants: {
     /**
      * The host is the peer that created the Session
