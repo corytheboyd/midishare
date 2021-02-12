@@ -1,6 +1,6 @@
 FROM node:14.15.3 AS node-base
 
-FROM node-base AS development
+FROM node-base AS base
 
 WORKDIR /
 COPY tsconfig.base.json .
@@ -25,4 +25,32 @@ COPY projects/common /code/common
 COPY projects/keyboard /code/keyboard
 COPY projects/client /code/app
 
+FROM base AS development
+
 ENTRYPOINT ["./node_modules/.bin/parcel", "serve", "src/index.html"]
+
+FROM base AS production-build
+
+ARG NODE_ENV
+ENV NODE_ENV=${NODE_ENV}
+ARG SERVER_URL
+ENV SERVER_URL=${SERVER_URL}
+ARG PUBLIC_URL
+ENV PUBLIC_URL=${PUBLIC_URL}
+ARG CDN_URL
+ENV CDN_URL=${CDN_URL}
+ARG WS_URL
+ENV WS_URL=${WS_URL}
+
+WORKDIR /code/common
+RUN ./node_modules/.bin/rollup --config=rollup.config.js
+
+WORKDIR /code/keyboard
+RUN ./node_modules/.bin/rollup --config=rollup.config.js
+
+WORKDIR /code/app
+RUN /code/app/node_modules/.bin/parcel build src/index.html
+
+FROM node-base AS production
+COPY --from=production-build /code/app/dist /code/dist
+WORKDIR /code

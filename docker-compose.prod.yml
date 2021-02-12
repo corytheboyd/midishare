@@ -1,18 +1,16 @@
 version: "3.8"
 services:
   client:
-    image: midishare/client:release
     build:
       target: production
       args:
         NODE_ENV: production
-        SERVER_URL: http://server:3000
-        PORT:
-        ADDRESS:
-        # https://create-react-app.dev/docs/advanced-configuration/
-        PUBLIC_URL: https://midishare.app/app/
+        SERVER_URL: https://api.midishare.app
+        WS_URL: ws://api.midishare.app
+        PUBLIC_URL: https://midishare.app
+        CDN_URL: https://midishare.b-cdn.net
 
-  server:
-    image: midishare/server:release
-    environment:
-      NODE_ENV: production
+#  server:
+#    image: midishare/server:release
+#    environment:
+#      NODE_ENV: production

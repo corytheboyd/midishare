@@ -9,6 +9,7 @@
     "three": "^0.124.0"
   },
   "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^2.3.0",
     "@tailwindcss/postcss7-compat": "^2.0.2",
     "@types/clipboard": "^2.0.1",
     "@types/node": "^14.14.20",

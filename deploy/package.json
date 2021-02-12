@@ -1,0 +1,14 @@
+{
+  "name": "@midishare/deploy-cdn",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "deploy": "./node_modules/.bin/ts-node index.ts"
+  },
+  "dependencies": {
+    "@types/ftp": "^0.3.31",
+    "ftp": "^0.3.10",
+    "ts-node": "^9.1.1"
+  }
+}

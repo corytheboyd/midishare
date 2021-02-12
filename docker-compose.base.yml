@@ -9,9 +9,6 @@ services:
       dockerfile: projects/client/Dockerfile
     environment:
       NODE_ENV:
-      PORT: 3000
-      ADDRESS: client
-      PUBLIC_PATH: /app/
       SERVER_URL:
 
   server:

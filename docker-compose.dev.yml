@@ -40,9 +40,6 @@ services:
       - "3001:3001" # WS
     environment:
       NODE_ENV: development
-      HOST: client
-      PORT: 3000
-      HMR_PORT: 3001
       PUBLIC_URL: https://localhost:3000
       CDN_URL: https://localhost:9000
       SERVER_URL: https://localhost:4000
@@ -58,7 +55,6 @@ services:
     command:
       - "--cache-dir=/parcel-cache"
       - "--port=3000"
-      - "--hmr-port=3001"
       - "--cert=/ssl/localhost.pem"
       - "--key=/ssl/localhost-key.pem"
 
