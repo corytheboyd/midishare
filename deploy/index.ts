@@ -34,8 +34,8 @@ async function runCommand(command: string[]): Promise<void> {
 }
 
 (async () => {
-  // console.log("Cleanup build artifacts");
-  // await runCommand([`rm -rf ${ARTIFACT_ROOT}`, `mkdir ${ARTIFACT_ROOT}`]);
+  console.log("Cleanup build artifacts");
+  await runCommand([`rm -rf ${ARTIFACT_ROOT}`, `mkdir ${ARTIFACT_ROOT}`]);
 
   console.log("Create production build artifacts");
   await runCommand(["bin/dcp-prod", "build", "client"]);
