@@ -7,8 +7,10 @@
     "deploy": "./node_modules/.bin/ts-node index.ts"
   },
   "dependencies": {
-    "@types/ftp": "^0.3.31",
-    "ftp": "^0.3.10",
+    "dotenv": "^8.2.0",
     "ts-node": "^9.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.27"
   }
 }
