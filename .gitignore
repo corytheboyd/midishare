@@ -20,6 +20,7 @@ ehthumbs.db
 Thumbs.db
 
 # Builds and dependencies
+dist
 **/dist/*
 **/build/*
 **/.cache/*

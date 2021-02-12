@@ -22,8 +22,8 @@ client.on("ready", async () => {
 });
 
 client.connect({
-  host: "la.storage.bunnycdn.com",
-  port: 21,
-  user: "midishare",
-  password: "81d01efe-bb74-4e4d-84c579ec9750-7558-430d",
+  host: process.env.BUNNY_FTP_HOST,
+  port: parseInt(process.env.BUNNY_FTP_PORT, 10),
+  user: process.env.BUNNY_FTP_USERNAME,
+  password: process.env.BUNNY_FTP_PASSWORD,
 });
