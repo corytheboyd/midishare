@@ -78,8 +78,10 @@ async function runCommand(command: string[]): Promise<void> {
   ]);
 
   console.log("Upload artifacts to CDN");
-
   await uploadDirectory(resolve(ARTIFACT_ROOT, "client"));
+
+  console.log("Uploading static assets to CDN");
+  await uploadDirectory(resolve(__dirname, "..", "assets"));
 
   console.log("Done!");
 })();
