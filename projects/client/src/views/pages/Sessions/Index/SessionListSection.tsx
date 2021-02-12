@@ -10,6 +10,10 @@ import {
   queryKey as getAllSessionsQueryKey,
 } from "../../../../lib/queries/getAllSessions";
 import { Session } from "@midishare/common";
+import {
+  getCurrentUser,
+  queryKey,
+} from "../../../../lib/queries/getCurrentUser";
 
 type SessionListSectionProps = {
   navigateToSession: (session: Session) => void;
@@ -18,7 +22,9 @@ type SessionListSectionProps = {
 export const SessionListSection: React.FC<SessionListSectionProps> = (
   props
 ) => {
-  const getAllSessionsQuery = useQuery<Session[], Error>(
+  const currentUserQuery = useQuery(queryKey(), getCurrentUser);
+
+  const sessionsQuery = useQuery<Session[], Error>(
     getAllSessionsQueryKey(),
     () => getAllSessions()
   );
@@ -46,8 +52,8 @@ export const SessionListSection: React.FC<SessionListSectionProps> = (
         </p>
       </div>
 
-      {getAllSessionsQuery.isError && (
-        <InlineErrorMessage message={getAllSessionsQuery.error!.message} />
+      {sessionsQuery.isError && (
+        <InlineErrorMessage message={sessionsQuery.error!.message} />
       )}
 
       <div className="w-full mt-3 space-y-1.5">
@@ -55,32 +61,40 @@ export const SessionListSection: React.FC<SessionListSectionProps> = (
           <InlineErrorMessage message={deleteSessionMutation.error!.message} />
         )}
 
-        {getAllSessionsQuery.isLoading && <span>Loading...</span>}
+        {sessionsQuery.isLoading && <span>Loading...</span>}
 
-        {!getAllSessionsQuery.isLoading &&
-          getAllSessionsQuery.data!.map((session) => (
-            <div key={session.id} className="py-1 flex">
-              <div className="flex-grow">
-                <span>{session.id}</span>
-              </div>
-              <div className="space-x-2 text-sm">
-                <SmallSecondaryButton
-                  color="green"
-                  onClick={() => props.navigateToSession(session)}
-                >
-                  Join
-                </SmallSecondaryButton>
+        {!sessionsQuery.isLoading &&
+          sessionsQuery.data!.map((session) => {
+            const showDeleteButton =
+              currentUserQuery.data &&
+              session.participants.host === currentUserQuery.data.sub;
 
-                <SmallSecondaryButton
-                  color="red"
-                  disabled={deleteSessionMutation.isLoading}
-                  onClick={() => handleDeleteSession(session.id)}
-                >
-                  Delete
-                </SmallSecondaryButton>
+            return (
+              <div key={session.id} className="py-1 flex">
+                <div className="flex-grow">
+                  <span>{session.id}</span>
+                </div>
+                <div className="space-x-2 text-sm">
+                  <SmallSecondaryButton
+                    color="green"
+                    onClick={() => props.navigateToSession(session)}
+                  >
+                    Join
+                  </SmallSecondaryButton>
+
+                  {showDeleteButton && (
+                    <SmallSecondaryButton
+                      color="red"
+                      disabled={deleteSessionMutation.isLoading}
+                      onClick={() => handleDeleteSession(session.id)}
+                    >
+                      Delete
+                    </SmallSecondaryButton>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
       </div>
     </section>
   );
