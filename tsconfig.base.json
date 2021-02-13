@@ -10,7 +10,6 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "target": "ES6",
-    "module": "CommonJS",
     "downlevelIteration": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true

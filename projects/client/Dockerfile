@@ -1,6 +1,4 @@
-FROM node:14.15.3 AS node-base
-
-FROM node-base AS base
+FROM node:14.15.3 AS base
 
 WORKDIR /
 COPY tsconfig.base.json .
@@ -29,7 +27,7 @@ FROM base AS development
 
 ENTRYPOINT ["./node_modules/.bin/parcel", "serve", "src/index.html"]
 
-FROM base AS production-build
+FROM base AS production
 
 ARG NODE_ENV
 ENV NODE_ENV=${NODE_ENV}
@@ -50,7 +48,3 @@ RUN ./node_modules/.bin/rollup --config=rollup.config.js
 
 WORKDIR /code/app
 RUN /code/app/node_modules/.bin/parcel build src/index.html
-
-FROM node-base AS production
-COPY --from=production-build /code/app/dist /code/dist
-WORKDIR /code

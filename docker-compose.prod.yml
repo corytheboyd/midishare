@@ -10,7 +10,11 @@ services:
         PUBLIC_URL: https://midishare.app
         CDN_URL: https://midishare.b-cdn.net
 
-#  server:
-#    image: midishare/server:release
-#    environment:
-#      NODE_ENV: production
+  server:
+    build:
+      target: production
+    environment:
+      ADDRESS: 127.0.0.1
+      PORT: 443
+      BASE_URL: https://api.midishare.app
+      CLIENT_URL: https://midishare.app

@@ -82,6 +82,8 @@ services:
       - "--key=/ssl/localhost-key.pem"
 
   server:
+    build:
+      target: development
     container_name: server
     env_file: projects/server/.env
     ports:

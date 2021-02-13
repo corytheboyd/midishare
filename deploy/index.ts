@@ -13,7 +13,10 @@ const ARTIFACT_ROOT = resolve(__dirname, "..", "dist");
 process.chdir(resolve(__dirname, ".."));
 
 async function runCommand(command: string[]): Promise<void> {
-  const task = spawn(command.join(" "), {
+  const stringCommand = command.join(" ");
+  console.debug("RUN COMMAND", stringCommand);
+
+  const task = spawn(stringCommand, {
     shell: true,
   });
 
@@ -24,7 +27,7 @@ async function runCommand(command: string[]): Promise<void> {
     task.on("close", (code) => {
       if (code !== 0) {
         console.error(`Command exited with non-zero code`);
-        process.exit(code);
+        process.exit(code || 1);
       } else {
         console.log("Command exited successfully");
       }
@@ -37,8 +40,8 @@ async function runCommand(command: string[]): Promise<void> {
   console.log("Cleanup build artifacts");
   await runCommand([`rm -rf ${ARTIFACT_ROOT}`, `mkdir ${ARTIFACT_ROOT}`]);
 
-  console.log("Create production build artifacts");
-  await runCommand(["bin/dcp-prod", "build", "client"]);
+  console.log("Create production build images");
+  await runCommand(["bin/dcp-prod", "build", "client", "server"]);
 
   console.log("Collect build artifacts");
   await runCommand([
@@ -67,7 +70,7 @@ async function runCommand(command: string[]): Promise<void> {
     `sh -c "cd dist; tar -cvf client.tar .; cp client.tar /artifacts; chown -R $(id -u):$(id -g) /artifacts;"`,
   ]);
 
-  console.log("Unpack archived artifacts");
+  console.log("Unpacking archive");
   await runCommand(["mkdir", "-p", resolve(ARTIFACT_ROOT, "client")]);
   await runCommand([
     "tar",
@@ -82,6 +85,48 @@ async function runCommand(command: string[]): Promise<void> {
 
   console.log("Uploading static assets to CDN");
   await uploadDirectory(resolve(__dirname, "..", "assets"));
+
+  console.log("Building server script");
+  await runCommand([
+    "bin/dcp-prod",
+    "run",
+    "--rm",
+    `--volume=${ARTIFACT_ROOT}:/artifacts`,
+    "server",
+    `sh -c "cd dist; tar -cvf server.tar .; cp server.tar /artifacts; chown -R $(id -u):$(id -g) /artifacts;"`,
+  ]);
+
+  console.log("Unpacking server archive");
+  await runCommand(["mkdir", "-p", resolve(ARTIFACT_ROOT, "server")]);
+  await runCommand([
+    "tar",
+    "-xvf",
+    resolve(ARTIFACT_ROOT, "server.tar"),
+    "--directory",
+    resolve(ARTIFACT_ROOT, "server"),
+  ]);
+
+  console.log("Adding server static files to unpacked archive before sync");
+  await runCommand([
+    "cp",
+    "projects/server/.nvmrc",
+    "projects/server/.npmrc",
+    "projects/server/.env",
+    resolve(ARTIFACT_ROOT, "server"),
+  ]);
+
+  console.log("Syncing server files");
+  await runCommand([
+    /**
+     * Note: this assumes that the machine being deployed from has their
+     * public SSH key in the remote host's authorized_keys.
+     *
+     * rsync -e "ssh -i ~/.ssh/id_rsa.pub" -ap dist/server nodejs@143.110.152.162:~
+     * */
+    `rsync -e "ssh -i ${process.env.SSH_KEY_PATH}"`,
+    `-ap ${resolve(ARTIFACT_ROOT, "server")}`,
+    `${process.env.SERVER_SSH_ADDRESS}:~`,
+  ]);
 
   console.log("Done!");
 })();
