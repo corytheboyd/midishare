@@ -124,6 +124,7 @@ async function runCommand(command: string[]): Promise<void> {
      * rsync -e "ssh -i ~/.ssh/id_rsa.pub" -ap dist/server nodejs@143.110.152.162:~
      * */
     `rsync -e "ssh -i ${process.env.SSH_KEY_PATH}"`,
+    "--verbose --stats --compress --archive --human-readable -P",
     `-ap ${resolve(ARTIFACT_ROOT, "server")}`,
     `${process.env.SERVER_SSH_ADDRESS}:~`,
   ]);

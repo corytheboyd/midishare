@@ -11,7 +11,7 @@ export async function uploadFile(fileUpload: FileUpload): Promise<void> {
     path:
       "/" +
       join(
-        process.env.BUNNY_STORAGE_ZONE_NAME,
+        process.env.BUNNY_STORAGE_ZONE_NAME as string,
         fileUpload.destPath,
         fileUpload.fileName
       ),

@@ -1,6 +1,5 @@
 import express, { Express, Request, Response } from "express";
-import { createServer, ServerOptions } from "https";
-import { readFileSync } from "fs";
+import { createServer } from "http";
 import helmet from "helmet";
 import { api } from "./lib/api/v1";
 import { auth, ConfigParams as AuthConfigParams } from "express-openid-connect";
@@ -71,11 +70,6 @@ const authConfig: AuthConfigParams = {
   },
 };
 
-const serverConfig: ServerOptions = {
-  cert: readFileSync(process.env.SSL_CERT_PATH as string),
-  key: readFileSync(process.env.SSL_KEY_PATH as string),
-};
-
 const corsConfig: CorsOptions = {
   origin: [
     process.env.CLIENT_URL as string,
@@ -115,7 +109,7 @@ app.use(cookieParser(process.env.AUTH_SECRET as string));
 // Application middlewares
 app.use("/api/v1", api());
 
-const httpServer = createServer(serverConfig, app);
+const httpServer = createServer(app);
 
 const webSocketServer = new WebSocketServer({
   noServer: true,

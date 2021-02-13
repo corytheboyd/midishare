@@ -81,23 +81,27 @@ services:
       - "--cert=/ssl/localhost.pem"
       - "--key=/ssl/localhost-key.pem"
 
-  server:
-    build:
-      target: development
-    container_name: server
-    env_file: projects/server/.env
+  server-nginx:
+    image: nginx:1.19.6
+    container_name: server-nginx
     ports:
       - "4000:4000"
+
+  server-app:
+    build:
+      target: development
+    container_name: server-app
+    env_file: projects/server-app/.env
+    expose:
+      - "4000"
+    ports:
       - "9229:9229" # node --inspect
     environment:
-      ADDRESS: server
+      ADDRESS: 127.0.0.1
       PORT: 4000
       BASE_URL: https://localhost:4000
-      SSL_CERT_PATH: /ssl/localhost.pem
-      SSL_KEY_PATH: /ssl/localhost-key.pem
       CLIENT_URL: https://localhost:3000
     volumes:
-      - "./ssl:/ssl:ro"
       - "./projects/server/src:/code/app/src"
       - "./projects/common/dist:/code/common/dist:ro"
 

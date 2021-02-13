@@ -10,7 +10,7 @@ services:
         PUBLIC_URL: https://midishare.app
         CDN_URL: https://midishare.b-cdn.net
 
-  server:
+  server-app:
     build:
       target: production
     environment:

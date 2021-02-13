@@ -1,4 +1,4 @@
-import { Server as HttpServer } from "https";
+import { Server as HttpServer } from "http";
 import { ServerResponse } from "http";
 import { getCurrentUserId } from "../getCurrentUserId";
 import { getSession } from "../state/getSession";
