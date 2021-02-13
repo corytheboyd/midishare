@@ -82,7 +82,9 @@ services:
       - "--key=/ssl/localhost-key.pem"
 
   server-nginx:
-    image: nginx:1.19.6
+    build:
+      context: .
+      dockerfile: projects/server-nginx/Dockerfile
     container_name: server-nginx
     ports:
       - "4000:4000"
@@ -102,7 +104,7 @@ services:
       BASE_URL: https://localhost:4000
       CLIENT_URL: https://localhost:3000
     volumes:
-      - "./projects/server/src:/code/app/src"
+      - "./projects/server-app/src:/code/app/src"
       - "./projects/common/dist:/code/common/dist:ro"
 
   keyboard:

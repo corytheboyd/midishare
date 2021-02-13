@@ -9,12 +9,12 @@ COPY projects/common/package-lock.json .
 RUN npm link
 
 WORKDIR /code/app
-COPY projects/server/package.json .
-COPY projects/server/package-lock.json .
+COPY projects/server-app/package.json .
+COPY projects/server-app/package-lock.json .
 RUN npm ci
 RUN npm link @midishare/common
 
-COPY projects/server /code/app
+COPY projects/server-app /code/app
 COPY projects/common /code/common
 
 FROM base AS development

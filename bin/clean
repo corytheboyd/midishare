@@ -12,7 +12,7 @@ echo Removing dependencies...
 (cd projects/docs && rm -rf node_modules)
 (cd projects/inspector && rm -rf node_modules)
 (cd projects/keyboard && rm -rf node_modules)
-(cd projects/server && rm -rf node_modules)
+(cd projects/server-app && rm -rf node_modules)
 
 echo Cleaning up Docker images and volumes...
 bin/dcp-dev rm -v

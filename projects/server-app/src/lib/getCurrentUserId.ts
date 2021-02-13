@@ -9,7 +9,7 @@ import { ANONYMOUS_ID_COOKIE_NAME } from "./addAnonymousIdCookie";
  * Otherwise, the value of the anonymousId cookie is returned.
  *
  * The anonymousId cookie ise by the addAnonymousIdCookie middleware.
- * @see projects/server/src/lib/addAnonymousIdCookie.ts
+ * @see projects/server-app/src/lib/addAnonymousIdCookie.ts
  * */
 export function getCurrentUserId(req: Request): string {
   const context = fromRequest(req);

@@ -1,0 +1,6 @@
+Hello, {{OBJECT}}!
+Goodbye, {{OBJECT}}!
+
+Unset variable: {{NOT_COOL_BRO}}
+
+While it may seem like {{NAME}} is a nice fellow, {{NAME}} is not.
