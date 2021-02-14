@@ -56,7 +56,5 @@ mkdir -p "$TARGET_DIR"
 echo "$TMP_DIR"/"$(basename "$SOURCE_DIR")"
 echo "$TARGET_DIR"
 cp -R "$TMP_DIR"/"$(basename "$SOURCE_DIR")"/* "$TARGET_DIR"
-# rm -rf "$SOURCE_DIR"
-# mv "$TMP_DIR"/"$(basename "$SOURCE_DIR")" "$TARGET_DIR"
-# rm -rf "$TMP_DIR"
+rm -rf "$TMP_DIR"
 exit 0
