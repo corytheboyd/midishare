@@ -1,8 +1,0 @@
-Hello, {{OBJECT}}!
-Goodbye, {{OBJECT}}!
-Unset variable: {{NOT_COOL_BRO}}
-While it may seem like {{NAME}} is a nice fellow, {{NAME}} is not.
-Not a single variable on this line, nope!
-
-
-There should be two blank new lines above this line
