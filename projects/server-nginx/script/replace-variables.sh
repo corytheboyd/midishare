@@ -1,11 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
-# replaces {{VARIABLE}} instances in the input file(s)
+# Replaces {{VARIABLE}} instances in the input file(s)
 # with the value of the corresponding environment
 # variable.
 #
-# Error messages are sent to /dev/stderr
+# Error messages are sent to /dev/stderr.
 #
 # Example:
 # $ echo "Hello, {{OBJECT}}!" > "test.txt"
