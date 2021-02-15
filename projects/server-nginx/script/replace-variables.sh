@@ -43,7 +43,7 @@ BEGIN {
       }
 
       printf "\033[31m%s: unset variable\033[0m\n", FILENAME > "/dev/stderr"
-      fmt_0 = substr($0, 0, RSTART - 1);
+      fmt_0 = substr($0, 0, RSTART);
       fmt_1 = substr($0, RSTART, RLENGTH);
       fmt_2 = substr($0, RSTART + RLENGTH, length($0) - 1);
       printf "\033[2m%d: \033[0m%s\033[1m\033[91m%s\033[0m%s\n", FNR, fmt_0, fmt_1, fmt_2  > "/dev/stderr"
