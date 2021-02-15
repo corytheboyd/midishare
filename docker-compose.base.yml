@@ -12,7 +12,7 @@ services:
       SERVER_URL:
 
   server-app:
-    container_name: server
+    container_name: server-app
     init: true
     environment:
       BASE_URL:

@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings FATAL => 'all';
+
+use File::Basename;
+
+sub usage {
+    if ($_[0]) {
+        print "\033[31m", $_[0], "\033[0m\n\n";
+    }
+    printf "Usage: %s [SOURCE_DIR], [TARGET_DIR]", File::Basename::basename($0);
+}
+
+if (!$ARGV[0]) {
+    usage("Invalid usage: SOURCE_DIR not provided");
+    exit 1;
+}
+if (!$ARGV[1]) {
+    usage("Invalid usage: TARGET_DIR not provided");
+    exit 1;
+}
+

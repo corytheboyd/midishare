@@ -81,14 +81,6 @@ services:
       - "--cert=/ssl/localhost.pem"
       - "--key=/ssl/localhost-key.pem"
 
-  server-nginx:
-    build:
-      context: .
-      dockerfile: projects/server-nginx/Dockerfile
-    container_name: server-nginx
-    ports:
-      - "4000:4000"
-
   server-app:
     build:
       target: development
@@ -106,6 +98,16 @@ services:
     volumes:
       - "./projects/server-app/src:/code/app/src"
       - "./projects/common/dist:/code/common/dist:ro"
+
+  server-nginx:
+    container_name: server-nginx
+    build:
+      context: .
+      dockerfile: projects/server-nginx/Dockerfile
+      args:
+        SERVER_URL: http://server-app:4000
+    ports:
+      - "4000:4000"
 
   keyboard:
     build:
