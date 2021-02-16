@@ -42,7 +42,11 @@ File::Find::find(
         if ($_ eq '.' || $_ eq '..') {
             return;
         } elsif (-d $_) {
-            File::Path::make_path(File::Spec->catdir($tmpdir, $_));
+            my $clone_dir_path = File::Spec->catdir(
+                $tmpdir,
+                File::Spec->abs2rel($File::Find::name, $source_dir)
+            );
+            File::Path::make_path($clone_dir_path);
             return;
         } elsif (!-f $_) {
             return;
@@ -50,6 +54,7 @@ File::Find::find(
 
         my $src_file = $File::Find::name;
         my $dst_file = File::Spec->catfile($tmpdir, File::Spec->abs2rel($src_file, $source_dir));
+
         open(SRC, "<", $src_file) or die $!;
         open(DES, ">", $dst_file) or die $!;
 
@@ -83,3 +88,18 @@ if (scalar(@unset_variables) > 0) {
     print "\033[91mAborting due to unset variable(s): ", join(', ', @unset_variables), "\033[0m\n";
     exit 1;
 }
+
+File::Find::find(
+    sub {
+        print $_, "\n";
+        if ($_ eq '.' || $_ eq '..') {
+            return;
+        } elsif (-d $_) {
+            my $clone_dir_in_target = File::Spec->abs2rel($File::Find::name, $tmpdir);
+            File::Path::make_path(File::Spec->catdir($target_dir, $clone_dir_in_target));
+        } elsif (!-f $_) {
+            return;
+        }
+    },
+    $tmpdir
+);
