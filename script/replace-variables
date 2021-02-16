@@ -8,6 +8,7 @@ use File::Path;
 use File::Spec;
 use File::Find;
 use File::Temp;
+use File::Copy;
 
 sub usage {
     if ($_[0]) {
@@ -67,7 +68,7 @@ File::Find::find(
                         "\033[2m", # faint
                         $src_file,
                         "\n",
-                        "$.:", # line number
+                        "$.: ", # line number
                         "\033[0m",
                         $_, # offending line,
                         "\n";
@@ -91,15 +92,15 @@ if (scalar(@unset_variables) > 0) {
 
 File::Find::find(
     sub {
-        print $_, "\n";
+        my $file_relative_to_tmpdir = File::Spec->abs2rel($File::Find::name, $tmpdir);
         if ($_ eq '.' || $_ eq '..') {
             return;
         } elsif (-d $_) {
-            my $clone_dir_in_target = File::Spec->abs2rel($File::Find::name, $tmpdir);
-            File::Path::make_path(File::Spec->catdir($target_dir, $clone_dir_in_target));
+            File::Path::make_path(File::Spec->catdir($target_dir, $file_relative_to_tmpdir));
         } elsif (!-f $_) {
             return;
         }
+        File::Copy::copy($File::Find::name, File::Spec->catfile($target_dir, $file_relative_to_tmpdir))
     },
     $tmpdir
 );
