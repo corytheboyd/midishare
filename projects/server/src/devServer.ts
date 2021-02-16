@@ -3,9 +3,9 @@ import { resolve } from "path";
 
 const compiler = ncc(resolve(__dirname, "index.ts"), {
   sourceMap: true,
-  minify: false,
-  quiet: true,
   watch: true,
+  cache: process.env.NCC_CACHE_PATH,
+  v8cache: true,
 });
 
 const initialBuildStartTime = new Date().getTime();
