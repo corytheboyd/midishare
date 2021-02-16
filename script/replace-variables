@@ -2,8 +2,13 @@
 
 use strict;
 use warnings FATAL => 'all';
+use feature 'say';
 
 use File::Basename;
+use File::Path;
+use File::Spec;
+use File::Find;
+use File::Temp;
 
 sub usage {
     if ($_[0]) {
@@ -15,9 +20,68 @@ sub usage {
 if (!$ARGV[0]) {
     usage("Invalid usage: SOURCE_DIR not provided");
     exit 1;
-}
-if (!$ARGV[1]) {
+} elsif (!-d $ARGV[0]) {
+    usage("Error: SOURCE_DIR does not exist");
+    exit 1;
+} elsif (!$ARGV[1]) {
     usage("Invalid usage: TARGET_DIR not provided");
     exit 1;
 }
 
+if (!-d $ARGV[1]) {
+    say "Creating TARGET_DIRECTORY";
+    File::Path::make_path($ARGV[1]);
+}
+
+my $tmpdir = File::Temp::newdir();
+my $source_dir = File::Spec->rel2abs($ARGV[0]);
+my $target_dir = File::Spec->rel2abs($ARGV[1]);
+my $PATTERN = qr/\{\{([0-9a-zA-Z_-]+)\}\}/;
+my $unset_variable_count = 0;
+
+File::Find::find(
+    sub {
+        if ($_ eq '.' || $_ eq '..') {
+            return;
+        } elsif (-d $_) {
+            File::Path::make_path(File::Spec->catdir($tmpdir, $_));
+            return;
+        } elsif (!-f $_) {
+            return;
+        }
+
+        my $src_file = $File::Find::name;
+        my $dst_file = File::Spec->catfile($tmpdir, File::Spec->abs2rel($src_file, $source_dir));
+        open(SRC, "<", $src_file) or die $!;
+        open(DES, ">", $dst_file) or die $!;
+
+        while(<SRC>) {
+            if ($_ =~ /$PATTERN/) {
+                if (!$ENV{$1}) {
+                    $unset_variable_count++;
+                    s/$PATTERN/\033[91m\033[1m{{FUCK}}\033[0m/;
+                    print STDERR
+                        "\033[2m", # faint
+                        $src_file,
+                        "\n",
+                        "$.:", # line number
+                        "\033[0m",
+                        $_, # offending line,
+                        "\n";
+                } else {
+                    s/$PATTERN/$ENV{$1}/;
+                }
+            }
+            print DES $_;
+        }
+
+        close(SRC);
+        close(DES);
+    },
+    $source_dir
+);
+
+if ($unset_variable_count > 0) {
+    print "\033[91m", "Failed to replace $unset_variable_count variable(s), aborting.", "\033[0m\n";
+    exit 1;
+}
