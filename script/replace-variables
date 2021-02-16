@@ -2,7 +2,6 @@
 
 use strict;
 use warnings FATAL => 'all';
-use feature 'say';
 
 use File::Basename;
 use File::Path;
@@ -29,7 +28,6 @@ if (!$ARGV[0]) {
 }
 
 if (!-d $ARGV[1]) {
-    say "Creating TARGET_DIRECTORY";
     File::Path::make_path($ARGV[1]);
 }
 
@@ -37,7 +35,7 @@ my $tmpdir = File::Temp::newdir();
 my $source_dir = File::Spec->rel2abs($ARGV[0]);
 my $target_dir = File::Spec->rel2abs($ARGV[1]);
 my $PATTERN = qr/\{\{([0-9a-zA-Z_-]+)\}\}/;
-my $unset_variable_count = 0;
+my @unset_variables;
 
 File::Find::find(
     sub {
@@ -58,8 +56,8 @@ File::Find::find(
         while(<SRC>) {
             if ($_ =~ /$PATTERN/) {
                 if (!$ENV{$1}) {
-                    $unset_variable_count++;
-                    s/$PATTERN/\033[91m\033[1m{{FUCK}}\033[0m/;
+                    push @unset_variables, $1;
+                    s/$PATTERN/\033[91m\033[1m{{$1}}\033[0m/;
                     print STDERR
                         "\033[2m", # faint
                         $src_file,
@@ -81,7 +79,7 @@ File::Find::find(
     $source_dir
 );
 
-if ($unset_variable_count > 0) {
-    print "\033[91m", "Failed to replace $unset_variable_count variable(s), aborting.", "\033[0m\n";
+if (scalar(@unset_variables) > 0) {
+    print "\033[91mAborting due to unset variable(s): ", join(', ', @unset_variables), "\033[0m\n";
     exit 1;
 }
