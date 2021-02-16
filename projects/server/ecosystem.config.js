@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "server",
-      script: "./node_modules/.bin",
+      script: "./node_modules/.bin/ts-node src/devServer.ts",
       watch: true,
       env: {
         NODE_ENV: "development",
