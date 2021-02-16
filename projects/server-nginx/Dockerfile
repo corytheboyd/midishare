@@ -7,7 +7,8 @@ ENV SERVER_URL=${SERVER_URL}
 
 # Replace environemnt variables in template source files and move
 # to /etc/nginx
-RUN script/replace-variables-dir.sh /etc/nginx /etc/nginx2
+COPY ./script script
+RUN ./script/replace-variables /etc/nginx /etc/nginx
 
 # Enable the vhost. See documentation of sites-[available|enabled]
 # https://wiki.debian.org/Nginx/DirectoryStructure
