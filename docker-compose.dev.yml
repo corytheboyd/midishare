@@ -81,31 +81,31 @@ services:
       - "--cert=/ssl/localhost.pem"
       - "--key=/ssl/localhost-key.pem"
 
-  server-app:
+  server:
     build:
       target: development
-    container_name: server-app
-    env_file: projects/server-app/.env
+    container_name: server
+    env_file: projects/server/.env
     expose:
       - "4000"
     ports:
       - "9229:9229" # node --inspect
     environment:
-      ADDRESS: 127.0.0.1
+      ADDRESS: server
       PORT: 4000
       BASE_URL: https://localhost:4000
       CLIENT_URL: https://localhost:3000
     volumes:
-      - "./projects/server-app/src:/code/app/src"
+      - "./projects/server/src:/code/app/src"
       - "./projects/common/dist:/code/common/dist:ro"
 
-  server-nginx:
-    container_name: server-nginx
+  nginx:
+    container_name: nginx
     build:
       context: .
-      dockerfile: projects/server-nginx/Dockerfile
+      dockerfile: projects/nginx/Dockerfile
       args:
-        SERVER_URL: http://server-app:4000
+        SERVER_URL: http://server:4000
     ports:
       - "4000:4000"
 

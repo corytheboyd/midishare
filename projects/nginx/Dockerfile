@@ -1,6 +1,6 @@
 FROM nginx:1.19.6-perl AS nginx-base
 
-COPY ./projects/server-nginx/ .
+COPY ./projects/nginx/ .
 
 ARG SERVER_URL
 ENV SERVER_URL=${SERVER_URL}

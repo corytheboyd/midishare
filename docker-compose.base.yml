@@ -11,21 +11,20 @@ services:
       NODE_ENV:
       SERVER_URL:
 
-  server-app:
-    container_name: server-app
+  server:
+    container_name: server
     init: true
     environment:
+      ADDRESS:
+      PORT:
       BASE_URL:
-      SSL_CERT_PATH:
-      SSL_KEY_PATH:
-      CLIENT_ORIGIN:
       SQLITE_DATABASE: /db/database.db
       DB_MIGRATIONS_PATH: /db/migrations
     volumes:
       - "./db:/db"
     build:
       context: .
-      dockerfile: projects/server-app/Dockerfile
+      dockerfile: projects/server/Dockerfile
 
   docs:
     container_name: docs

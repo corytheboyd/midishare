@@ -109,9 +109,9 @@ async function runCommand(command: string[]): Promise<void> {
   console.log("Adding server static files to unpacked archive before sync");
   await runCommand([
     "cp",
-    "projects/server-app/.nvmrc",
-    "projects/server-app/.npmrc",
-    "projects/server-app/.env",
+    "projects/server/.nvmrc",
+    "projects/server/.npmrc",
+    "projects/server/.env",
     resolve(ARTIFACT_ROOT, "server"),
   ]);
 
