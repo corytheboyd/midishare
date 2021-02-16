@@ -3,7 +3,6 @@ import { createServer } from "http";
 import helmet from "helmet";
 import { api } from "./lib/api/v1";
 import { auth, ConfigParams as AuthConfigParams } from "express-openid-connect";
-import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
 import { Server as WebSocketServer } from "ws";
 import cookieParser from "cookie-parser";
@@ -100,7 +99,6 @@ const app = express() as Express & {
 };
 
 // Third-party middlewares
-app.use(morgan("combined"));
 app.use(helmet());
 app.use(cors(corsConfig));
 app.use(auth(authConfig));
@@ -118,7 +116,7 @@ const webSocketServer = new WebSocketServer({
 register(httpServer, webSocketServer, app);
 
 httpServer.listen(port, address, () => {
-  console.log(`Listening on https://${address}:${port}`);
+  console.log(`Listening on http://${address}:${port}`);
 });
 
 /**

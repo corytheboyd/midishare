@@ -15,4 +15,3 @@ export const connectionMap: Record<
   sessionData: {},
   signaling: {},
 };
-console.debug("WS CONNECTION MAP", connectionMap);

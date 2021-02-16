@@ -4,7 +4,6 @@ volumes:
   client_parcel-cache:
   docs_parcel-cache:
   inspector_parcel-cache:
-  server_ncc-cache:
 
 services:
   sqlite-web:
@@ -12,7 +11,7 @@ services:
     container_name: sqlite-web
     init: true
     ports:
-      - "4100:8080"
+      - "9100:8080"
     volumes:
       - "./db:/data"
     environment:
@@ -85,24 +84,19 @@ services:
   server:
     build:
       target: development
-    container_name: server
     env_file: projects/server/.env
     expose:
-      - "4000"
+      - "4100"
     ports:
       - "9229:9229" # node --inspect
     environment:
       ADDRESS: server
-      PORT: 4000
+      PORT: 4100
       BASE_URL: https://localhost:4000
       CLIENT_URL: https://localhost:3000
-      NCC_CACHE_PATH: /ncc-cache
     volumes:
       - "./projects/server/src:/code/app/src"
       - "./projects/common/dist:/code/common/dist:ro"
-      - type: volume
-        source: server_ncc-cache
-        target: /ncc-cache
 
   nginx:
     container_name: nginx
@@ -110,9 +104,14 @@ services:
       context: .
       dockerfile: projects/nginx/Dockerfile
       args:
-        SERVER_URL: http://server:4000
+        SERVER_URL: http://server:4100
+        SERVER_NAME: localhost
+        SSL_CERT_PATH: /ssl/localhost.pem
+        SSL_KEY_PATH: /ssl/localhost-key.pem
+    volumes:
+      - "./ssl:/ssl:ro"
     ports:
-      - "4000:4000"
+      - "4000:443"
 
   keyboard:
     build:

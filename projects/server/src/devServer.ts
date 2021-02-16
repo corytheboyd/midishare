@@ -1,6 +1,10 @@
 import ncc from "@vercel/ncc";
 import { resolve } from "path";
 
+// TODO not sure if this was a good idea.. was thinking of using it to
+//  gracefully start a server once the build is finished, but it's a big
+//  complex..
+
 const compiler = ncc(resolve(__dirname, "index.ts"), {
   sourceMap: true,
   watch: true,
@@ -26,6 +30,7 @@ compiler.handler(({ err }) => {
   }
 
   console.log(`Build finished. ${elapsed}(S)`);
+  process.send!("ready");
 });
 
 compiler.rebuild(() => {
