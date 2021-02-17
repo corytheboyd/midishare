@@ -27,21 +27,31 @@ const DIST_FILE = "server.tgz";
     `sh -c "cd dist && tar -zcvf ../${DIST_FILE} . && cd - ; cp ${DIST_FILE} /artifacts ; chown -R $(id -u):$(id -g) /artifacts"`,
   ]);
 
-  console.log("Sending dist to host...");
+  console.log("Sending dist to server...");
   await execOnServer(["mkdir -p /home/node/midishare/dist/"]);
   await sendToServer(
     resolve(ARTIFACT_ROOT, `server/${DIST_FILE}`),
     "/home/node/midishare/dist/"
   );
 
-  console.log("Unpacking dist on host...");
+  console.log("Unpacking dist on server...");
   await execOnServer([
-    `cd /home/node/midishare/dist ; tar -xvf ${DIST_FILE} ; rm ${DIST_FILE}`,
+    `cd /home/node/midishare/dist/ ; tar -xvf ${DIST_FILE} ; rm ${DIST_FILE}`,
   ]);
 
-  console.log("Sending .env to host...");
+  console.log("Sending .env to server...");
   await sendToServer(
     resolve(__dirname, "../../projects/server/.env.production"),
-    "/home/node/midishare"
+    "/home/node/midishare/"
   );
+
+  console.log("Sending db to server....");
+  await execOnServer(["mkdir -p /home/node/midishare/db/migrations/"]);
+  await sendToServer(
+    resolve(__dirname, "../../db/migrations"),
+    "/home/node/midishare/db/"
+  );
+
+  console.log("Deploying and restarting server with PM2...");
+  await runCommand(["cd projects/server ;", "npm run deploy -- --force"]);
 })();
