@@ -13,9 +13,3 @@ services:
   server:
     build:
       target: production
-
-  nginx:
-    build:
-      args:
-        SERVER_URL: https://api.midishare.app
-        SERVER_NAME: midishare.app

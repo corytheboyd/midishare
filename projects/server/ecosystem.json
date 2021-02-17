@@ -19,8 +19,8 @@
         "PORT": "4100",
         "BASE_URL": "https://api.midishare.app",
         "CLIENT_URL": "https://midishare.app",
-        "SQLITE_DATABASE": "/home/node/db/database.db",
-        "DB_MIGRATIONS_PATH": "/home/node/db/migrations"
+        "SQLITE_DATABASE": "/home/node/midishare/current/db/database.db",
+        "DB_MIGRATIONS_PATH": "/home/node/midishare/current/db/migrations"
       }
     }
   ],
@@ -28,13 +28,10 @@
     "production": {
       "user": "node",
       "host": ["64.227.101.60"],
-      "ssh_options": ["StrictHostKeyChecking=no"],
-      "key": "",
-
       "ref": "origin/rewrite",
       "repo": "git@github.com:corytheboyd/midishare.git",
       "path": "/home/node/midishare",
-
+      "pre-deploy-local": "",
       "post-deploy": "pm2 startOrRestart projects/server/ecosystem.json --env production"
     }
   }

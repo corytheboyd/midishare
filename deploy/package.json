@@ -4,7 +4,7 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "deploy": "./node_modules/.bin/ts-node index.ts"
+    "deploy:server": "./node_modules/.bin/ts-node server.ts"
   },
   "dependencies": {
     "dotenv": "^8.2.0",

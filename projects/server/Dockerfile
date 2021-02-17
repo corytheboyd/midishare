@@ -29,7 +29,5 @@ WORKDIR /code/common
 RUN ./node_modules/.bin/rollup --config=rollup.config.js
 
 WORKDIR /code/app
-RUN ./node_modules/.bin/ncc build src/index.ts \
-    --out=dist \
-    --source-map
+RUN npm run build
 RUN rm -rf node_modules
