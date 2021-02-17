@@ -31,7 +31,6 @@
       "ref": "origin/rewrite",
       "repo": "git@github.com:corytheboyd/midishare.git",
       "path": "/home/node/midishare",
-      "pre-deploy-local": "",
       "post-deploy": "pm2 startOrRestart projects/server/ecosystem.json --env production"
     }
   }
