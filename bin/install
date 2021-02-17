@@ -1,20 +1,26 @@
 #!/bin/bash
 set -euo pipefail
 
+echo Install dependencies at root...
+(npm install)
+
+echo Install dependencies for deploy scripts...
+(cd deploy && npm install)
+
 echo Install dependencies for projects/client...
-(cd projects/client && npm ci)
+(cd projects/client && npm install)
 
 echo Install dependencies for projects/common...
-(cd projects/common && npm ci)
+(cd projects/common && npm install)
 
 echo Install dependencies for projects/inspector...
-(cd projects/inspector && npm ci)
+(cd projects/inspector && npm install)
 
 echo Install dependencies for projects/keyboard...
-(cd projects/keyboard && npm ci)
+(cd projects/keyboard && npm install)
 
 echo Install dependencies for projects/server...
-(cd projects/server && npm ci)
+(cd projects/server && npm install)
 
 echo Creating Docker images...
 bin/dcp-dev build
