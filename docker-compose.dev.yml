@@ -2,7 +2,6 @@ version: "3.8"
 
 volumes:
   client_parcel-cache:
-  docs_parcel-cache:
   inspector_parcel-cache:
 
 services:

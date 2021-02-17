@@ -25,7 +25,6 @@ Put together a prototype and tested it with my teacher, and it worked!
 | Service | Description | Address |
 | --- | ---- | --- |
 | Client | The Midishare application | https://localhost:3000 |
-| Documentation | Documentation about Midishare components, such as `@midishare/keyboard` | https://localhost:3100 |
 | MIDI Inspector | Debugging application for MIDI inputs | https://localhost:3200 |
 | API | REST API and WebSocket for Midishare application | https://localhost:4000 |
 | CDN | A simple static file server for assets that will be hosted on a CDN | https://localhost:9000 |

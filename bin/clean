@@ -8,7 +8,6 @@ echo Removing local bundles...
 echo Removing dependencies...
 (cd projects/client && rm -rf node_modules)
 (cd projects/common && rm -rf node_modules)
-(cd projects/docs && rm -rf node_modules)
 (cd projects/inspector && rm -rf node_modules)
 (cd projects/keyboard && rm -rf node_modules)
 (cd projects/server && rm -rf node_modules)
