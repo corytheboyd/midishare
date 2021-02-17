@@ -68,12 +68,7 @@ services:
       - "./projects/common/dist:/code/common/dist:ro"
 
   nginx:
-    container_name: nginx
-    depends_on:
-      - server
     build:
-      context: .
-      dockerfile: projects/nginx/Dockerfile
       args:
         SERVER_URL: http://server:4100
         SERVER_NAME: localhost

@@ -1,6 +1,4 @@
-FROM nginx:1.19.6-perl AS nginx-base
-
-COPY ./projects/nginx/ .
+FROM nginx:1.19.6-perl
 
 ARG SERVER_URL
 ENV SERVER_URL=${SERVER_URL}
@@ -10,6 +8,8 @@ ARG SSL_KEY_PATH
 ENV SSL_KEY_PATH=${SSL_KEY_PATH}
 ARG SERVER_NAME
 ENV SERVER_NAME=${SERVER_NAME}
+
+COPY ./projects/nginx/ .
 
 # Replace environemnt variables in template source files and move
 # to /etc/nginx

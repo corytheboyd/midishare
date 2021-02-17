@@ -18,6 +18,15 @@ services:
       context: .
       dockerfile: projects/server/Dockerfile
 
+  nginx:
+    depends_on:
+      - server
+    container_name: ngninx
+    init: true
+    build:
+      context: .
+      dockerfile: projects/nginx/Dockerfile
+
   keyboard:
     container_name: keyboard
     init: true

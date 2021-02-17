@@ -1,14 +1,14 @@
 import { resolve } from "path";
-import { runCommand } from "./lib/runCommand";
-import { sendToServer } from "./lib/sendToServer";
-import { ARTIFACT_ROOT } from "./index";
-import { execOnServer } from "./lib/execOnServer";
+import { runCommand } from "../lib/runCommand";
+import { ARTIFACT_ROOT } from "../index";
+import { sendToServer } from "../lib/sendToServer";
+import { execOnServer } from "../lib/execOnServer";
 
 const DIST_FILE = "dist.tgz";
 
 (async () => {
   // Run everything from the project root directory
-  process.chdir(resolve(__dirname, ".."));
+  process.chdir(resolve(__dirname, "../.."));
 
   console.log("Cleanup build artifacts...");
   await runCommand([`rm -rf ${resolve(ARTIFACT_ROOT, "server")}`]);
@@ -37,12 +37,15 @@ const DIST_FILE = "dist.tgz";
 
   console.log("Sending .env to host...");
   await sendToServer(
-    resolve(__dirname, "../projects/server/.env.production"),
+    resolve(__dirname, "../../projects/server/.env.production"),
     "/home/node/"
   );
 
+  // TODO honestly, this doesn't do anything anymore lol. We're completely
+  //  handling it on our own anyway. Remove and just run the post deploy
+  //  commands manually
   console.log("Running PM2 deployment...");
   await runCommand([
-    `cd ${resolve(__dirname, "../projects/server")} ; npm run deploy`,
+    `cd ${resolve(__dirname, "../../projects/server")} ; npm run deploy`,
   ]);
 })();
