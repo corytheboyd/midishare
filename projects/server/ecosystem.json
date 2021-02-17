@@ -2,7 +2,7 @@
   "apps": [
     {
       "name": "server",
-      "script": "index.js",
+      "script": "projects/server/index.js",
       "watch": ["src/**/*", "/db/migrations/**/*", "/code/common/**/*"],
       "env_development": {
         "NODE_ENV": "development",
