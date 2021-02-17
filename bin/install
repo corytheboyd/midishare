@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -euo pipefail
 
 echo Install dependencies for projects/client...

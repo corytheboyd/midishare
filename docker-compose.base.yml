@@ -18,6 +18,7 @@ services:
       ADDRESS:
       PORT:
       BASE_URL:
+      CLIENT_URL:
       SQLITE_DATABASE: /db/database.db
       DB_MIGRATIONS_PATH: /db/migrations
     volumes:

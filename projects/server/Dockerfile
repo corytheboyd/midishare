@@ -1,4 +1,4 @@
-FROM node:14.15.3 AS base
+FROM node:14.15.5 AS base
 
 WORKDIR /
 COPY tsconfig.base.json .
@@ -19,7 +19,8 @@ COPY projects/common /code/common
 
 FROM base AS development
 
-ENTRYPOINT ["./docker-entrypoint.sh"]
+CMD npx pm2 start src/index.ts --interpreter=./node_modules/.bin/ts-node && \
+    npx pm2 logs;
 
 FROM base AS production
 
@@ -27,4 +28,7 @@ WORKDIR /code/common
 RUN ./node_modules/.bin/rollup --config=rollup.config.js
 
 WORKDIR /code/app
-RUN ./node_modules/.bin/ncc build src/index.ts --out=dist --source-map
+RUN ./node_modules/.bin/ncc build src/index.ts \
+    --out=dist \
+    --source-map
+RUN rm -rf node_modules
