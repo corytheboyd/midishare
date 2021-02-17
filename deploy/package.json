@@ -4,6 +4,7 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
+    "deploy:client": "./node_modules/.bin/ts-node projects/client.ts",
     "deploy:server": "./node_modules/.bin/ts-node projects/server.ts",
     "deploy:nginx": "./node_modules/.bin/ts-node projects/nginx.ts"
   },
