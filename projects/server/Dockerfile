@@ -19,7 +19,8 @@ COPY projects/common /code/common
 
 FROM base AS development
 
-CMD npx pm2-dev start ecosystem.config.js
+# See: https://pm2.keymetrics.io/docs/usage/docker-pm2-nodejs/#development-environment
+CMD ./node_modules/.bin/pm2-dev start ecosystem.json --env development
 
 FROM base AS production
 

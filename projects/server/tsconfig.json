@@ -4,7 +4,7 @@
     "baseUrl": "./",
     "lib": ["ES2020"],
     "paths": {
-      "@vercel/ncc": ["./src/vercel__ncc.d.ts"]
+      "@vercel/ncc": ["./src/unused/vercel__ncc.d.ts"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"]

@@ -31,7 +31,7 @@ import { db, dbOpen } from "./lib/state/db";
 
 const authConfig: AuthConfigParams = {
   issuerBaseURL: "https://midishare.us.auth0.com",
-  clientID: "KfeOyf0URxB0TmuMSDaI8orGQ4Ufvs78",
+  clientID: process.env.AUTH0_CLIENT_ID,
   errorOnRequiredAuth: true,
   authRequired: false,
   auth0Logout: true,

@@ -14,15 +14,6 @@ services:
   server:
     container_name: server
     init: true
-    environment:
-      ADDRESS:
-      PORT:
-      BASE_URL:
-      CLIENT_URL:
-      SQLITE_DATABASE: /db/database.db
-      DB_MIGRATIONS_PATH: /db/migrations
-    volumes:
-      - "./db:/db"
     build:
       context: .
       dockerfile: projects/server/Dockerfile

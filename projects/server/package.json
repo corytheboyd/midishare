@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "pm2-runtime start ecosystem.config.js --env production"
+    "build": "./node_modules/.bin/ncc build src/index.ts -o dist"
   },
   "dependencies": {
     "pm2": "^4.5.4"

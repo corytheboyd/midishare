@@ -1,5 +1,5 @@
 # Secrets
-**/.env
+**/.env*
 
 # Protected assets
 /assets/protected/**/*

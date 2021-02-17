@@ -84,17 +84,11 @@ services:
   server:
     build:
       target: development
-    env_file: projects/server/.env
+    env_file: projects/server/.env.development
     expose:
       - "4100"
-    ports:
-      - "9229:9229" # node --inspect
-    environment:
-      ADDRESS: server
-      PORT: 4100
-      BASE_URL: https://localhost:4000
-      CLIENT_URL: https://localhost:3000
     volumes:
+      - "./db:/db"
       - "./projects/server/src:/code/app/src"
       - "./projects/common/dist:/code/common/dist:ro"
 
