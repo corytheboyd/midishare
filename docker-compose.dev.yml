@@ -58,29 +58,6 @@ services:
       - "--cert=/ssl/localhost.pem"
       - "--key=/ssl/localhost-key.pem"
 
-  docs:
-    build:
-      target: development
-    ports:
-      - "3100:3100"
-      - "3101:3101"
-    environment:
-      NODE_ENV: development
-      CDN_URL: https://localhost:9000
-    volumes:
-      - "./ssl:/ssl:ro"
-      - "./projects/docs/src:/code/app/src"
-      - "./projects/keyboard/dist:/code/keyboard/dist:ro"
-      - type: volume
-        source: docs_parcel-cache
-        target: /parcel-cache
-    command:
-      - "--cache-dir=/parcel-cache"
-      - "--port=3100"
-      - "--hmr-port=3101"
-      - "--cert=/ssl/localhost.pem"
-      - "--key=/ssl/localhost-key.pem"
-
   server:
     build:
       target: development
