@@ -30,4 +30,6 @@ wget https://github.com/corytheboyd/midishare/raw/rewrite/db/database.db
 
 ```
 # pretty much just follow this https://gist.github.com/RobertMcReed/c6963a09962adf22c91e7c1370dffc13
+# install pm2 on remote server
+sudo npm i -g pm2@4.5.4
 ```

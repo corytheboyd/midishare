@@ -7,9 +7,6 @@
     "deploy": "./node_modules/.bin/pm2 deploy ecosystem.json production",
     "build": "./node_modules/.bin/ncc build src/index.ts -o dist"
   },
-  "dependencies": {
-    "pm2": "^4.5.4"
-  },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
     "@types/cors": "^2.8.9",
@@ -26,6 +23,7 @@
     "express": "^4.17.1",
     "express-openid-connect": "^2.2.1",
     "helmet": "^4.4.1",
+    "pm2": "^4.5.4",
     "sqlite": "^4.0.19",
     "sqlite3": "^5.0.0",
     "ts-node": "^9.1.1",

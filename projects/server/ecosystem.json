@@ -35,9 +35,6 @@
       "repo": "git@github.com:corytheboyd/midishare.git",
       "path": "/home/node/midishare",
 
-      "pre-setup": "echo 'PRE-SETUP' ; ls -al",
-      "post-setup": "echo 'POST-SETUP' ; ls -al",
-      "pre-deploy-local": "echo 'PRE-DEPLOY-LOCAL'",
       "post-deploy": "pm2 startOrRestart projects/server/ecosystem.json --env production"
     }
   }
