@@ -60,7 +60,6 @@ services:
   server:
     build:
       target: development
-    env_file: projects/server/.env.development
     expose:
       - "4100"
     volumes:

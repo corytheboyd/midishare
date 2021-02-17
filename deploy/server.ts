@@ -35,6 +35,12 @@ const DIST_FILE = "dist.tgz";
     `tar -xvf /home/node/dist/server/${DIST_FILE} ; rm /home/node/dist/server/${DIST_FILE}`,
   ]);
 
+  console.log("Sending .env to host...");
+  await sendToServer(
+    resolve(__dirname, "../projects/server/.env.production"),
+    "/home/node/"
+  );
+
   console.log("Running PM2 deployment...");
   await runCommand([
     `cd ${resolve(__dirname, "../projects/server")} ; npm run deploy`,

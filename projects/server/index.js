@@ -1,3 +1,6 @@
+require("dotenv").config({
+  path: process.env.DOTENV_PATH,
+});
 if (process.env.NODE_ENV === "development") {
   require("ts-node/register");
   require("./src/index");
