@@ -24,6 +24,10 @@ sudo apt install build-essential
 # I just downloaded the empty database checked in to source control to the root of the project.
 cd ~/server
 wget https://github.com/corytheboyd/midishare/raw/rewrite/db/database.db
+```
 
+### Deployment
 
+```
+# pretty much just follow this https://gist.github.com/RobertMcReed/c6963a09962adf22c91e7c1370dffc13
 ```

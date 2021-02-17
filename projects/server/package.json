@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "deploy:setup": "./node_modules/.bin/pm2 deploy ecosystem.json production setup",
+    "deploy": "./node_modules/.bin/pm2 deploy ecosystem.json production",
     "build": "./node_modules/.bin/ncc build src/index.ts -o dist"
   },
   "dependencies": {

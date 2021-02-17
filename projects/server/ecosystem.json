@@ -28,9 +28,17 @@
     "production": {
       "user": "node",
       "host": ["64.227.101.60"],
+      "ssh_options": ["StrictHostKeyChecking=no"],
+      "key": "",
+
       "ref": "origin/rewrite",
       "repo": "git@github.com:corytheboyd/midishare.git",
-      "path": "/home/node/midishare"
+      "path": "/home/node/midishare",
+
+      "pre-setup": "echo 'PRE-SETUP' ; ls -al",
+      "post-setup": "echo 'POST-SETUP' ; ls -al",
+      "pre-deploy-local": "echo 'PRE-DEPLOY-LOCAL'",
+      "post-deploy": "npm install --production && npx pm2 startOrRestart ecosystem.json --env production"
     }
   }
 }
