@@ -1,4 +1,4 @@
-FROM node:14.15.3 AS base
+FROM node:14.15.5 AS base
 
 WORKDIR /
 COPY tsconfig.base.json .

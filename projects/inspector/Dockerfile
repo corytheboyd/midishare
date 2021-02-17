@@ -1,4 +1,4 @@
-FROM node:14.15.3 AS node-base
+FROM node:14.15.5 AS node-base
 
 FROM node-base AS development
 
