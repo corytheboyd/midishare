@@ -4,7 +4,7 @@ import { ARTIFACT_ROOT } from "../index";
 import { sendToServer } from "../lib/sendToServer";
 import { execOnServer } from "../lib/execOnServer";
 
-const DIST_FILE = "dist.tgz";
+const DIST_FILE = "server.tgz";
 
 (async () => {
   // Run everything from the project root directory
@@ -28,24 +28,20 @@ const DIST_FILE = "dist.tgz";
   ]);
 
   console.log("Sending dist to host...");
-  await sendToServer(resolve(ARTIFACT_ROOT, "server"), "/home/node/dist");
+  await execOnServer(["mkdir -p /home/node/midishare/dist/"]);
+  await sendToServer(
+    resolve(ARTIFACT_ROOT, `server/${DIST_FILE}`),
+    "/home/node/midishare/dist/"
+  );
 
   console.log("Unpacking dist on host...");
   await execOnServer([
-    `tar -xvf /home/node/dist/server/${DIST_FILE} ; rm /home/node/dist/server/${DIST_FILE}`,
+    `cd /home/node/midishare/dist ; tar -xvf ${DIST_FILE} ; rm ${DIST_FILE}`,
   ]);
 
   console.log("Sending .env to host...");
   await sendToServer(
     resolve(__dirname, "../../projects/server/.env.production"),
-    "/home/node/"
+    "/home/node/midishare"
   );
-
-  // TODO honestly, this doesn't do anything anymore lol. We're completely
-  //  handling it on our own anyway. Remove and just run the post deploy
-  //  commands manually
-  console.log("Running PM2 deployment...");
-  await runCommand([
-    `cd ${resolve(__dirname, "../../projects/server")} ; npm run deploy`,
-  ]);
 })();
