@@ -73,7 +73,7 @@ File::Find::find(
                         $_, # offending line,
                         "\n";
                 } else {
-                    s/$PATTERN/$ENV{$1}/;
+                    s/$PATTERN/$ENV{$1}/g;
                 }
             }
             print DES $_;
