@@ -32,6 +32,9 @@ import { execOnServer } from "../lib/execOnServer";
     process.env.NGINX_USER_ADDRESS
   );
 
+  console.log("Verifying configuration on host...");
+  await execOnServer(["nginx -t"], process.env.NGINX_USER_ADDRESS);
+
   console.log("Restarting nginx on host...");
   await execOnServer(["service nginx restart"], process.env.NGINX_USER_ADDRESS);
 })();

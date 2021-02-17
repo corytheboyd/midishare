@@ -20,4 +20,4 @@ services:
         SERVER_URL: http://127.0.0.1:4100
         SERVER_NAME: api.midishare.app
         SSL_CERT_PATH: /etc/letsencrypt/live/api.midishare.app/fullchain.pem
-        SSL_KEY_PATH: /etc/letsencrypt/live/api.midishare.app/privkey.pem;
+        SSL_KEY_PATH: /etc/letsencrypt/live/api.midishare.app/privkey.pem
