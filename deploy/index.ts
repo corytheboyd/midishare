@@ -3,7 +3,6 @@ import { config } from "dotenv";
 import { runCommand } from "./lib/runCommand";
 import { sendToServer } from "./lib/sendToServer";
 import { execOnServer } from "./lib/execOnServer";
-import { uploadDirectory } from "./lib/cdn/uploadDirectory";
 
 config({
   path: resolve(__dirname, ".env"),
@@ -108,11 +107,11 @@ process.chdir(resolve(__dirname, ".."));
       "projects/server/package-lock.json",
       "projects/server/.nvmrc",
       "projects/server/.npmrc",
-      "db/migrations",
       resolve(ARTIFACT_ROOT, "server"),
     ]);
+    await sendToServer("db/migrations", "~/db");
 
-    console.log("Syncing server files");
+    console.log("Syncing server artifacts");
     await sendToServer(resolve(ARTIFACT_ROOT, "server"), "~");
 
     console.log("Restarting server");

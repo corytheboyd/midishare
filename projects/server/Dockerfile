@@ -19,8 +19,7 @@ COPY projects/common /code/common
 
 FROM base AS development
 
-CMD npx pm2 start src/index.ts --interpreter=./node_modules/.bin/ts-node && \
-    npx pm2 logs;
+CMD npx pm2-dev start ecosystem.config.js
 
 FROM base AS production
 
