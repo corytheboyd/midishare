@@ -35,17 +35,15 @@ services:
   client:
     build:
       target: development
-    ports:
-      - "3000:3000" # HTTPS
-      - "3001:3001" # WS
+    expose:
+      - "3000"
     environment:
       NODE_ENV: development
       PUBLIC_URL: https://www.midishare.local:3000
       CDN_URL: https://cdn.midishare.local:9000
-      SERVER_URL: https://api.midishare.local:4000
-      WS_URL: wss://api.midishare.local:4000
+      SERVER_URL: https://api.midishare.local:3000
+      WS_URL: wss://api.midishare.local:3000
     volumes:
-      - "./ssl:/ssl:ro"
       - "./projects/client/src:/code/app/src"
       - "./projects/keyboard/dist:/code/keyboard/dist:ro"
       - "./projects/common/dist:/code/common/dist:ro"
@@ -55,14 +53,12 @@ services:
     command:
       - "--cache-dir=/parcel-cache"
       - "--port=3000"
-      - "--cert=/ssl/_wildcard.midishare.local.pem"
-      - "--key=/ssl/_wildcard.midishare.local-key.pem"
 
   server:
     build:
       target: development
     expose:
-      - "4100"
+      - "3000"
     volumes:
       - "./db:/db"
       - "./projects/server/src:/code/app/src"
@@ -71,7 +67,8 @@ services:
   nginx:
     build:
       args:
-        API_SERVER_URL: http://server:4100
+        API_SERVER_URL: http://server:3000
+        WWW_SERVER_URL: http://client:3000
         API_DOMAIN: api.midishare.local
         WWW_DOMAIN: www.midishare.local
         SSL_CERT_PATH: /ssl/_wildcard.midishare.local.pem
@@ -79,7 +76,7 @@ services:
     volumes:
       - "./ssl:/ssl:ro"
     ports:
-      - "4000:443"
+      - "3000:443"
 
   keyboard:
     build:

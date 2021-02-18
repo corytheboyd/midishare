@@ -9,19 +9,27 @@ server {
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
-    root /var/www/html;
-
-    index index.html index.htm index.nginx-debian.html;
+    location / {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_redirect off;
+        proxy_read_timeout 240s;
+        proxy_pass {{WWW_SERVER_URL}};
+    }
 }
 
 server {
     listen 80;
     server_name {{WWW_DOMAIN}} www.{{WWW_DOMAIN}};
 
-    if ($host = midishare.app) {
+    if ($host = {{WWW_DOMAIN}}) {
         return 301 https://$host$request_uri;
     }
-    if ($host = www.midishare.app) {
+    if ($host = www.{{WWW_DOMAIN}}) {
         return 301 https://$host$request_uri;
     }
     return 404;
