@@ -6,7 +6,7 @@ services:
       args:
         NODE_ENV: production
         SERVER_URL: http://server:3000
-        WS_URL: ws://api.midishare.app
+        WS_URL: wss://api.midishare.app
         PUBLIC_URL: https://midishare.app
         CDN_URL: https://midishare.b-cdn.net
 
