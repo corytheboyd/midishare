@@ -12,7 +12,8 @@
         "CLIENT_URL": "https://www.midishare.local:3000",
         "SQLITE_DATABASE": "/db/database.db",
         "DB_MIGRATIONS_PATH": "/db/migrations",
-        "DOTENV_PATH": "/code/app/.env.development"
+        "DOTENV_PATH": "/code/app/.env.development",
+        "COOKIE_DOMAIN": "midishare.local"
       },
       "env_production": {
         "NODE_ENV": "production",
@@ -22,7 +23,8 @@
         "CLIENT_URL": "https://www.midishare.app",
         "SQLITE_DATABASE": "/home/node/midishare/current/db/database.db",
         "DB_MIGRATIONS_PATH": "/home/node/midishare/current/db/migrations",
-        "DOTENV_PATH": "/home/node/.env.production"
+        "DOTENV_PATH": "/home/node/.env.production",
+        "COOKIE_DOMAIN": "midishare.app"
       }
     }
   ],

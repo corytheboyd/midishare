@@ -20,10 +20,7 @@ export const addAnonymousIdCookie = () => (
   if (!req.signedCookies[ANONYMOUS_ID_COOKIE_NAME]) {
     const anonymousId = `anonymous|${uuid()}`;
     res.cookie(ANONYMOUS_ID_COOKIE_NAME, anonymousId, {
-      domain: (() => {
-        const url = new URL(process.env.CLIENT_URL as string);
-        return url.hostname;
-      })(),
+      domain: process.env.COOKIE_DOMAIN,
       signed: true,
     });
   }

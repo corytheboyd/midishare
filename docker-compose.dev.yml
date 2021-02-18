@@ -43,7 +43,7 @@ services:
       PUBLIC_URL: https://www.midishare.local:3000
       CDN_URL: https://cdn.midishare.local:9000
       SERVER_URL: https://api.midishare.local:4000
-      WS_URL: ws://localhost:4000
+      WS_URL: wss://api.midishare.local:4000
     volumes:
       - "./ssl:/ssl:ro"
       - "./projects/client/src:/code/app/src"
