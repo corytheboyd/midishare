@@ -23,7 +23,7 @@
         "CLIENT_URL": "https://www.midishare.app",
         "SQLITE_DATABASE": "/home/node/midishare/current/db/database.db",
         "DB_MIGRATIONS_PATH": "/home/node/midishare/current/db/migrations",
-        "DOTENV_PATH": "/home/node/.env.production",
+        "DOTENV_PATH": "/home/node/midishare/.env.production",
         "COOKIE_DOMAIN": "midishare.app"
       }
     }
