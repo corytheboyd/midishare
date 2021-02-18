@@ -5,7 +5,7 @@ services:
       target: production
       args:
         NODE_ENV: production
-        SERVER_URL: https://api.midishare.app
+        SERVER_URL: http://server:3000
         WS_URL: ws://api.midishare.app
         PUBLIC_URL: https://midishare.app
         CDN_URL: https://midishare.b-cdn.net
@@ -17,7 +17,7 @@ services:
   nginx:
     build:
       args:
-        API_SERVER_URL: http://127.0.0.1:4100
+        API_SERVER_URL: http://127.0.0.1:3000
         API_DOMAIN: api.midishare.app
         WWW_DOMAIN: midishare.app
         SSL_CERT_PATH: /etc/letsencrypt/live/midishare.app/fullchain.pem
