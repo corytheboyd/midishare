@@ -11,4 +11,4 @@ COPY projects/keyboard/package-lock.json .
 RUN npm ci
 COPY projects/keyboard .
 
-ENTRYPOINT ["./node_modules/.bin/rollup", "--config=rollup.config.js"]
+ENTRYPOINT ["./docker-entrypoint.sh"]

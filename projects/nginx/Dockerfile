@@ -24,6 +24,7 @@ RUN ./script/replace-variables /etc/nginx /etc/nginx
 
 # Enable the vhost. See documentation of sites-[available|enabled]
 # https://wiki.debian.org/Nginx/DirectoryStructure
+RUN mkdir -p /etc/nginx/sites-enabled
 RUN ln -s /etc/nginx/sites-available/api.midishare /etc/nginx/sites-enabled/
 RUN ln -s /etc/nginx/sites-available/www.midishare /etc/nginx/sites-enabled/
 

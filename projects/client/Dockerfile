@@ -25,7 +25,7 @@ COPY projects/client /code/app
 
 FROM base AS development
 
-ENTRYPOINT ["./node_modules/.bin/parcel", "serve", "src/index.html"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
 
 FROM base AS production
 
@@ -41,10 +41,10 @@ ARG WS_URL
 ENV WS_URL=${WS_URL}
 
 WORKDIR /code/common
-RUN ./node_modules/.bin/rollup --config=rollup.config.js
+RUN npm run build
 
 WORKDIR /code/keyboard
-RUN ./node_modules/.bin/rollup --config=rollup.config.js
+RUN npm run build
 
 WORKDIR /code/app
-RUN /code/app/node_modules/.bin/parcel build src/index.html
+RUN npm run build

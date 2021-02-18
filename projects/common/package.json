@@ -7,6 +7,10 @@
   "module": "dist/index.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "./node_modules/.bin/rollup --config=rollup.config.js",
+    "build": "./node_modules/.bin/rollup --config=rollup.config.js"
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.1.0",
     "@rollup/plugin-node-resolve": "^11.1.1",

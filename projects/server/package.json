@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "dev": "./node_modules/.bin/pm2-dev start ecosystem.json --env development",
+    "build": "./node_modules/.bin/ncc build src/index.ts -o dist --minify --source-map",
     "deploy:setup": "./node_modules/.bin/pm2 deploy ecosystem.json production setup",
-    "deploy": "./node_modules/.bin/pm2 deploy ecosystem.json production",
-    "build": "./node_modules/.bin/ncc build src/index.ts -o dist --minify --source-map"
+    "deploy": "./node_modules/.bin/pm2 deploy ecosystem.json production"
   },
   "dependencies": {
     "dotenv": "^8.2.0"

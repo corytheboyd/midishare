@@ -11,4 +11,4 @@ COPY projects/common/package-lock.json .
 RUN npm ci
 COPY projects/common .
 
-ENTRYPOINT ["./node_modules/.bin/rollup", "--config=rollup.config.js"]
+ENTRYPOINT ["./docker-entrypoint.sh"]

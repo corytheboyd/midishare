@@ -33,3 +33,28 @@ wget https://github.com/corytheboyd/midishare/raw/rewrite/db/database.db
 # install pm2 on remote server
 sudo npm i -g pm2@4.5.4
 ```
+
+### Nginx Amplify
+
+Run on remote server only, but maybe can add to development as well?
+```
+curl -L -O https://github.com/nginxinc/nginx-amplify-agent/raw/master/packages/install.sh
+# modify package_name per this comment https://github.com/nginxinc/nginx-amplify-agent/issues/181#issuecomment-662107703
+API_KEY='SUPERSECRET' sh ./install.sh
+
+# then, need to install nginx modules stub_status
+# added this to a conf.d file
+server {
+	listen 127.0.0.1:80;
+	server_name 127.0.0.1;
+	location /nginx_status {
+		stub_status on;
+		allow 127.0.0.1;
+		deny all;
+	}
+}
+
+# then adding more to format of logs
+# https://amplify.nginx.com/docs/guide-metrics-and-metadata.html#additional-nginx-metrics
+
+```

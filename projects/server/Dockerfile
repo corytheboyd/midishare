@@ -20,13 +20,13 @@ COPY projects/common /code/common
 FROM base AS development
 
 # See: https://pm2.keymetrics.io/docs/usage/docker-pm2-nodejs/#development-environment
-CMD ./node_modules/.bin/pm2-dev start ecosystem.json --env development
+CMD npm run dev
 
 # Build the production script
 FROM base AS production
 
 WORKDIR /code/common
-RUN ./node_modules/.bin/rollup --config=rollup.config.js
+RUN npm run build
 
 WORKDIR /code/app
 RUN npm run build

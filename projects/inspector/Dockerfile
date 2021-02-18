@@ -11,4 +11,4 @@ COPY projects/inspector/package-lock.json .
 RUN npm ci
 COPY projects/inspector .
 
-ENTRYPOINT ["./node_modules/.bin/parcel", "serve", "src/index.html"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
