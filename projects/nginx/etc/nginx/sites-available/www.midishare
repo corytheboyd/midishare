@@ -1,0 +1,28 @@
+# https://pm2.keymetrics.io/docs/tutorials/pm2-nginx-production-setup
+server {
+    listen 443 ssl;
+    server_name {{WWW_DOMAIN}} www.{{WWW_DOMAIN}};
+
+    ssl_certificate {{SSL_CERT_PATH}};
+    ssl_certificate_key {{SSL_KEY_PATH}};
+
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    root /var/www/html;
+
+    index index.html index.htm index.nginx-debian.html;
+}
+
+server {
+    listen 80;
+    server_name {{WWW_DOMAIN}} www.{{WWW_DOMAIN}};
+
+    if ($host = midishare.app) {
+        return 301 https://$host$request_uri;
+    }
+    if ($host = www.midishare.app) {
+        return 301 https://$host$request_uri;
+    }
+    return 404;
+}

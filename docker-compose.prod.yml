@@ -17,7 +17,8 @@ services:
   nginx:
     build:
       args:
-        SERVER_URL: http://127.0.0.1:4100
-        SERVER_NAME: api.midishare.app
+        API_SERVER_URL: http://127.0.0.1:4100
+        API_DOMAIN: api.midishare.app
+        WWW_DOMAIN: midishare.app
         SSL_CERT_PATH: /etc/letsencrypt/live/api.midishare.app/fullchain.pem
         SSL_KEY_PATH: /etc/letsencrypt/live/api.midishare.app/privkey.pem

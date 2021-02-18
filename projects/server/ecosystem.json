@@ -8,8 +8,8 @@
         "NODE_ENV": "development",
         "ADDRESS": "server",
         "PORT": "4100",
-        "BASE_URL": "https://localhost:4000",
-        "CLIENT_URL": "https://localhost:3000",
+        "BASE_URL": "https://api.midishare.local:4000",
+        "CLIENT_URL": "https://www.midishare.local:3000",
         "SQLITE_DATABASE": "/db/database.db",
         "DB_MIGRATIONS_PATH": "/db/migrations",
         "DOTENV_PATH": "/code/app/.env.development"
@@ -19,7 +19,7 @@
         "ADDRESS": "127.0.0.1",
         "PORT": "4100",
         "BASE_URL": "https://api.midishare.app",
-        "CLIENT_URL": "https://midishare.app",
+        "CLIENT_URL": "https://www.midishare.app",
         "SQLITE_DATABASE": "/home/node/midishare/current/db/database.db",
         "DB_MIGRATIONS_PATH": "/home/node/midishare/current/db/migrations",
         "DOTENV_PATH": "/home/node/.env.production"

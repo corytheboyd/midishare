@@ -23,8 +23,9 @@ services:
     ports:
       - "9000:443"
     environment:
-      SSL_CERT_PATH: /usr/share/nginx/ssl/localhost.pem
-      SSL_KEY_PATH: /usr/share/nginx/ssl/localhost-key.pem
+      DOMAIN: cdn.midishare.local
+      SSL_CERT_PATH: /usr/share/nginx/ssl/_wildcard.midishare.local.pem
+      SSL_KEY_PATH: /usr/share/nginx/ssl/_wildcard.midishare.local-key.pem
       PUBLIC_PATH: /usr/share/nginx/html
     volumes:
       - "./ssl:/usr/share/nginx/ssl:ro"
@@ -39,9 +40,9 @@ services:
       - "3001:3001" # WS
     environment:
       NODE_ENV: development
-      PUBLIC_URL: https://localhost:3000
-      CDN_URL: https://localhost:9000
-      SERVER_URL: https://localhost:4000
+      PUBLIC_URL: https://www.midishare.local:3000
+      CDN_URL: https://cdn.midishare.local:9000
+      SERVER_URL: https://api.midishare.local:4000
       WS_URL: ws://localhost:4000
     volumes:
       - "./ssl:/ssl:ro"
@@ -54,8 +55,8 @@ services:
     command:
       - "--cache-dir=/parcel-cache"
       - "--port=3000"
-      - "--cert=/ssl/localhost.pem"
-      - "--key=/ssl/localhost-key.pem"
+      - "--cert=/ssl/_wildcard.midishare.local.pem"
+      - "--key=/ssl/_wildcard.midishare.local-key.pem"
 
   server:
     build:
@@ -70,10 +71,11 @@ services:
   nginx:
     build:
       args:
-        SERVER_URL: http://server:4100
-        SERVER_NAME: localhost
-        SSL_CERT_PATH: /ssl/localhost.pem
-        SSL_KEY_PATH: /ssl/localhost-key.pem
+        API_SERVER_URL: http://server:4100
+        API_DOMAIN: api.midishare.local
+        WWW_DOMAIN: www.midishare.local
+        SSL_CERT_PATH: /ssl/_wildcard.midishare.local.pem
+        SSL_KEY_PATH: /ssl/_wildcard.midishare.local-key.pem
     volumes:
       - "./ssl:/ssl:ro"
     ports:
@@ -117,5 +119,5 @@ services:
       - "--cache-dir=/parcel-cache"
       - "--port=3200"
       - "--hmr-port=3201"
-      - "--cert=/ssl/localhost.pem"
-      - "--key=/ssl/localhost-key.pem"
+      - "--cert=/ssl/_wildcard.midishare.local.pem"
+      - "--key=/ssl/_wildcard.midishare.local-key.pem"

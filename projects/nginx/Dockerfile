@@ -1,7 +1,11 @@
 FROM nginx:1.19.6-perl
 
-ARG SERVER_URL
-ENV SERVER_URL=${SERVER_URL}
+ARG API_SERVER_URL
+ENV API_SERVER_URL=${API_SERVER_URL}
+ARG API_DOMAIN
+ENV API_DOMAIN=${API_DOMAIN}
+ARG WWW_DOMAIN
+ENV WWW_DOMAIN=${WWW_DOMAIN}
 ARG SSL_CERT_PATH
 ENV SSL_CERT_PATH=${SSL_CERT_PATH}
 ARG SSL_KEY_PATH
@@ -18,7 +22,8 @@ RUN ./script/replace-variables /etc/nginx /etc/nginx
 
 # Enable the vhost. See documentation of sites-[available|enabled]
 # https://wiki.debian.org/Nginx/DirectoryStructure
-RUN ln -s /etc/nginx/sites-available/midishare.conf /etc/nginx/sites-enabled/
+RUN ln -s /etc/nginx/sites-available/api.midishare /etc/nginx/sites-enabled/
+RUN ln -s /etc/nginx/sites-available/www.midishare /etc/nginx/sites-enabled/
 
 # TODO Maybe this https://amplify.nginx.com/dashboard/
 #RUN curl -L -O https://github.com/nginxinc/nginx-amplify-agent/raw/master/packages/install.sh && \
