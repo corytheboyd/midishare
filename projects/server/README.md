@@ -137,3 +137,7 @@ make install
 ```
 
 Done again, but note from the new module's repo the config is all different.
+
+Shit, I am back. When trying to deploy, nginx -t failed with error: stream already enabled in 50-mod...something
+
+Recompiling without the `--with-stream` flag to see if it fixes it, too burnt out to do much more debugging lol
