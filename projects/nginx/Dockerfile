@@ -27,8 +27,3 @@ RUN ./script/replace-variables /etc/nginx /etc/nginx
 RUN mkdir -p /etc/nginx/sites-enabled
 RUN ln -s /etc/nginx/sites-available/api.midishare /etc/nginx/sites-enabled/
 RUN ln -s /etc/nginx/sites-available/www.midishare /etc/nginx/sites-enabled/
-
-# TODO Maybe this https://amplify.nginx.com/dashboard/
-#RUN curl -L -O https://github.com/nginxinc/nginx-amplify-agent/raw/master/packages/install.sh && \
-#    API_KEY='LOLOLOL' sh ./install.sh && \
-#    rm install.sh;
