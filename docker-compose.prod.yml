@@ -23,3 +23,5 @@ services:
         SSL_CERT_PATH: /etc/letsencrypt/live/midishare.app/fullchain.pem
         SSL_KEY_PATH: /etc/letsencrypt/live/midishare.app/privkey.pem
         WWW_SERVER_URL: https://midishare.b-cdn.net/
+        MMDB_CITY_PATH: /etc/nginx/mmdb/GeoLite2-City.mmdb
+        MMDB_COUNTRY_PATH: /etc/nginx/mmdb/GeoLite2-Country.mmdb

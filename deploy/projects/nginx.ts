@@ -32,15 +32,15 @@ import { execOnServer } from "../lib/execOnServer";
     process.env.NGINX_USER_ADDRESS
   );
 
-  console.log("Verifying configuration on host...");
-  await execOnServer(["nginx -t"], process.env.NGINX_USER_ADDRESS);
-
-  console.log("Sending geoip database data to server...");
+  console.log("Sending Maxmind GeoIP databases to server...");
   await sendToServer(
     resolve(__dirname, "../../projects/nginx/mmdb"),
-    "/etc/nginx/mddb/",
+    "/etc/nginx/",
     process.env.NGINX_USER_ADDRESS
   );
+
+  console.log("Verifying configuration on host...");
+  await execOnServer(["nginx -t"], process.env.NGINX_USER_ADDRESS);
 
   console.log("Restarting nginx on host...");
   await execOnServer(["service nginx restart"], process.env.NGINX_USER_ADDRESS);
