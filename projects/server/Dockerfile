@@ -19,11 +19,9 @@ COPY projects/common /code/common
 
 FROM base AS development
 
-# See: https://pm2.keymetrics.io/docs/usage/docker-pm2-nodejs/#development-environment
-CMD npm run dev
+CMD ./node_modules/.bin/ts-node src/index.ts
 
-# Build the production script
-FROM base AS production
+FROM base AS build
 
 WORKDIR /code/common
 RUN npm run build
@@ -31,3 +29,10 @@ RUN npm run build
 WORKDIR /code/app
 RUN npm run build
 RUN rm -rf node_modules
+
+FROM build AS production
+
+WORKDIR /app
+COPY --from=build /code/app/dist/ .
+
+CMD node index.js

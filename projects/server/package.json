@@ -3,13 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "./node_modules/.bin/pm2-dev start ecosystem.json --env development",
-    "build": "./node_modules/.bin/ncc build src/index.ts -o dist --minify --source-map",
-    "deploy:setup": "./node_modules/.bin/pm2 deploy ecosystem.json production setup",
-    "deploy": "./node_modules/.bin/pm2 deploy ecosystem.json production"
-  },
-  "dependencies": {
-    "dotenv": "^8.2.0"
+    "start": "node index.js",
+    "build": "./node_modules/.bin/ncc build src/index.ts -o dist --minify --source-map"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
@@ -23,6 +18,7 @@
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "deepmerge": "^4.2.2",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-openid-connect": "^2.2.1",
     "helmet": "^4.4.1",
