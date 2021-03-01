@@ -1,6 +1,6 @@
 # Midishare
 
-https://midishare.app
+https://www.midishare.app
 
 Peer-to-peer MIDI keyboard input streaming service connecting music teachers and students in near real-time.
 
