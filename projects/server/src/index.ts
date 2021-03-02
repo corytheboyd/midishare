@@ -79,7 +79,6 @@ const corsConfig: CorsOptions = {
 };
 
 const port = parseInt(process.env.PORT as string, 10);
-const address = process.env.ADDRESS as string;
 
 const app = express() as Express & {
   /**
@@ -115,8 +114,8 @@ const webSocketServer = new WebSocketServer({
 
 register(httpServer, webSocketServer, app);
 
-httpServer.listen(port, address, () => {
-  console.log(`Listening on http://${address}:${port}`);
+httpServer.listen(port, "127.0.0.1", () => {
+  console.log(`Listening on http://127.0.0.1:${port}`);
 });
 
 /**
