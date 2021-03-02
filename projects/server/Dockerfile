@@ -35,5 +35,6 @@ FROM build AS production
 WORKDIR /app
 COPY --from=build /code/app/dist/ .
 COPY db/migrations/ db/migrations/
+COPY projects/server/CHECKS .
 
 CMD node index.js

@@ -10,6 +10,7 @@ import { register } from "./lib/ws/register";
 import { ServerResponse } from "http";
 import { handleShutdown } from "./lib/handleShutdown";
 import { db, dbOpen } from "./lib/state/db";
+import { healthCheck } from "./lib/healthCheck";
 
 (async () => {
   try {
@@ -104,6 +105,7 @@ app.use(auth(authConfig));
 app.use(cookieParser(process.env.AUTH_SECRET as string));
 
 // Application middlewares
+app.use("/_health", healthCheck());
 app.use("/api/v1", api());
 
 const httpServer = createServer(app);
@@ -114,8 +116,8 @@ const webSocketServer = new WebSocketServer({
 
 register(httpServer, webSocketServer, app);
 
-httpServer.listen(port, "127.0.0.1", () => {
-  console.log(`Listening on http://127.0.0.1:${port}`);
+httpServer.listen(port, "0.0.0.0", () => {
+  console.log(`Listening on http://0.0.0.0:${port}`);
 });
 
 /**
