@@ -21,7 +21,7 @@ import { db, dbOpen } from "./lib/state/db";
 
   try {
     await db.migrate({
-      migrationsPath: process.env.DB_MIGRATIONS_PATH,
+      migrationsPath: "/var/db/migrations",
     });
   } catch (err) {
     console.error("Failed to run database migrations", err);

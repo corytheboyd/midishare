@@ -60,7 +60,7 @@ services:
     expose:
       - "3000"
     volumes:
-      - "./db:/db"
+      - "./db:/var/db"
       - "./projects/server/src:/code/app/src"
       - "./projects/common/dist:/code/common/dist:ro"
 

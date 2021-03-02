@@ -8,7 +8,7 @@ import { open } from "sqlite";
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 
 export const dbOpen = open({
-  filename: process.env.SQLITE_DATABASE as string,
+  filename: "/var/db/database.db",
   driver: sqlite3.Database,
 });
 
