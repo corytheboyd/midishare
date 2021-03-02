@@ -21,7 +21,7 @@ import { db, dbOpen } from "./lib/state/db";
 
   try {
     await db.migrate({
-      migrationsPath: "/var/db/migrations",
+      migrationsPath: process.env.SQLITE_MIGRATIONS_PATH,
     });
   } catch (err) {
     console.error("Failed to run database migrations", err);

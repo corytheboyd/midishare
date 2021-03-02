@@ -10,6 +10,8 @@
         "PORT": "3000",
         "BASE_URL": "https://api.midishare.local:3000",
         "CLIENT_URL": "https://www.midishare.local:3000",
+        "SQLITE_DATABASE": "/db/database.db",
+        "SQLITE_MIGRATIONS_PATH": "/db/migrations",
         "DOTENV_PATH": "/code/app/.env.development",
         "COOKIE_DOMAIN": "midishare.local"
       },
@@ -19,6 +21,8 @@
         "PORT": "3000",
         "BASE_URL": "https://api.midishare.app",
         "CLIENT_URL": "https://www.midishare.app",
+        "SQLITE_DATABASE": "/home/node/midishare/current/db/database.db",
+        "SQLITE_MIGRATIONS_PATH": "/home/node/midishare/current/db/migrations",
         "DOTENV_PATH": "/home/node/midishare/.env.production",
         "COOKIE_DOMAIN": "midishare.app"
       }
