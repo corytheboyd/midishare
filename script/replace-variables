@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+# It's like envsubst, but uses {{mustache}} style, and is written
+# in perl for some reason. I like it though and it was fun to build!
+
 use strict;
 use warnings FATAL => 'all';
 

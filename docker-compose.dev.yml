@@ -75,8 +75,6 @@ services:
         SSL_KEY_PATH: /ssl/_wildcard.midishare.local-key.pem
     volumes:
       - "./ssl:/ssl:ro"
-      # TODO damn, gotta recompile nginx in docker with http_geoip_module... maybe.
-      - "./projects/nginx/mmdb:/etc/nginx/mmdb:ro"
     ports:
       - "3000:443"
 
