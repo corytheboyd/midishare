@@ -51,5 +51,5 @@ RUN npm run build
 
 FROM nginx:1.19.7-alpine AS production
 
-COPY projects/client/nginx/templates /etc/nginx/templates
-COPY --from=build /code/app/dist /usr/share/nignx/html
+COPY --from=build /code/app/dist /usr/share/nginx/html/
+COPY projects/client/CHECKS .
