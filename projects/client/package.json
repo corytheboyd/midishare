@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "./node_modules/.bin/parcel server src/index.html",
-    "build": "/code/app/node_modules/.bin/parcel build src/index.html"
+    "dev": "./node_modules/.bin/parcel server src/index.html"
   },
   "dependencies": {
     "clipboard": "^2.0.6",

@@ -47,7 +47,7 @@ WORKDIR /code/keyboard
 RUN npm run build
 
 WORKDIR /code/app
-RUN npm run build
+RUN ./node_modules/.bin/parcel build --public-url $CDN_URL src/index.html
 
 FROM nginx:1.19.7-alpine AS production
 
