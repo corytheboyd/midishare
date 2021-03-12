@@ -55,3 +55,4 @@ FROM nginx:1.19.7-alpine AS production
 
 COPY --from=build /code/app/dist /usr/share/nginx/html/
 COPY projects/client/CHECKS .
+COPY projects/client/nginx /etc/nginx
