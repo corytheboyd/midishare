@@ -35,8 +35,10 @@ ARG SERVER_URL
 ENV SERVER_URL=${SERVER_URL}
 ARG PUBLIC_URL
 ENV PUBLIC_URL=${PUBLIC_URL}
-ARG CDN_URL
-ENV CDN_URL=${CDN_URL}
+ARG PUBLIC_CDN_URL
+ENV PUBLIC_CDN_URL=${PUBLIC_CDN_URL}
+ARG PROTECTED_CDN_URL
+ENV PROTECTED_CDN_URL=${PROTECTED_CDN_URL}
 ARG WS_URL
 ENV WS_URL=${WS_URL}
 
@@ -47,7 +49,7 @@ WORKDIR /code/keyboard
 RUN npm run build
 
 WORKDIR /code/app
-RUN ./node_modules/.bin/parcel build --public-url $CDN_URL src/index.html
+RUN ./node_modules/.bin/parcel build --public-url $PUBLIC_CDN_URL src/index.html
 
 FROM nginx:1.19.7-alpine AS production
 
