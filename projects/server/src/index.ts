@@ -12,6 +12,11 @@ import { handleShutdown } from "./lib/handleShutdown";
 import { db, dbOpen } from "./lib/state/db";
 import { healthCheck } from "./lib/healthCheck";
 
+console.log("WE IN SERVER", process.env);
+
+import { config } from "dotenv";
+config();
+
 (async () => {
   try {
     await dbOpen;

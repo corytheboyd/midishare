@@ -60,6 +60,15 @@ services:
       target: development
     expose:
       - "3000"
+    env_file: projects/server/.env.development
+    environment:
+      PORT: 3000
+      NODE_ENV: development
+      BASE_URL: https://api.midishare.local:3000
+      CLIENT_URL: https://www.midishare.local:3000
+      COOKIE_DOMAIN: midishare.local
+      SQLITE_DATABASE_PATH: /db/database.db
+      SQLITE_MIGRATIONS_PATH: /db/migrations
     volumes:
       - "./db:/db"
       - "./projects/server/src:/code/app/src"
