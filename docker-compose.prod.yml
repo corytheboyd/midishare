@@ -9,7 +9,7 @@ services:
         WS_URL: wss://api.midishare.app
         PUBLIC_URL: https://www.midishare.app
         PUBLIC_CDN_URL: https://midishare.b-cdn.net
-        PROTECTED_CDN_URL: https://midishare-static.b-cdn.net
+        STATIC_CDN_URL: https://midishare-static.b-cdn.net
 
   server:
     build:

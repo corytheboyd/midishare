@@ -3,7 +3,7 @@ import createReactHook from "zustand";
 import { Input } from "webmidi";
 import produce from "immer";
 import { createRuntime, Runtime } from "@midishare/keyboard";
-import { PROTECTED_CDN_URL } from "./constants";
+import { STATIC_CDN_URL } from "./constants";
 
 export type State = {
   /**
@@ -77,12 +77,12 @@ export const store = create<State>((set, get) => ({
         if (!state.runtime) {
           state.runtime = {
             localKeyboardRuntime: createRuntime({
-              assetPath: PROTECTED_CDN_URL,
+              assetPath: STATIC_CDN_URL,
               keyPressedColor: "blue",
             }),
 
             remoteKeyboardRuntime: createRuntime({
-              assetPath: PROTECTED_CDN_URL,
+              assetPath: STATIC_CDN_URL,
               keyPressedColor: "yellow",
             }),
           };

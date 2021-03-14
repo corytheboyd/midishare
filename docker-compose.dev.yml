@@ -43,7 +43,7 @@ services:
       NODE_ENV: development
       PUBLIC_URL: https://www.midishare.local:3000
       PUBLIC_CDN_URL: https://cdn.midishare.local:9000
-      PROTECTED_CDN_URL: https://cdn.midishare.local:9000
+      STATIC_CDN_URL: https://cdn.midishare.local:9000
       SERVER_URL: https://api.midishare.local:3000
       WS_URL: wss://api.midishare.local:3000
     volumes:
