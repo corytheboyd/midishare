@@ -15,7 +15,7 @@ type ChromeProps = {
 export const Chrome: React.FC<ChromeProps> = (props) => {
   return (
     <div className="flex flex-col h-full">
-      <nav className="flex flex-col p-4 bg-gray-700">
+      <nav className="flex flex-col p-4 bg-gray-700 shadow-lg">
         <Navbar />
       </nav>
 
