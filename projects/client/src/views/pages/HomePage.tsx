@@ -34,7 +34,7 @@ export const HomePage: React.FC = () => {
 
   return (
     <Chrome>
-      <article className="bg-gray-900 px-4 flex flex-col items-center pb-10 pt-4 md:pt-8">
+      <article className="px-4 flex flex-col items-center pb-10 pt-4 md:pt-8">
         <div className="space-y-5 flex flex-col items-center text-center">
           <h1 className="font-serif font-bold text-3xl lg:text-5xl lg:max-w-2xl text-gray-200">
             Keyboard sharing for remote music lessons
