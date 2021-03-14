@@ -161,7 +161,19 @@ export class PeerConnection {
   }
 
   private createPeerConnection(): RTCPeerConnection {
-    const pc = new RTCPeerConnection();
+    const pc = new RTCPeerConnection({
+      iceServers: [
+        // TODO this will be actually secure later
+        // TODO development? would need to force use of ice servers in
+        //  negotiation, since sessions will be on the same network. sounds
+        //  tough, look into it some day.
+        {
+          urls: ["turn:coturn.midishare.app:3478"],
+          username: "test",
+          credential: "test",
+        },
+      ],
+    });
 
     pc.onnegotiationneeded = async () => {
       console.debug("PeerConnection: negotiation needed");
