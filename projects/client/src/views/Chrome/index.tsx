@@ -24,10 +24,10 @@ export const Chrome: React.FC<ChromeProps> = (props) => {
       </main>
 
       {!props.hideFooter && (
-        <footer className="bg-gray-100 flex flex-col p-5">
+        <footer className="bg-gray-700 flex flex-col p-5 text-gray-400">
           <MaxWidthContent>
             <div className="flex items-center justify-center">
-              <span className="text-sm">© Midishare • 2021</span>
+              <span className="text-xs">© Midishare • 2021</span>
             </div>
           </MaxWidthContent>
         </footer>

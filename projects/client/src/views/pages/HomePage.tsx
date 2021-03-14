@@ -1,78 +1,129 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Chrome } from "../Chrome";
 
+const QuestionAnswerNode: React.FC<{
+  question: JSX.Element | string;
+  answer: JSX.Element | string;
+}> = (props) => {
+  return (
+    <div className="space-y-2">
+      <h3 className="text-gray-400 italic border-l-4 pl-2">{props.question}</h3>
+      <div className="text-sm pl-2 space-y-2">{props.answer}</div>
+    </div>
+  );
+};
+
 export const HomePage: React.FC = () => {
+  const exampleImageUrl = useMemo(() => {
+    const url = new URL(process.env.STATIC_CDN_URL as string);
+    url.pathname = "/example-image.png";
+    return url.toString();
+  }, []);
+
   return (
     <Chrome>
-      <article className="flex flex-col items-center">
-        <div className="text-center pb-5 max-w-3xl">
-          <h1 className="font-serif font-bold text-5xl mt-8">
-            Remote keyboard sharing for teachers and students
+      <article className="bg-gray-900 px-4 flex flex-col items-center pb-10">
+        <div className="space-y-5 pt-4 flex flex-col items-center text-center">
+          <h1 className="font-serif font-bold text-3xl text-gray-200">
+            Keyboard sharing for remote music lessons
           </h1>
-          <p>
-            You and your students don't need complicated camera rigging for
-            lessons.
-          </p>
-          <p>
-            With Midishare, teacher and student see every key press one another
-            in real time.
-          </p>
-          <h2>FAQs</h2>
-          <h3>Does Midishare offer music lessons?</h3>
-          <p>
-            No, at this time Midishare does not offer music lessons. If you're
-            getting started and are looking for lessons, don't be shy and check
-            out your local schools!
-          </p>
-          <h3>Do I use Midishare instead of Zoom?</h3>
-          <p>
-            No, at this time Midishare does not replace Zoom (or any other video
-            conferencing provider). If you already use Zoom for lessons, you
-            will run Zoom and then open Midishare, running them both at the same
-            time. As a student, for example, you would look at Zoom to see your
-            teachers video (audio comes from zoom as well), and you would look
-            at Midishare to see their playing.
-          </p>
-          <p>
-            In the near future, Midishare will be able to replace Zoom as the
-            only program needed for your lessions.
-          </p>
-          <h3>What does they Midishare keyboard sound like?</h3>
-          <p>
-            The Midishare keyboard does not play audio when the MIDI keyboard is
-            played at this time. You can simply play instrument audio over your
-            Zoom call for now, which is likely what you already do for your
-            lessons.
-          </p>
-          <p>
-            The main reason it was avoid at first was to minimize the potential
-            for Midishare keyboard sound to feed back into the Zoom call audio,
-            creating a poor experience for all. That doesn't mean it's not
-            possible, it will be reconsidered when Midishare Audio/Video is
-            worked on.
-          </p>
-          <h3>Do I need a MIDI keyboard?</h3>
-          <p>
-            A MIDI keyboard isn't required to participate in a Midishare
-            session. You only need to have a MIDI keyboard if you want to stream
-            your playing to the other participant.
-          </p>
-          <p>
-            For example, Midishare can simply be used by a teacher to stream
-            their playing to a student, without requiring the student worry
-            about setting up a keyboard with Midishare.
-          </p>
-          <h3>Can I use this to teach a full classroom?</h3>
-          <p>
-            No, currently Midishare only connects two people per session,
-            typically a teacher and a student engaged in remote music lessons.
-          </p>
-          <h3>So is it educational only?</h3>
-          <p>
-            No, not necessarily, so long as you want to connect the MIDI
-            keyboards of any two people into the same web page, Midishare will
-            work!
-          </p>
+
+          <div className="space-y-4 text-gray-400">
+            <p className="text-md">
+              You don't need complicated camera rigging for music lessons
+              anymore
+            </p>
+            <p className="text-md">
+              With Midishare, teacher and student see the entire range of each
+              other's playing in real time
+            </p>
+          </div>
+
+          <img
+            className="md:max-w-xl lg:max-w-3xl"
+            src={exampleImageUrl}
+            alt="Example screenshot of Midishare"
+          />
+        </div>
+
+        <div className="max-w-3xl">
+          <h2 className="text-center text-xl font-bold text-gray-300 mt-2 mb-3">
+            FAQs
+          </h2>
+
+          <div className="text-gray-300 space-y-3">
+            <QuestionAnswerNode
+              question="Does Midishare offer lessons?"
+              answer={
+                <p>
+                  No, at this time Midishare does not offer music lessons. If
+                  you're getting started and are looking for lessons, don't be
+                  shy and check out your local schools!
+                </p>
+              }
+            />
+            <QuestionAnswerNode
+              question="Do I use Midishare instead of Zoom?"
+              answer={
+                <>
+                  <p>
+                    No, at this time Midishare does not replace Zoom (or any
+                    other video conferencing provider). If you already use Zoom
+                    for lessons, you will run Zoom and then open Midishare,
+                    running them both at the same time.
+                  </p>
+                </>
+              }
+            />
+            <QuestionAnswerNode
+              question="What does they Midishare keyboard sound like?"
+              answer={
+                <>
+                  <p>
+                    The Midishare keyboard does not play audio at this time. For
+                    lessons, continue to play instrument audio over your video
+                    call.
+                  </p>
+                </>
+              }
+            />
+            <QuestionAnswerNode
+              question="Do I need a MIDI keyboard to use this?"
+              answer={
+                <>
+                  <p>
+                    A MIDI keyboard is not required to participate in a
+                    Midishare session. You only need to have a MIDI keyboard if
+                    you want to stream your playing to the other participant.
+                  </p>
+                </>
+              }
+            />
+            <QuestionAnswerNode
+              question="Can I have all of my students in one session?"
+              answer={
+                <>
+                  <p>
+                    No, currently Midishare only connects two people per
+                    session, typically a teacher and a student engaged in remote
+                    music lessons.
+                  </p>
+                </>
+              }
+            />
+            <QuestionAnswerNode
+              question="Can this only be used for music lessons?"
+              answer={
+                <>
+                  <p>
+                    No, not necessarily, so long as you want to connect the MIDI
+                    keyboards of any two people into the same web page,
+                    Midishare will work!
+                  </p>
+                </>
+              }
+            />
+          </div>
         </div>
       </article>
     </Chrome>
