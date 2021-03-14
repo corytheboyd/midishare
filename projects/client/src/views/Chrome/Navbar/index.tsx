@@ -22,7 +22,7 @@ const LOGOUT_URL = (() => {
 
 export const NavButton: React.FC<BaseButtonProps> = (props) => (
   <BaseButton
-    className="px-2 py-1 text-sm hover:shadow hover:bg-gray-50 rounded transition"
+    className="px-2 py-1 text-sm hover:text-gray-600 hover:shadow hover:bg-gray-200 rounded transition"
     {...props}
   >
     {props.children}
@@ -75,9 +75,9 @@ const ProfileSection: React.FC = () => {
 export const Navbar: React.FC = () => {
   return (
     <MaxWidthContent>
-      <div className="flex justify-center">
+      <div className="flex justify-center text-gray-400">
         <div className="flex-grow-0">
-          <a className="font-bold font-mono" href="/">
+          <a className="font-bold font-mono text-gray-200" href="/">
             Midishare
           </a>
         </div>

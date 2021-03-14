@@ -15,7 +15,7 @@ type ChromeProps = {
 export const Chrome: React.FC<ChromeProps> = (props) => {
   return (
     <div className="flex flex-col h-full">
-      <nav className="flex flex-col p-4 border-b-2">
+      <nav className="flex flex-col p-4 bg-gray-700">
         <Navbar />
       </nav>
 
@@ -24,7 +24,7 @@ export const Chrome: React.FC<ChromeProps> = (props) => {
       </main>
 
       {!props.hideFooter && (
-        <footer className="bg-gray-700 flex flex-col p-5 text-gray-400">
+        <footer className="bg-gray-800 flex flex-col p-5 text-gray-400">
           <MaxWidthContent>
             <div className="flex items-center justify-center">
               <span className="text-xs">© Midishare • 2021</span>
