@@ -14,15 +14,3 @@ services:
   server:
     build:
       target: production
-
-  nginx:
-    build:
-      args:
-        API_SERVER_URL: http://127.0.0.1:3000
-        API_DOMAIN: api.midishare.app
-        WWW_DOMAIN: midishare.app
-        SSL_CERT_PATH: /etc/letsencrypt/live/midishare.app/fullchain.pem
-        SSL_KEY_PATH: /etc/letsencrypt/live/midishare.app/privkey.pem
-        WWW_SERVER_URL: https://midishare.b-cdn.net/
-        MMDB_CITY_PATH: /etc/nginx/mmdb/GeoLite2-City.mmdb
-        MMDB_COUNTRY_PATH: /etc/nginx/mmdb/GeoLite2-Country.mmdb

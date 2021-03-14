@@ -1,7 +1,7 @@
 # https://pm2.keymetrics.io/docs/tutorials/pm2-nginx-production-setup
 server {
   listen 443 ssl;
-  server_name {{WWW_DOMAIN}} www.{{WWW_DOMAIN}};
+  server_name {{WWW_DOMAIN}};
 
   ssl_certificate {{SSL_CERT_PATH}};
   ssl_certificate_key {{SSL_KEY_PATH}};
@@ -13,14 +13,13 @@ server {
 
     proxy_pass {{WWW_SERVER_URL}};
 
-    proxy_intercept_errors on;
     error_page 404 = /; # spa routing
   }
 }
 
 server {
   listen 80;
-  server_name {{WWW_DOMAIN}} www.{{WWW_DOMAIN}};
+  server_name {{WWW_DOMAIN}};
 
   if ($host = {{WWW_DOMAIN}}) {
       return 301 https://$host$request_uri;

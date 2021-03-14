@@ -7,8 +7,9 @@ export const HomePage: React.FC = () => {
       <article className="flex flex-col items-center">
         <div className="text-center pb-5 max-w-3xl">
           <h1 className="font-serif font-bold text-5xl mt-8">
-            Live music sessions with real-time MIDI input streaming
+            Remote keyboard sharing for teachers and students
           </h1>
+          <p>THis is sparta</p>
         </div>
       </article>
     </Chrome>
