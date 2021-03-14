@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Chrome } from "../Chrome";
+import { LargePrimaryButton } from "../common/buttons/LargePrimaryButton";
 
 const QuestionAnswerNode: React.FC<{
   question: JSX.Element | string;
@@ -9,6 +10,17 @@ const QuestionAnswerNode: React.FC<{
     <div className="space-y-2">
       <h3 className="text-gray-400 italic border-l-4 pl-2">{props.question}</h3>
       <div className="text-sm pl-2 space-y-2">{props.answer}</div>
+    </div>
+  );
+};
+
+const FeaturingWell: React.FC<{ title: string; description: string }> = (
+  props
+) => {
+  return (
+    <div className="w-full p-2 rounded-lg sm:p-3 sm:rounded-lg bg-gray-800 shadow-lg shadow-inner space-y-2 text-center">
+      <h2 className="font-bold text-gray-300">{props.title}</h2>
+      <p className="text-xs lg:text-sm text-gray-400">{props.description}</p>
     </div>
   );
 };
@@ -46,7 +58,30 @@ export const HomePage: React.FC = () => {
           />
         </div>
 
-        <div className="max-w-3xl">
+        <div className="mt-5">
+          <LargePrimaryButton>Get Started</LargePrimaryButton>
+        </div>
+
+        <div className="flex flex-col sm:flex-row space-y-5 sm:space-y-0 sm:space-x-5 w-full lg:max-w-4xl mt-10">
+          <FeaturingWell
+            title="Easy to use"
+            description="All you need is a web browser to host or join a Midishare session"
+          />
+          <FeaturingWell
+            title="Fairly priced"
+            description="Unlimited or pay-as-you-go, cancel and rejoin at any time"
+          />
+          <FeaturingWell
+            title="Proven technology"
+            description="Powered by WebRTC specifically optimized for keyboard playing"
+          />
+          <FeaturingWell
+            title="Open source"
+            description="Midishare is built on top of, and is itself, open source software"
+          />
+        </div>
+
+        <div className="max-w-3xl mt-10">
           <h2 className="text-center text-xl font-bold text-gray-300 mt-2 mb-3">
             FAQs
           </h2>
