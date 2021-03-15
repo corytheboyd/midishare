@@ -47,7 +47,7 @@ export const SessionListSection: React.FC<SessionListSectionProps> = (
     <section>
       <div>
         <h1 className="text-xl font-bold font-serif">Sessions</h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm opacity-75">
           The sessions that you are currently participating in
         </p>
       </div>

@@ -3,7 +3,11 @@
 @tailwind utilities;
 
 body {
-    @apply h-screen bg-gray-900;
+    @apply h-screen;
+    @apply bg-gray-900;
+
+    /*Default text color*/
+    @apply text-gray-300;
 }
 
 div#root {

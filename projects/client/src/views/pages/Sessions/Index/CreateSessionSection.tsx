@@ -31,7 +31,7 @@ export const CreateSessionSection: React.FC<CreateSessionSectionProps> = (
     <section>
       <div>
         <h1 className="text-xl font-bold font-serif">Create Session</h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm opacity-75">
           Starts a new real-time MIDI streaming session that you can invite
           someone to join.
         </p>

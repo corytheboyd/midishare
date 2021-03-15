@@ -8,7 +8,7 @@ const QuestionAnswerNode: React.FC<{
 }> = (props) => {
   return (
     <div className="space-y-2">
-      <h3 className="text-gray-400 italic border-l-4 pl-2">{props.question}</h3>
+      <h3 className="italic border-l-4 pl-2">{props.question}</h3>
       <div className="text-sm pl-2 space-y-2">{props.answer}</div>
     </div>
   );
@@ -19,8 +19,8 @@ const FeaturingWell: React.FC<{ title: string; description: string }> = (
 ) => {
   return (
     <div className="w-full p-2 rounded-lg sm:p-3 sm:rounded-lg bg-gray-800 shadow-lg shadow-inner space-y-2 text-center">
-      <h2 className="font-bold text-gray-300">{props.title}</h2>
-      <p className="text-xs lg:text-sm text-gray-400">{props.description}</p>
+      <h2 className="font-bold">{props.title}</h2>
+      <p className="text-xs lg:text-sm">{props.description}</p>
     </div>
   );
 };
@@ -36,11 +36,11 @@ export const HomePage: React.FC = () => {
     <Chrome>
       <article className="px-4 flex flex-col items-center pb-10 pt-4 md:pt-8">
         <div className="space-y-5 flex flex-col items-center text-center">
-          <h1 className="font-serif font-bold text-3xl lg:text-5xl lg:max-w-2xl text-gray-200">
+          <h1 className="font-serif font-bold text-3xl lg:text-5xl lg:max-w-2xl">
             Keyboard sharing for remote music lessons
           </h1>
 
-          <div className="space-y-4 text-gray-400">
+          <div className="space-y-4">
             <p className="text-md">
               You don't need complicated camera rigging for music lessons
               anymore
@@ -86,7 +86,7 @@ export const HomePage: React.FC = () => {
             FAQs
           </h2>
 
-          <div className="text-gray-300 space-y-3">
+          <div className="space-y-3">
             <QuestionAnswerNode
               question="Does Midishare offer lessons?"
               answer={
