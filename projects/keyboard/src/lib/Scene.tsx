@@ -12,6 +12,20 @@ import { Runtime } from "./Runtime";
 
 const voidColor = new Color(0, 0, 0);
 
+// max velocity: 127
+// full velocity rotation: 0.11
+// min velocity rotation: 0.03
+// Rx = Rmin + (Vx * C)
+// Rmax = Rmin + (Vmax * C)
+// C = (Rmax - Rmin) / Vmax
+const V_MAX = 127;
+const R_MAX = 0.11;
+const R_MIN = 0.03;
+
+function rotationFromVelocity(velocity: number): number {
+  return R_MIN + velocity * ((R_MAX - R_MIN) / V_MAX);
+}
+
 type SceneProps = {
   runtime: Runtime;
   bounds: RectReadOnly;
@@ -86,7 +100,11 @@ export const Scene: React.FC<SceneProps> = (props) => {
           keyMesh.material.emissive.lerp(voidColor, 0.15);
         }
       } else {
-        keyMesh.rotation.x = lerp(keyMesh.rotation.x, 0.09, 0.25);
+        keyMesh.rotation.x = lerp(
+          keyMesh.rotation.x,
+          rotationFromVelocity(velocity),
+          0.3
+        );
 
         if (props.runtime.keyPressedColor) {
           keyMesh.material.emissive.lerp(props.runtime.keyPressedColor, 1);
