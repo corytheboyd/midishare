@@ -37,12 +37,16 @@ export type State = {
     remoteKeyboardRuntime: Runtime;
   };
   initializeRuntime: () => void;
+
+  sustainInverted: boolean;
+  setSustainInverted: (value: boolean) => void;
 };
 
 export const store = create<State>((set, get) => ({
   midiAccessGranted: null,
   midiInputDevices: [],
   activeMidiInputDeviceId: null,
+  sustainInverted: false,
   setMidiAccessGranted: (value) =>
     set(
       produce(get(), (state) => {
@@ -87,6 +91,12 @@ export const store = create<State>((set, get) => ({
             }),
           };
         }
+      })
+    ),
+  setSustainInverted: (value) =>
+    set(
+      produce(get(), (state) => {
+        state.sustainInverted = value;
       })
     ),
 }));

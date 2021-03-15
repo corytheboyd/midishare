@@ -6,6 +6,7 @@ export type PeerLaneProps = {
   runtime: Runtime;
   keyboardDisabled?: boolean;
   disabledMessageContent?: JSX.Element;
+  isLocal: boolean;
 };
 
 export const PeerLane: React.FC<PeerLaneProps> = (props) => {

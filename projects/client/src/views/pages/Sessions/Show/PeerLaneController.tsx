@@ -38,6 +38,7 @@ export const PeerLaneController: React.FC<PeerLaneControllerProps> = (
       {/* Remote Peer, Host mode */}
       {isCurrentUserHost === true && (
         <PeerLane
+          isLocal={false}
           runtime={runtime!.remoteKeyboardRuntime}
           keyboardDisabled={!props.session.participants.guest}
           disabledMessageContent={
@@ -47,11 +48,12 @@ export const PeerLaneController: React.FC<PeerLaneControllerProps> = (
       )}
 
       {isCurrentUserHost === false && (
-        <PeerLane runtime={runtime!.remoteKeyboardRuntime} />
+        <PeerLane isLocal={false} runtime={runtime!.remoteKeyboardRuntime} />
       )}
 
       {/* Local Peer */}
       <PeerLane
+        isLocal={true}
         runtime={runtime!.localKeyboardRuntime}
         keyboardDisabled={!activeMidiInputDeviceId}
         disabledMessageContent={<AttachMidiPrompt />}

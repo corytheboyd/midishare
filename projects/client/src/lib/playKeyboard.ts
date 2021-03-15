@@ -1,6 +1,7 @@
 import { InputEvents } from "webmidi";
 import { AllowedInputEventTypes } from "./handleMidiInput";
 import { getKeyNameFromIndex, Runtime } from "@midishare/keyboard";
+import { store } from "./store";
 
 export function playKeyboard(
   eventType: Extract<keyof InputEvents, AllowedInputEventTypes>,
@@ -23,7 +24,9 @@ export function playKeyboard(
   if (eventType === "controlchange") {
     // Sustain pedal
     if (data[1] === 64) {
-      const isPressed = data[2] === 0;
+      const isInverted = store.getState().sustainInverted;
+      const isPressed = isInverted ? data[2] > 0 : data[2] === 0;
+
       if (isPressed) {
         runtime.sustainOn();
       } else {
