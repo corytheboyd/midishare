@@ -28,7 +28,7 @@ const FeaturingWell: React.FC<{ title: string; description: string }> = (
 export const HomePage: React.FC = () => {
   const exampleImageUrl = useMemo(() => {
     const url = new URL(process.env.STATIC_CDN_URL as string);
-    url.pathname = "/example-image.png";
+    url.pathname = "/example-image-2.png";
     return url.toString();
   }, []);
 
