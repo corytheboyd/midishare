@@ -6,10 +6,11 @@
     "dev": "./node_modules/.bin/parcel server src/index.html"
   },
   "dependencies": {
+    "@types/classnames": "^2.2.11",
     "clipboard": "^2.0.6",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "three": "^0.124.0"
+    "three": "^0.126.1"
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^2.3.0",
@@ -22,6 +23,7 @@
     "@types/react-query": "^1.1.2",
     "@types/react-router-dom": "^5.1.7",
     "autoprefixer": "^9.8.6",
+    "classnames": "^2.2.6",
     "debug": "^2.6.9",
     "express": "^4.17.1",
     "immer": "^8.0.1",

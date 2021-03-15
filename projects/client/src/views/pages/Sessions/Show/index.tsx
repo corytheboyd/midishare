@@ -96,15 +96,11 @@ export const SessionShowPage: React.FC = () => {
         <title>Midishare • Session</title>
       </Helmet>
 
-      <div className="flex flex-col h-full">
-        <div className="flex-grow">
-          {sessionQuery.isLoading && <span>Loading...</span>}
+      {sessionQuery.isLoading && <span>Loading...</span>}
 
-          {!sessionQuery.isLoading && (
-            <PeerLaneController session={sessionQuery.data!} />
-          )}
-        </div>
-      </div>
+      {!sessionQuery.isLoading && (
+        <PeerLaneController session={sessionQuery.data!} />
+      )}
     </Chrome>
   );
 };

@@ -78,12 +78,12 @@ export const store = create<State>((set, get) => ({
           state.runtime = {
             localKeyboardRuntime: createRuntime({
               assetPath: STATIC_CDN_URL,
-              keyPressedColor: "blue",
+              keyPressedColor: "green",
             }),
 
             remoteKeyboardRuntime: createRuntime({
               assetPath: STATIC_CDN_URL,
-              keyPressedColor: "yellow",
+              keyPressedColor: "purple",
             }),
           };
         }

@@ -10,9 +10,6 @@ import {
   queryKey as userProfileQueryKey,
 } from "../../../../lib/queries/getCurrentUser";
 
-const localColor = "blue";
-const remoteColor = "yellow";
-
 type PeerLaneControllerProps = {
   session: Session;
 };
@@ -37,12 +34,11 @@ export const PeerLaneController: React.FC<PeerLaneControllerProps> = (
   }, [userQuery.data, props.session]);
 
   return (
-    <div className="flex flex-col h-full w-full space-y-2 p-2">
+    <div className="flex flex-col items-center h-full w-full space-y-2 p-2">
       {/* Remote Peer, Host mode */}
       {isCurrentUserHost === true && (
         <PeerLane
           runtime={runtime!.remoteKeyboardRuntime}
-          color={remoteColor}
           keyboardDisabled={!props.session.participants.guest}
           disabledMessageContent={
             <InviteGuestPrompt sessionId={props.session.id} />
@@ -51,16 +47,12 @@ export const PeerLaneController: React.FC<PeerLaneControllerProps> = (
       )}
 
       {isCurrentUserHost === false && (
-        <PeerLane
-          runtime={runtime!.remoteKeyboardRuntime}
-          color={remoteColor}
-        />
+        <PeerLane runtime={runtime!.remoteKeyboardRuntime} />
       )}
 
       {/* Local Peer */}
       <PeerLane
         runtime={runtime!.localKeyboardRuntime}
-        color={localColor}
         keyboardDisabled={!activeMidiInputDeviceId}
         disabledMessageContent={<AttachMidiPrompt />}
       />
