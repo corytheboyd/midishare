@@ -79,10 +79,10 @@ services:
       args:
         API_SERVER_URL: http://server:3000
         WWW_SERVER_URL: http://client:3000
-        MIDI_SERVER_URL: http://inspector:3000
+        INSPECTOR_SERVER_URL: http://inspector:3000
         API_DOMAIN: api.midishare.local
         WWW_DOMAIN: www.midishare.local
-        MIDI_DOMAIN: midi.midishare.local
+        INSPECTOR_DOMAIN: inspector.midishare.local
         HMR_DOMAIN: hmr.midishare.local
         SSL_CERT_PATH: /ssl/_wildcard.midishare.local.pem
         SSL_KEY_PATH: /ssl/_wildcard.midishare.local-key.pem

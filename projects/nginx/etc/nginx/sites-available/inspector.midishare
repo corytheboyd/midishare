@@ -1,7 +1,7 @@
 # https://pm2.keymetrics.io/docs/tutorials/pm2-nginx-production-setup
 server {
   listen 443 ssl;
-  server_name {{MIDI_DOMAIN}};
+  server_name {{INSPECTOR_DOMAIN}};
 
   ssl_certificate {{SSL_CERT_PATH}};
   ssl_certificate_key {{SSL_KEY_PATH}};
@@ -11,7 +11,7 @@ server {
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header Host $http_host;
 
-    proxy_pass {{MIDI_SERVER_URL}};
+    proxy_pass {{INSPECTOR_SERVER_URL}};
 
     error_page 404 = /; # spa routing
   }
@@ -19,8 +19,8 @@ server {
 
 server {
   listen 80;
-  server_name {{MIDI_DOMAIN}};
-  if ($host = {{MIDI_DOMAIN}}) {
+  server_name {{INSPECTOR_DOMAIN}};
+  if ($host = {{INSPECTOR_DOMAIN}}) {
       return 301 https://$host$request_uri;
   }
   return 404;

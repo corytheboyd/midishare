@@ -11,7 +11,7 @@ COPY projects/inspector .
 
 FROM base AS development
 
-CMD npm run dev
+ENTRYPOINT ["./docker-entrypoint.sh"]
 
 FROM base AS build
 
