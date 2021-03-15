@@ -3,7 +3,7 @@ import classnames from "classnames";
 import { PeerLaneProps } from "./index";
 
 const pedImageUrl = (() => {
-  const url = new URL(process.env.PUBLIC_CDN_URL as string);
+  const url = new URL(process.env.STATIC_CDN_URL as string);
   url.pathname = "/ped.png";
   return url.toString();
 })();
