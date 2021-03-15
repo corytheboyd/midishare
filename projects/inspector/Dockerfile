@@ -3,7 +3,7 @@ FROM node:14.15.5 AS base
 WORKDIR /
 COPY tsconfig.base.json .
 
-WORKDIR /code
+WORKDIR /code/app
 COPY projects/inspector/package.json .
 COPY projects/inspector/package-lock.json .
 RUN npm ci
