@@ -1,7 +1,6 @@
 import React from "react";
 import { KeyboardWell } from "./KeyboardWell";
 import { Runtime } from "@midishare/keyboard";
-import { KeyboardInfoWell } from "./KeyboardInfoWell";
 
 export type PeerLaneProps = {
   runtime: Runtime;

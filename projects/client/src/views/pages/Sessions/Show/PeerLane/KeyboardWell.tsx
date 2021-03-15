@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { PeerLaneProps } from "./index";
-import { Keyboard } from "@midishare/keyboard";
 import classnames from "classnames";
 import { KeyboardInfoWell } from "./KeyboardInfoWell";
+import { Keyboard } from "@midishare/keyboard";
 
 export const KeyboardWell: React.FC<PeerLaneProps> = (props) => {
   const keys = props.runtime.useStore((state) => state.keys);

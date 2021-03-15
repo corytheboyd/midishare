@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import classnames from "classnames";
+import { PeerLaneProps } from "./index";
 
 const pedImageUrl = (() => {
   const url = new URL(process.env.PUBLIC_CDN_URL as string);
@@ -7,8 +8,8 @@ const pedImageUrl = (() => {
   return url.toString();
 })();
 
-export const KeyboardInfoWell: React.FC = () => {
-  const [isPressed, setIsPressed] = useState(false);
+export const KeyboardInfoWell: React.FC<PeerLaneProps> = (props) => {
+  const isPressed = props.runtime.useStore((store) => store.sustain);
 
   return (
     <div
@@ -17,12 +18,8 @@ export const KeyboardInfoWell: React.FC = () => {
         {
           "opacity-25": !isPressed,
           "shadow-sm": isPressed,
-          "animate-pulse": isPressed,
         }
       )}
-      onClick={() => {
-        setIsPressed(!isPressed);
-      }}
     >
       <img className="h-10" src={pedImageUrl} alt="Pedal symbol" />
     </div>

@@ -19,4 +19,16 @@ export function playKeyboard(
       runtime.keyOff(keyName);
     }
   }
+
+  if (eventType === "controlchange") {
+    // Sustain pedal
+    if (data[1] === 64) {
+      const isPressed = data[2] === 0;
+      if (isPressed) {
+        runtime.sustainOn();
+      } else {
+        runtime.sustainOff();
+      }
+    }
+  }
 }
