@@ -10,6 +10,10 @@ ARG HMR_DOMAIN
 ENV HMR_DOMAIN=${HMR_DOMAIN}
 ARG WWW_SERVER_URL
 ENV WWW_SERVER_URL=${WWW_SERVER_URL}
+ARG MIDI_DOMAIN
+ENV MIDI_DOMAIN=${MIDI_DOMAIN}
+ARG MIDI_SERVER_URL
+ENV MIDI_SERVER_URL=${MIDI_SERVER_URL}
 ARG SSL_CERT_PATH
 ENV SSL_CERT_PATH=${SSL_CERT_PATH}
 ARG SSL_KEY_PATH
@@ -29,3 +33,4 @@ RUN ./script/replace-variables /etc/nginx /etc/nginx
 RUN mkdir -p /etc/nginx/sites-enabled
 RUN ln -s /etc/nginx/sites-available/api.midishare /etc/nginx/sites-enabled/
 RUN ln -s /etc/nginx/sites-available/www.midishare /etc/nginx/sites-enabled/
+RUN ln -s /etc/nginx/sites-available/midi.midishare /etc/nginx/sites-enabled/

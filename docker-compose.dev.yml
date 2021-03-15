@@ -35,8 +35,6 @@ services:
   client:
     build:
       target: development
-    ports:
-      - "4000:4000"
     expose:
       - "3000"
     environment:
@@ -56,7 +54,6 @@ services:
     command:
       - "--cache-dir=/parcel-cache"
       - "--port=3000"
-      - "--hmr-port=4000"
 
   server:
     build:
@@ -82,8 +79,10 @@ services:
       args:
         API_SERVER_URL: http://server:3000
         WWW_SERVER_URL: http://client:3000
+        MIDI_SERVER_URL: http://inspector:3000
         API_DOMAIN: api.midishare.local
         WWW_DOMAIN: www.midishare.local
+        MIDI_DOMAIN: midi.midishare.local
         HMR_DOMAIN: hmr.midishare.local
         SSL_CERT_PATH: /ssl/_wildcard.midishare.local.pem
         SSL_KEY_PATH: /ssl/_wildcard.midishare.local-key.pem
@@ -118,17 +117,12 @@ services:
       target: development
       dockerfile: projects/inspector/Dockerfile
     volumes:
-      - "./ssl:/ssl:ro"
       - "./projects/inspector/src:/code/src"
       - type: volume
         source: inspector_parcel-cache
         target: /parcel-cache
-    ports:
-      - "3200:3200" # HTTPS
-      - "3201:3201" # WS
+    expose:
+      - "3000"
     command:
       - "--cache-dir=/parcel-cache"
-      - "--port=3200"
-      - "--hmr-port=3201"
-      - "--cert=/ssl/_wildcard.midishare.local.pem"
-      - "--key=/ssl/_wildcard.midishare.local-key.pem"
+      - "--port=3000"

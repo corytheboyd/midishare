@@ -22,7 +22,6 @@ server {
 server {
   listen 80;
   server_name {{API_DOMAIN}};
-
   if ($host = {{API_DOMAIN}}) {
       return 301 https://$host$request_uri;
   }
