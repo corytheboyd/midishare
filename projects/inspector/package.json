@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "./node_modules/.bin/parcel server src/index.html"
+    "dev": "./node_modules/.bin/parcel server src/index.html",
+    "build": "./node_modules/.bin/parcel build src/index.html"
   },
   "devDependencies": {
     "@types/node": "^14.14.20",

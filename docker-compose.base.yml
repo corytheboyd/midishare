@@ -21,7 +21,7 @@ services:
   nginx:
     depends_on:
       - server
-    container_name: ngninx
+    container_name: nginx
     init: true
     build:
       context: .
