@@ -1,6 +1,6 @@
 import { Session } from "@midishare/common";
 
-export async function invertSustain(id: string): Promise<Session> {
+export async function setSustainInverted(id: string): Promise<Session> {
   const url = new URL(process.env.SERVER_URL as string);
   url.pathname = `/api/v1/sessions/${id}/join`;
 
