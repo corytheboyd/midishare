@@ -12,6 +12,10 @@ export type UserProfile = {
   email: string;
 };
 
+export type SessionRuntimeOptions = {
+  sustainInverted: boolean;
+};
+
 export type Session = {
   id: string;
   participants: {
@@ -25,6 +29,10 @@ export type Session = {
      * until the guest joins the session!
      * */
     guest?: UserId;
+  };
+  runtimeOptions: {
+    host: SessionRuntimeOptions;
+    guest: SessionRuntimeOptions;
   };
 };
 

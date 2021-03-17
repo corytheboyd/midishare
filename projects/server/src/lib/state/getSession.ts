@@ -3,9 +3,10 @@ import { db } from "./db";
 import { SessionRow } from "./types";
 
 export async function getSession(id: string): Promise<Session> {
-  const data = await db.get<
-    Required<Pick<SessionRow, "uuid" | "hostId" | "guestId">>
-  >("SELECT uuid, hostId, guestId FROM Sessions WHERE uuid = ?", id);
+  const data = await db.get<Required<Omit<SessionRow, "id">>>(
+    "SELECT uuid, hostId, guestId FROM Sessions WHERE uuid = ?",
+    id
+  );
 
   if (!data) {
     throw new Error("Session does not exist");
@@ -16,6 +17,14 @@ export async function getSession(id: string): Promise<Session> {
     participants: {
       host: data.hostId,
       guest: data.guestId,
+    },
+    runtimeOptions: {
+      host: {
+        sustainInverted: data.hostSustainInverted === 1,
+      },
+      guest: {
+        sustainInverted: data.guestSustainInverted === 1,
+      },
     },
   };
 }

@@ -15,5 +15,13 @@ export async function createSession(userId: UserId): Promise<Session> {
     participants: {
       host: userId,
     },
+    runtimeOptions: {
+      host: {
+        sustainInverted: false,
+      },
+      guest: {
+        sustainInverted: false,
+      },
+    },
   };
 }
