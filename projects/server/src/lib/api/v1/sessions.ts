@@ -8,6 +8,7 @@ import { getAllSessions } from "../../state/getAllSessions";
 import { deleteSession } from "../../state/deleteSession";
 import { send } from "../../ws/connections/send";
 import { WebSocketSubType } from "@midishare/common";
+import { setSustainInverted } from "../../state/setSustainInverted";
 
 export const sessions = (): Router => {
   const router = Router();
@@ -74,6 +75,49 @@ export const sessions = (): Router => {
     await deleteSession(session);
 
     res.status(204);
+    res.end();
+  });
+
+  router.put("/:id", requiresAuth(), async (req, res) => {
+    const userId = getCurrentUserId(req);
+    const session = await getSession(req.params.id);
+
+    if (
+      session.participants.host !== userId ||
+      session.participants.guest !== userId
+    ) {
+      res.status(404);
+      res.end();
+      return;
+    }
+
+    const value = req.params.value === "1";
+
+    if (session.participants.host === userId) {
+      await setSustainInverted(session.id, "host", value);
+    } else {
+      await setSustainInverted(session.id, "guest", value);
+    }
+
+    // Send updated session to other peer
+    await (async () => {
+      const session = await getSession(req.params.id);
+
+      const targetUser =
+        userId === session.participants.host
+          ? session.participants.guest
+          : session.participants.host;
+
+      // Guest may not have joined yet
+      if (!targetUser) {
+        return;
+      }
+
+      // Send updated session to other peer
+      send(WebSocketSubType.SESSION_DATA, targetUser, JSON.stringify(session));
+    })();
+
+    res.status(200);
     res.end();
   });
 
