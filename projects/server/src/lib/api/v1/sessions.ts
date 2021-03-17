@@ -78,7 +78,7 @@ export const sessions = (): Router => {
     res.end();
   });
 
-  router.put("/:id/setSustainInverted", requiresAuth(), async (req, res) => {
+  router.post("/:id/setSustainInverted", requiresAuth(), async (req, res) => {
     const userId = getCurrentUserId(req);
     const session = await getSession(req.params.id);
 

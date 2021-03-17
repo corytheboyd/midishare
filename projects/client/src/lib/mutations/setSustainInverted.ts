@@ -1,11 +1,15 @@
 import { Session } from "@midishare/common";
 
-export async function setSustainInverted(id: string): Promise<Session> {
+export async function setSustainInverted(
+  id: string,
+  value: boolean
+): Promise<Session> {
   const url = new URL(process.env.SERVER_URL as string);
-  url.pathname = `/api/v1/sessions/${id}/join`;
+  url.pathname = `/api/v1/sessions/${id}/setSustainInverted`;
+  url.searchParams.append("value", value ? "1" : "0");
 
   const response = await fetch(url.toString(), {
-    method: "PUT",
+    method: "POST",
     mode: "cors",
     credentials: "include",
   });
