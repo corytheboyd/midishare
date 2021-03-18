@@ -19,7 +19,7 @@ COPY projects/common /code/common
 
 FROM base AS development
 
-CMD ./node_modules/.bin/ts-node src/index.ts
+CMD ./node_modules/.bin/ts-node-dev src/index.ts
 
 FROM base AS build
 
