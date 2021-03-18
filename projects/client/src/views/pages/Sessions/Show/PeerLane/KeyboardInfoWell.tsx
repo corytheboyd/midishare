@@ -31,15 +31,11 @@ export const KeyboardInfoWell: React.FC<PeerLaneProps> = (props) => {
     Parameters<typeof setSustainInverted>[0]
   >(setSustainInverted, {
     onSuccess: (data, variables) => {
-      console.debug("RESPONSE data", data);
-
       queryClient.setQueryData(getSessionQueryKey(variables.id), data);
     },
   });
 
   const handleInvertSustain = useCallback(() => {
-    console.debug("toggleSustainInverted");
-
     // TODO I have written this logic TOO MANY TIMES, something is off about
     //  either/all of the Session schema, missing helper functions, etc.
     const session = queryClient.getQueryData(
