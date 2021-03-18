@@ -115,10 +115,10 @@ export const sessions = (): Router => {
 
       // Send updated session to other peer
       send(WebSocketSubType.SESSION_DATA, targetUser, JSON.stringify(session));
-    })();
 
-    res.status(200);
-    res.end();
+      // Send updated session back in response
+      res.send(session);
+    })();
   });
 
   return router;
