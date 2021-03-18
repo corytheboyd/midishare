@@ -7,6 +7,7 @@ import { Logout } from "../../common/icons/sm/Logout";
 import { UserProfile } from "@midishare/common";
 import { getCurrentUser, queryKey } from "../../../lib/queries/getCurrentUser";
 import { Routes } from "../../routes";
+import { Menu } from "../../common/icons/md/Menu";
 
 const LOGIN_URL = (() => {
   const url = new URL(process.env.SERVER_URL as string);
@@ -74,24 +75,24 @@ const ProfileSection: React.FC = () => {
 
 export const Navbar: React.FC = () => {
   return (
-    <MaxWidthContent>
-      <div className="flex justify-center text-gray-400">
-        <div className="flex-grow-0">
-          <a className="font-bold font-mono text-gray-200" href="/">
-            Midishare
-          </a>
-        </div>
+    <nav className="flex flex-col py-2 px-3 lg:p-3 bg-gray-700 shadow-lg">
+      <MaxWidthContent>
+        <div className="flex flex-row w-full">
+          <h1>
+            <a className="text-sm font-bold" href="/">
+              Midishare
+            </a>
+          </h1>
 
-        <div className="flex-grow flex justify-end items-center px-5 text-sm space-x-5">
-          <NavButton to={Routes.SESSIONS}>Sessions</NavButton>
-        </div>
-
-        <div className="self-end">
-          <div className="flex justify-end">
-            <ProfileSection />
+          <div className="flex-grow flex justify-end">
+            <NavButton>
+              <div className="w-5 h-5">
+                <Menu />
+              </div>
+            </NavButton>
           </div>
         </div>
-      </div>
-    </MaxWidthContent>
+      </MaxWidthContent>
+    </nav>
   );
 };
