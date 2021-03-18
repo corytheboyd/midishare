@@ -69,8 +69,16 @@ export class PeerConnection {
     this.polite = value;
   }
 
-  public onMidiData(cb: (data: number[]) => void): void {
+  public onMidiData(cb: (data: number[]) => void): () => void {
     this.onMidiDataCallbacks.push(cb);
+    const index = this.onMidiDataCallbacks.length - 1;
+    return () => {
+      // Yeah, you could use splice. I just try to stay away from impure
+      // functions for the sake of it.
+      this.onMidiDataCallbacks = this.onMidiDataCallbacks.filter(
+        (cb, i) => i !== index
+      );
+    };
   }
 
   /**

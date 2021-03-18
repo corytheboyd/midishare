@@ -1,13 +1,16 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useContext } from "react";
 import { ExclamationCircle } from "../../../../common/icons/sm/ExclamationCircle";
 import { BaseButton } from "../../../../common/buttons/BaseButton";
 import { Plus } from "../../../../common/icons/sm/Plus";
 import { getMidiAccess } from "../../../../../lib/getMidiAccess";
 import { useStore } from "../../../../../lib/store";
+import { SessionShowContext } from "../SessionShowContext";
 
 const GetAccessButton: React.FC = () => {
+  const context = useContext(SessionShowContext);
+
   const handleAttachMidiKeyboard = () => {
-    getMidiAccess();
+    getMidiAccess(context);
   };
 
   return (

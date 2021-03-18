@@ -1,4 +1,4 @@
-import { AllowedInputEventTypes } from "../handleMidiInput";
+import { AllowedInputEventTypes } from "../createMidiInputHandler";
 import { getKeyNameFromIndex } from "@midishare/keyboard";
 import { store } from "../store";
 

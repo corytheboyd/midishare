@@ -1,14 +1,12 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import classnames from "classnames";
 import { PeerLaneProps } from "./index";
-import { useStore } from "../../../../../lib/store";
 import { useMutation } from "react-query";
 import { setSustainInverted } from "../../../../../lib/mutations/setSustainInverted";
 import { queryClient } from "../../../../../lib/queryClient";
 import { queryKey as getSessionQueryKey } from "../../../../../lib/queries/getSession";
-import { queryKey as getCurrentUserQueryKey } from "../../../../../lib/queries/getCurrentUser";
-import { Session, UserProfile } from "@midishare/common";
-import { useParams } from "react-router-dom";
+import { Session } from "@midishare/common";
+import { SessionShowContext } from "../SessionShowContext";
 
 const pedImageUrl = (() => {
   const url = new URL(process.env.STATIC_CDN_URL as string);
@@ -17,13 +15,10 @@ const pedImageUrl = (() => {
 })();
 
 export const KeyboardInfoWell: React.FC<PeerLaneProps> = (props) => {
-  // TODO this is technically a bit of a coupling concern-- what if the URL
-  //  structure changes? it's weird to have hierarchically deep components
-  //  depend on that. however, this project is tiny so I am letting it slide.
-  const urlParams = useParams<{ id: string }>();
+  const context = useContext(SessionShowContext);
 
+  // Canonical isPressed, directly from MIDI signal
   const isPressed = props.runtime.useStore((state) => state.sustain);
-  const isSustainInverted = useStore((state) => state.sustainInverted);
 
   const setSustainInvertedMutation = useMutation<
     Session,
@@ -36,23 +31,11 @@ export const KeyboardInfoWell: React.FC<PeerLaneProps> = (props) => {
   });
 
   const handleInvertSustain = useCallback(() => {
-    // TODO I have written this logic TOO MANY TIMES, something is off about
-    //  either/all of the Session schema, missing helper functions, etc.
-    const session = queryClient.getQueryData(
-      getSessionQueryKey(urlParams.id)
-    ) as Session;
-    const currentUser = queryClient.getQueryData(
-      getCurrentUserQueryKey()
-    ) as UserProfile;
-    const isCurrentUserHost = currentUser.sub === session.participants.host;
-
     setSustainInvertedMutation.mutate({
-      id: urlParams.id,
-      value: isCurrentUserHost
-        ? !session.runtimeOptions.host.sustainInverted
-        : !session.runtimeOptions.guest.sustainInverted,
+      id: context.session!.id,
+      value: !context.localRuntimeOptions!.sustainInverted,
     });
-  }, [setSustainInverted, isSustainInverted]);
+  }, [context.session]);
 
   return (
     <div

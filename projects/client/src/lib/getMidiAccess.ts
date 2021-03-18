@@ -2,12 +2,12 @@ import WebMidi, {
   InputEventControlchange,
   InputEventNoteoff,
   InputEventNoteon,
-  InputEvents,
 } from "webmidi";
 import { store } from "./store";
-import { handleMidiInput } from "./handleMidiInput";
+import { createMidiInputHandler } from "./createMidiInputHandler";
+import { ISessionShowContext } from "../views/pages/Sessions/Show/SessionShowContext";
 
-export function getMidiAccess(): void {
+export function getMidiAccess(context: ISessionShowContext): void {
   if (store.getState().midiAccessGranted !== null) {
     return;
   }
@@ -25,14 +25,7 @@ export function getMidiAccess(): void {
       }
       store.getState().addMidiInputDevice(event.port);
 
-      const eventListenerCallback = (
-        event: InputEventNoteon | InputEventNoteoff | InputEventControlchange
-      ) => {
-        if (store.getState().activeMidiInputDeviceId !== event.target.id) {
-          return;
-        }
-        handleMidiInput(event.type, event.timestamp, event.data);
-      };
+      const eventListenerCallback = createMidiInputHandler(context);
 
       event.port.addListener("noteon", "all", eventListenerCallback);
       event.port.addListener("noteoff", "all", eventListenerCallback);

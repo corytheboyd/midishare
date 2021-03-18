@@ -18,14 +18,19 @@ import {
 } from "../../../../lib/queries/getCurrentUser";
 import { useSocket } from "../../../../lib/ws/useSocket";
 import { queryClient } from "../../../../lib/queryClient";
-import { AllowedInputEventTypes } from "../../../../lib/handleMidiInput";
+import { AllowedInputEventTypes } from "../../../../lib/createMidiInputHandler";
 import { playKeyboard } from "../../../../lib/playKeyboard";
 import { WebSocketSubType } from "@midishare/common";
+import {
+  buildSessionShowContext,
+  SessionShowContext,
+} from "./SessionShowContext";
 
 export const SessionShowPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
 
-  const userQuery = useQuery(currentUserQueryKey(), getCurrentUser);
+  const currentUserQuery = useQuery(currentUserQueryKey(), getCurrentUser);
+
   const sessionQuery = useQuery(
     sessionQueryKey(urlParams.id),
     () => getSession(urlParams.id),
@@ -38,15 +43,24 @@ export const SessionShowPage: React.FC = () => {
 
   const connection = usePeerConnection(urlParams.id);
 
+  // Intentionally re-evaluated on every render, then passed through React
+  // context
+  // TODO instead of sprinkling react-query everywhere below this
+  //  hierarchically, move things up to context instead that should be here
+  const context = buildSessionShowContext({
+    currentUser: currentUserQuery.data,
+    session: sessionQuery.data,
+  });
+
   useEffect(() => {
     if (!sessionQuery.data) {
       return;
     }
     connection.setPolite(
-      userQuery.data?.sub === sessionQuery.data.participants.host
+      currentUserQuery.data?.sub === sessionQuery.data.participants.host
     );
     connection.start();
-  }, [sessionQuery.isSuccess, userQuery.isSuccess]);
+  }, [sessionQuery.isSuccess, currentUserQuery.isSuccess]);
 
   const sessionDataSocket = useSocket({
     type: WebSocketSubType.SESSION_DATA,
@@ -60,7 +74,7 @@ export const SessionShowPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    connection.onMidiData((data) => {
+    return connection.onMidiData((data) => {
       const [timestamp, ...midi] = data;
 
       let eventType: AllowedInputEventTypes | null = null;
@@ -81,26 +95,35 @@ export const SessionShowPage: React.FC = () => {
         if (!runtime) {
           throw new Error("Runtime not initialized");
         }
-        playKeyboard(eventType, timestamp, Uint8Array.from(midi), runtime);
+
+        playKeyboard(
+          "remote",
+          eventType,
+          timestamp,
+          Uint8Array.from(midi),
+          context
+        );
       }
     });
-  }, []);
+  }, [context]);
 
   if (!sessionQuery.isLoading && !sessionQuery.data) {
     return <NotFound message="Session does not exist" />;
   }
 
   return (
-    <Chrome hideFooter={true}>
-      <Helmet>
-        <title>Midishare • Session</title>
-      </Helmet>
+    <SessionShowContext.Provider value={context}>
+      <Chrome hideFooter={true}>
+        <Helmet>
+          <title>Midishare • Session</title>
+        </Helmet>
 
-      {sessionQuery.isLoading && <span>Loading...</span>}
+        {sessionQuery.isLoading && <span>Loading...</span>}
 
-      {!sessionQuery.isLoading && (
-        <PeerLaneController session={sessionQuery.data!} />
-      )}
-    </Chrome>
+        {!sessionQuery.isLoading && (
+          <PeerLaneController session={sessionQuery.data!} />
+        )}
+      </Chrome>
+    </SessionShowContext.Provider>
   );
 };

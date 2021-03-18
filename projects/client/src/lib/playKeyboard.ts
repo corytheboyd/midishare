@@ -1,15 +1,36 @@
 import { InputEvents } from "webmidi";
-import { AllowedInputEventTypes } from "./handleMidiInput";
-import { getKeyNameFromIndex, Runtime } from "@midishare/keyboard";
-import { store } from "./store";
+import { AllowedInputEventTypes } from "./createMidiInputHandler";
+import { getKeyNameFromIndex } from "@midishare/keyboard";
+import { ISessionShowContext } from "../views/pages/Sessions/Show/SessionShowContext";
+
+const SUSTAIN_PEDAL_CONTROL_CODE = 64;
 
 export function playKeyboard(
+  targetRuntime: "local" | "remote",
   eventType: Extract<keyof InputEvents, AllowedInputEventTypes>,
   timestamp: number,
   data: Uint8Array,
-  runtime: Runtime
+  context: ISessionShowContext
 ): void {
-  // Play the local keyboard
+  const runtime =
+    targetRuntime === "local" ? context.localRuntime : context.remoteRuntime;
+
+  const runtimeOptions =
+    targetRuntime === "local"
+      ? context.localRuntimeOptions
+      : context.remoteRuntimeOptions;
+
+  if (!runtime) {
+    throw new Error("Failed to play keyboard: target runtime does not exist");
+  }
+
+  if (!runtimeOptions) {
+    throw new Error(
+      "Failed to play keyboard: target runtimeOptions does not exist"
+    );
+  }
+
+  // Play notes
   if (eventType === "noteon" || eventType === "noteoff") {
     const [, note, velocity] = data;
     const keyName = getKeyNameFromIndex(note - 21);
@@ -21,11 +42,12 @@ export function playKeyboard(
     }
   }
 
+  // Sustain pedal
   if (eventType === "controlchange") {
-    // Sustain pedal
-    if (data[1] === 64) {
-      const isInverted = store.getState().sustainInverted;
-      const isPressed = isInverted ? data[2] > 0 : data[2] === 0;
+    if (data[1] === SUSTAIN_PEDAL_CONTROL_CODE) {
+      const isPressed = runtimeOptions.sustainInverted
+        ? data[2] > 0
+        : data[2] === 0;
 
       if (isPressed) {
         runtime.sustainOn();
