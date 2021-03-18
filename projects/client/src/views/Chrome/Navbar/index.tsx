@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { MaxWidthContent } from "../index";
 import { BaseButton, BaseButtonProps } from "../../common/buttons/BaseButton";
@@ -8,6 +8,8 @@ import { UserProfile } from "@midishare/common";
 import { getCurrentUser, queryKey } from "../../../lib/queries/getCurrentUser";
 import { Routes } from "../../routes";
 import { Menu } from "../../common/icons/md/Menu";
+import classNames from "classnames";
+import { useStore } from "../../../lib/store";
 
 const LOGIN_URL = (() => {
   const url = new URL(process.env.SERVER_URL as string);
@@ -30,11 +32,46 @@ const NavButton: React.FC<BaseButtonProps> = (props) => (
   </BaseButton>
 );
 
-const MobileNavMenu: React.FC<{ open: boolean }> = (props) => {
+const MobileNavMenu: React.FC<{ open: boolean; requestClose: () => void }> = (
+  props
+) => {
+  function handleKeyDown(event: KeyboardEvent) {
+    if (!props.open) {
+      return;
+    }
+
+    if (event.code === "Escape") {
+      props.requestClose();
+    }
+  }
+
+  useEffect(() => {
+    if (props.open) {
+      document.addEventListener("keydown", handleKeyDown);
+    } else {
+      document.removeEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [props.open]);
+
   return (
     <>
-      <div className="bg-black absolute top-0 right-0 w-full h-full opacity-75" />
-      <div className="absolute mt-11 right-0 focus:outline-none bg-gray-700 text-gray-800 w-full opacity-100">
+      <div
+        className={classNames({
+          "bg-black absolute top-0 right-0 w-full h-full opacity-75": true,
+          invisible: !props.open,
+        })}
+        onClick={() => props.requestClose()}
+      />
+      <div
+        className={classNames({
+          "absolute mt-11 right-0 focus:outline-none bg-gray-700 text-gray-800 w-full opacity-100": true,
+          invisible: !props.open,
+        })}
+      >
         {props.children}
       </div>
     </>
@@ -65,6 +102,8 @@ export const Navbar: React.FC = () => {
     }
   );
 
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
   return (
     <>
       <nav className="flex flex-col py-2 px-3 lg:p-3 bg-gray-700 shadow-lg">
@@ -87,7 +126,7 @@ export const Navbar: React.FC = () => {
                 </div>
               )}
 
-              <NavButton>
+              <NavButton onClick={() => setMobileNavOpen(!mobileNavOpen)}>
                 <div className="w-5 h-5">
                   <Menu />
                 </div>
@@ -97,7 +136,10 @@ export const Navbar: React.FC = () => {
         </MaxWidthContent>
       </nav>
 
-      <MobileNavMenu open={true}>
+      <MobileNavMenu
+        open={mobileNavOpen}
+        requestClose={() => setMobileNavOpen(false)}
+      >
         <div className="flex flex-col justify-end space-y-2 py-2 text-sm">
           <MobileNavMenuButton
             label="Sessions"
@@ -111,7 +153,6 @@ export const Navbar: React.FC = () => {
             label="Releases"
             description="Check out recent Midishare changes"
           />
-
           {currentUserQuery.data && <MobileNavMenuButton label="Logout" />}
         </div>
       </MobileNavMenu>
