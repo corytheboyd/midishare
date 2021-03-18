@@ -4,7 +4,7 @@ import { SessionRow } from "./types";
 
 export async function getSession(id: string): Promise<Session> {
   const data = await db.get<Required<Omit<SessionRow, "id">>>(
-    "SELECT uuid, hostId, guestId FROM Sessions WHERE uuid = ?",
+    "SELECT uuid, hostId, guestId, hostSustainInverted, guestSustainInverted FROM Sessions WHERE uuid = ?",
     id
   );
 

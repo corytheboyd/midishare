@@ -83,7 +83,7 @@ export const sessions = (): Router => {
     const session = await getSession(req.params.id);
 
     if (
-      session.participants.host !== userId ||
+      session.participants.host !== userId &&
       session.participants.guest !== userId
     ) {
       res.status(404);
@@ -91,8 +91,7 @@ export const sessions = (): Router => {
       return;
     }
 
-    const value = req.params.value === "1";
-
+    const value = req.query.value === "1";
     if (session.participants.host === userId) {
       await setSustainInverted(session.id, "host", value);
     } else {
