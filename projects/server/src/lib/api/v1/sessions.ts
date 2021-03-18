@@ -78,7 +78,11 @@ export const sessions = (): Router => {
     res.end();
   });
 
-  router.post("/:id/setSustainInverted", requiresAuth(), async (req, res) => {
+  /**
+   * @note Auth not required, so that the guest peer can also invert their
+   *  sustain on/off state if they do not have an account.
+   * */
+  router.post("/:id/setSustainInverted", async (req, res) => {
     const userId = getCurrentUserId(req);
     const session = await getSession(req.params.id);
 
