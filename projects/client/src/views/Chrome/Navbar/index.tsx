@@ -25,7 +25,7 @@ const LOGOUT_URL = (() => {
 
 const NavButton: React.FC<BaseButtonProps> = (props) => (
   <BaseButton
-    className="px-2 py-1 text-sm hover:text-gray-600 hover:shadow hover:bg-gray-200 rounded transition"
+    className="px-2 py-1 text-sm hover:text-gray-600 shadow-inner rounded transition"
     {...props}
   >
     {props.children}
@@ -61,14 +61,14 @@ const MobileNavMenu: React.FC<{ open: boolean; requestClose: () => void }> = (
     <>
       <div
         className={classNames({
-          "bg-black absolute top-0 right-0 w-full h-full opacity-75": true,
+          "z-10 absolute top-0 right-0 bg-black w-full h-full opacity-75": true,
           invisible: !props.open,
         })}
         onClick={() => props.requestClose()}
       />
       <div
         className={classNames({
-          "absolute mt-11 right-0 focus:outline-none bg-gray-700 text-gray-800 w-full opacity-100": true,
+          "z-20 mt-11 absolute top-0 right-0 focus:outline-none bg-gray-700 text-gray-800 w-full opacity-100": true,
           invisible: !props.open,
         })}
       >
@@ -78,16 +78,23 @@ const MobileNavMenu: React.FC<{ open: boolean; requestClose: () => void }> = (
   );
 };
 
-const MobileNavMenuButton: React.FC<{
-  label: string;
-  description?: string;
-}> = (props) => {
+const MobileNavMenuButton: React.FC<
+  BaseButtonProps & {
+    label: string;
+    description?: string;
+    variant?: "primary";
+  }
+> = ({ label, description, variant, ...buttonProps }) => {
   return (
-    <BaseButton className="bg-gray-800 py-2 text-right pr-2">
-      <span className="font-bold text-gray-200">{props.label}</span>
-      {props.description && (
-        <p className="text-xs text-gray-400">{props.description}</p>
-      )}
+    <BaseButton
+      className={classNames({
+        "bg-gray-800 py-2 text-right pr-2": true,
+        "bg-green-800": variant === "primary",
+      })}
+      {...buttonProps}
+    >
+      <span className="font-bold text-gray-200">{label}</span>
+      {description && <p className="text-xs text-gray-400">{description}</p>}
     </BaseButton>
   );
 };
@@ -144,16 +151,30 @@ export const Navbar: React.FC = () => {
           <MobileNavMenuButton
             label="Sessions"
             description="Create or join a session"
-          />
-          <MobileNavMenuButton
-            label="Discussion"
-            description="The Midishare discussion forum"
+            variant="primary"
+            to={Routes.SESSIONS}
+            onClick={() => setMobileNavOpen(false)}
           />
           <MobileNavMenuButton
             label="Releases"
             description="Check out recent Midishare changes"
+            href="https://github.com/corytheboyd/midishare/releases/tag/0.1.0"
+            target="_blank"
+            onClick={() => setMobileNavOpen(false)}
           />
-          {currentUserQuery.data && <MobileNavMenuButton label="Logout" />}
+          <MobileNavMenuButton
+            label="Discussion"
+            description="The Midishare discussion forum"
+            href="https://github.com/corytheboyd/midishare/discussions"
+            target="_blank"
+            onClick={() => setMobileNavOpen(false)}
+          />
+          {currentUserQuery.data && (
+            <MobileNavMenuButton
+              label="Logout"
+              onClick={() => setMobileNavOpen(false)}
+            />
+          )}
         </div>
       </MobileNavMenu>
     </>
