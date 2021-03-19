@@ -76,9 +76,17 @@ export const Navbar: React.FC = () => {
                 </div>
               )}
 
-              <div className="hidden lg:block">
-                <NavButton>Logout</NavButton>
-              </div>
+              {currentUserQuery.data && (
+                <div className="hidden lg:block">
+                  <NavButton href={LOGOUT_URL}>Logout</NavButton>
+                </div>
+              )}
+
+              {currentUserQuery.data === null && (
+                <div className="hidden lg:block">
+                  <NavButton href={LOGIN_URL}>Login</NavButton>
+                </div>
+              )}
 
               <div className="lg:hidden">
                 <NavButton onClick={() => setMobileNavOpen(!mobileNavOpen)}>
