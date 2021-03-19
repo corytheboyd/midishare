@@ -72,6 +72,8 @@ export const sessions = (): Router => {
       return;
     }
 
+    throw new Error("First error, be gentle");
+
     await deleteSession(session);
 
     res.status(204);
