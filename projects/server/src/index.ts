@@ -20,6 +20,7 @@ import BugsnagPluginExpress from "@bugsnag/plugin-express";
 Bugsnag.start({
   apiKey: "bf9d63908437155509e0c62d25d64d69",
   plugins: [BugsnagPluginExpress],
+  appVersion: process.env.GIT_REV || process.env.NODE_ENV,
 });
 
 (async () => {
