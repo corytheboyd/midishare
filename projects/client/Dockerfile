@@ -29,6 +29,8 @@ ENTRYPOINT ["./docker-entrypoint.sh"]
 
 FROM base AS build
 
+ARG GIT_REV
+ENV GIT_REV=${GIT_REV}
 ARG NODE_ENV
 ENV NODE_ENV=${NODE_ENV}
 ARG SERVER_URL
@@ -49,7 +51,14 @@ WORKDIR /code/keyboard
 RUN npm run build
 
 WORKDIR /code/app
-RUN ./node_modules/.bin/parcel build --public-url $PUBLIC_CDN_URL src/index.html
+RUN $(npm bin)/parcel build --public-url $PUBLIC_CDN_URL src/index.html
+
+# https://docs.bugsnag.com/build-integrations/js/source-maps-browser/
+RUN $(npm bin)/bugsnag-source-maps upload-browser \
+  --api-key acdecfdca0546bbd2ea06683ef2754be \
+  --app-version ${GIT_REV} \
+  --directory dist \
+  --base-url ${PUBLIC_CDN_URL}
 
 FROM nginx:1.19.7-alpine AS production
 

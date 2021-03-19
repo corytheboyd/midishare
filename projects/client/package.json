@@ -6,6 +6,8 @@
     "dev": "./node_modules/.bin/parcel server src/index.html"
   },
   "dependencies": {
+    "@bugsnag/js": "^7.9.0",
+    "@bugsnag/plugin-react": "^7.9.0",
     "@types/classnames": "^2.2.11",
     "clipboard": "^2.0.6",
     "react": "^17.0.1",
@@ -13,6 +15,7 @@
     "three": "^0.126.1"
   },
   "devDependencies": {
+    "@bugsnag/source-maps": "^2.0.0",
     "@fullhuman/postcss-purgecss": "^2.3.0",
     "@tailwindcss/postcss7-compat": "^2.0.2",
     "@types/clipboard": "^2.0.1",

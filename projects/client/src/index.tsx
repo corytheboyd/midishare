@@ -11,33 +11,45 @@ import { SessionShowPage } from "./views/pages/Sessions/Show";
 import { SessionJoinPage } from "./views/pages/Sessions/SessionJoinPage";
 import { NotFound } from "./views/pages/NotFound";
 import { SessionIndexPage } from "./views/pages/Sessions/Index";
+import Bugsnag from "@bugsnag/js";
+import BugsnagPluginReact from "@bugsnag/plugin-react";
+
+Bugsnag.start({
+  apiKey: "acdecfdca0546bbd2ea06683ef2754be",
+  plugins: [new BugsnagPluginReact()],
+  appVersion: process.env.GIT_REV || process.env.NODE_ENV,
+});
+
+const ErrorBoundary = Bugsnag.getPlugin("react")!.createErrorBoundary(React);
 
 render(
-  <QueryClientProvider client={queryClient}>
-    <ReactQueryDevtools initialIsOpen={true} />
-    <Helmet>
-      <title>Midishare</title>
-    </Helmet>
-    <Router>
-      <Switch>
-        <Route path={Routes.SESSION_JOIN}>
-          <SessionJoinPage />
-        </Route>
-        <Route path={Routes.SESSION}>
-          <SessionShowPage />
-        </Route>
-        <Route path={Routes.SESSIONS}>
-          <SessionIndexPage />
-        </Route>
-        <Route exact path={Routes.HOME}>
-          <HomePage />
-        </Route>
-        <Route path="*">
-          <NotFound />
-        </Route>
-      </Switch>
-    </Router>
-  </QueryClientProvider>,
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={true} />
+      <Helmet>
+        <title>Midishare</title>
+      </Helmet>
+      <Router>
+        <Switch>
+          <Route path={Routes.SESSION_JOIN}>
+            <SessionJoinPage />
+          </Route>
+          <Route path={Routes.SESSION}>
+            <SessionShowPage />
+          </Route>
+          <Route path={Routes.SESSIONS}>
+            <SessionIndexPage />
+          </Route>
+          <Route exact path={Routes.HOME}>
+            <HomePage />
+          </Route>
+          <Route path="*">
+            <NotFound />
+          </Route>
+        </Switch>
+      </Router>
+    </QueryClientProvider>
+  </ErrorBoundary>,
   document.getElementById("root")
 );
 
