@@ -12,8 +12,15 @@ import { handleShutdown } from "./lib/handleShutdown";
 import { db, dbOpen } from "./lib/state/db";
 import { healthCheck } from "./lib/healthCheck";
 
-import { config } from "dotenv";
-config();
+import { config as dotenvConfig } from "dotenv";
+dotenvConfig();
+
+import Bugsnag from "@bugsnag/js";
+import BugsnagPluginExpress from "@bugsnag/plugin-express";
+Bugsnag.start({
+  apiKey: "bf9d63908437155509e0c62d25d64d69",
+  plugins: [BugsnagPluginExpress],
+});
 
 (async () => {
   try {
@@ -102,6 +109,7 @@ const app = express() as Express & {
 };
 
 // Third-party middlewares
+app.use(Bugsnag.getPlugin("express")!.requestHandler);
 app.use(helmet());
 app.use(cors(corsConfig));
 app.use(auth(authConfig));
