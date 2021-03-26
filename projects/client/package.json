@@ -5,12 +5,10 @@
   "scripts": {
     "dev": "./node_modules/.bin/parcel server src/index.html"
   },
-  "dependencies": {
-    "@bugsnag/source-maps": "^2.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@bugsnag/js": "^7.9.0",
-    "@bugsnag/plugin-react": "^7.9.0",
+    "@sentry/react": "^6.2.3",
+    "@sentry/tracing": "^6.2.3",
     "@types/classnames": "^2.2.11",
     "clipboard": "^2.0.6",
     "react": "^17.0.1",
