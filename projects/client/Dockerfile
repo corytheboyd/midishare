@@ -53,15 +53,10 @@ RUN npm run build
 WORKDIR /code/app
 RUN $(npm bin)/parcel build --public-url $PUBLIC_CDN_URL src/index.html
 
-# https://docs.bugsnag.com/build-integrations/js/source-maps-browser/
-RUN $(npm bin)/bugsnag-source-maps upload-browser \
-  --api-key acdecfdca0546bbd2ea06683ef2754be \
-  --app-version ${GIT_REV} \
-  --directory dist \
-  --base-url ${PUBLIC_CDN_URL}
-
 FROM nginx:1.19.7-alpine AS production
 
 COPY --from=build /code/app/dist /usr/share/nginx/html/
 COPY projects/client/CHECKS .
 COPY projects/client/nginx /etc/nginx
+COPY projects/client/Procfile .
+COPY projects/client/script/ ./script/

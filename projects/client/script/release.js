@@ -1,11 +1,11 @@
-const { node } = require("@bugsnag/source-maps");
+const { browser } = require("@bugsnag/source-maps");
 const { resolve } = require("path");
 
 (async () => {
   const config = {
-    apiKey: "bf9d63908437155509e0c62d25d64d69",
+    apiKey: "acdecfdca0546bbd2ea06683ef2754be",
     appVersion: process.env.GIT_REV,
-    directory: resolve(__dirname, "../dist"),
+    directory: "/usr/share/nginx/html",
     overwrite: true,
   };
   console.log("Uploading source maps to Bugsnag", config);
