@@ -37,4 +37,8 @@ WORKDIR /app
 COPY --from=build /code/app/dist/ ./dist/
 COPY db/migrations/ db/migrations/
 COPY projects/server/CHECKS .
+
 COPY projects/server/Procfile .
+COPY projects/server/script script
+COPY .sentryclirc .
+RUN curl -sL https://sentry.io/get-cli/ | bash
