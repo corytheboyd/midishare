@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
-    "build": "./node_modules/.bin/ncc build src/index.ts -o dist --minify --source-map"
+    "build": "./node_modules/.bin/ncc build src/index.ts -o dist --source-map"
   },
   "devDependencies": {
-    "@bugsnag/source-maps": "^2.0.0",
+    "@bugsnag/js": "^7.9.0",
+    "@bugsnag/plugin-express": "^7.9.0",
     "@types/cookie-parser": "^1.4.2",
     "@types/cors": "^2.8.9",
     "@types/debug": "^4.1.5",
@@ -31,7 +32,6 @@
     "ws": "^7.4.3"
   },
   "dependencies": {
-    "@bugsnag/js": "^7.9.0",
-    "@bugsnag/plugin-express": "^7.9.0"
+    "@bugsnag/source-maps": "^2.0.0"
   }
 }
