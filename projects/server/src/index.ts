@@ -117,6 +117,9 @@ Sentry.init({
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
+
+  release: process.env.GIT_REV || process.env.NODE_ENV,
+  environment: process.env.NODE_ENV,
 });
 
 // RequestHandler creates a separate execution context using domains, so that every
