@@ -53,8 +53,13 @@ RUN npm run build
 WORKDIR /code/app
 RUN $(npm bin)/parcel build --public-url $PUBLIC_CDN_URL src/index.html
 
-FROM nginx:1.19.7-alpine AS production
+FROM nginx:1.19.7 AS production
 
 COPY --from=build /code/app/dist /usr/share/nginx/html/
 COPY projects/client/CHECKS .
 COPY projects/client/nginx /etc/nginx
+
+COPY projects/client/Procfile .
+COPY projects/client/script script
+COPY .sentryclirc .
+RUN curl -sL https://sentry.io/get-cli/ | bash
