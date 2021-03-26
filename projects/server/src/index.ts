@@ -11,17 +11,11 @@ import { ServerResponse } from "http";
 import { handleShutdown } from "./lib/handleShutdown";
 import { db, dbOpen } from "./lib/state/db";
 import { healthCheck } from "./lib/healthCheck";
+import * as Sentry from "@sentry/node";
+import * as Tracing from "@sentry/tracing";
 
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
-
-import Bugsnag from "@bugsnag/js";
-import BugsnagPluginExpress from "@bugsnag/plugin-express";
-Bugsnag.start({
-  apiKey: "bf9d63908437155509e0c62d25d64d69",
-  plugins: [BugsnagPluginExpress],
-  appVersion: process.env.GIT_REV || process.env.NODE_ENV,
-});
 
 (async () => {
   try {
@@ -109,8 +103,29 @@ const app = express() as Express & {
   ) => void;
 };
 
+Sentry.init({
+  dsn:
+    "https://27a122c6e06d470dbf51418ae6c0ba8a@o559557.ingest.sentry.io/5694473",
+  integrations: [
+    // enable HTTP calls tracing
+    new Sentry.Integrations.Http({ tracing: true }),
+    // enable Express.js middleware tracing
+    new Tracing.Integrations.Express({ app }),
+  ],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
+
+// RequestHandler creates a separate execution context using domains, so that every
+// transaction/span/breadcrumb is attached to its own Hub instance
+app.use(Sentry.Handlers.requestHandler());
+// TracingHandler creates a trace for every incoming request
+app.use(Sentry.Handlers.tracingHandler());
+
 // Third-party middlewares
-app.use(Bugsnag.getPlugin("express")!.requestHandler);
 app.use(helmet());
 app.use(cors(corsConfig));
 app.use(auth(authConfig));
@@ -119,6 +134,20 @@ app.use(cookieParser(process.env.AUTH_SECRET as string));
 // Application middlewares
 app.use("/_health", healthCheck());
 app.use("/api/v1", api());
+
+// The error handler must be before any other error middleware and after all controllers
+app.use(Sentry.Handlers.errorHandler());
+
+// Optional fallthrough error handler
+app.use(function onError(req, res) {
+  // The error id is attached to `res.sentry` to be returned
+  // and optionally displayed to the user for support.
+  res.statusCode = 500;
+  res.header(
+    "X-Sentry-Error-ID",
+    (res as typeof res & { sentry: string }).sentry
+  );
+});
 
 const httpServer = createServer(app);
 

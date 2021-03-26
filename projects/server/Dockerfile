@@ -34,15 +34,7 @@ RUN npm run build
 FROM build AS production
 
 WORKDIR /app
-
-# Installs dependencies needed for release script
-COPY projects/server/package.json .
-COPY projects/server/package-lock.json .
-RUN npm ci --production
-
 COPY --from=build /code/app/dist/ ./dist/
-
 COPY db/migrations/ db/migrations/
 COPY projects/server/CHECKS .
 COPY projects/server/Procfile .
-COPY projects/server/script/ ./script/
