@@ -59,13 +59,7 @@ export const HomePage: React.FC = () => {
         </div>
 
         <div className="mt-5">
-          <LargePrimaryButton
-            onClick={() => {
-              throw new Error("Test error, please ignore");
-            }}
-          >
-            Get Started
-          </LargePrimaryButton>
+          <LargePrimaryButton>Get Started</LargePrimaryButton>
         </div>
 
         <div className="flex flex-col sm:flex-row space-y-5 sm:space-y-0 sm:space-x-5 w-full lg:max-w-4xl mt-10">
