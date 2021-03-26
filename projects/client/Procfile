@@ -1,4 +1,3 @@
 # Note: web process automatically started, as the default nginx container
 # run command
-
-release: node script/release.js
+# release: node script/release.js
