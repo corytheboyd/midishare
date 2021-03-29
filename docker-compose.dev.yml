@@ -5,18 +5,6 @@ volumes:
   inspector_parcel-cache:
 
 services:
-  server_deno:
-    init: true
-    container_name: server_deno
-    build:
-      dockerfile: projects/server_deno/Dockerfile
-      context: .
-      target: development
-    expose:
-      - "3000"
-    volumes:
-      - "./projects/server_deno/src:/home/deno/src:ro"
-
   sqlite-web:
     image: coleifer/sqlite-web # https://github.com/coleifer/sqlite-web
     container_name: sqlite-web
@@ -72,25 +60,32 @@ services:
       target: development
     expose:
       - "3000"
-    env_file: projects/server/.env.development
-    environment:
-      PORT: 3000
-      NODE_ENV: development
-      BASE_URL: https://api.midishare.local:3000
-      CLIENT_URL: https://www.midishare.local:3000
-      COOKIE_DOMAIN: midishare.local
-      SQLITE_DATABASE_PATH: /db/database.db
-      SQLITE_MIGRATIONS_PATH: /db/migrations
     volumes:
-      - "./db:/db"
-      - "./projects/server/src:/code/app/src"
-      - "./projects/common/dist:/code/common/dist:ro"
+      - "./projects/server/src:/home/deno/src:ro"
+
+#  server_nodejs:
+#    build:
+#      target: development
+#    expose:
+#      - "3000"
+#    env_file: projects/server_nodejs/.env.development
+#    environment:
+#      PORT: 3000
+#      NODE_ENV: development
+#      BASE_URL: https://api.midishare.local:3000
+#      CLIENT_URL: https://www.midishare.local:3000
+#      COOKIE_DOMAIN: midishare.local
+#      SQLITE_DATABASE_PATH: /db/database.db
+#      SQLITE_MIGRATIONS_PATH: /db/migrations
+#    volumes:
+#      - "./db:/db"
+#      - "./projects/server/src:/code/app/src"
+#      - "./projects/common/dist:/code/common/dist:ro"
 
   nginx:
     build:
       args:
-        API_SERVER_URL: http://server_deno:3000
-#        API_SERVER_URL: http://server:3000
+        API_SERVER_URL: http://server:3000
         WWW_SERVER_URL: http://client:3000
         INSPECTOR_SERVER_URL: http://inspector:3000
         API_DOMAIN: api.midishare.local

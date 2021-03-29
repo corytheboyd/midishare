@@ -1,44 +1,34 @@
-FROM node:14.15.5 AS base
+FROM ubuntu:20.10 AS base
 
-WORKDIR /
-COPY tsconfig.base.json .
+ENV DENO_INSTALL=/usr/local
+ENV DENO_DIR=/home/deno/.cache
 
-WORKDIR /code/common
-COPY projects/common/package.json .
-COPY projects/common/package-lock.json .
-RUN npm link
+# Create deno user:group before installation so that the home directory exits
+RUN addgroup deno && useradd --gid deno --create-home deno
 
-WORKDIR /code/app
-COPY projects/server/package.json .
-COPY projects/server/package-lock.json .
-RUN npm ci
-RUN npm link @midishare/common
+RUN apt-get update && apt-get install unzip curl -y
+RUN curl -fsSL https://deno.land/x/install/install.sh | sh
 
-COPY projects/server /code/app
-COPY projects/common /code/common
+# Switch to deno user after installing system dependencies
+USER deno:deno
+WORKDIR /home/deno
 
-FROM base AS development
+ENTRYPOINT ["deno"]
 
-CMD ./node_modules/.bin/ts-node-dev src/index.ts
+FROM base AS run-base
 
-FROM base AS build
+# Run application, always with integrity verification
+# https://deno.land/manual@v1.8.2/linking_to_external_code/integrity_checking#runtime-verification
+COPY --chown=deno projects/server/lock.json .
+COPY --chown=deno projects/server/.deno-cache ${DENO_DIR}
+COPY --chown=deno projects/server .
 
-ARG GIT_REV
+ENTRYPOINT ["deno", "run", "--allow-net", "--lock=lock.json", "--cached-only"]
 
-WORKDIR /code/common
-RUN npm run build
+FROM run-base AS development
 
-WORKDIR /code/app
-RUN npm run build
+CMD ["--unstable", "--watch", "src/index.ts"]
 
-FROM build AS production
+FROM run-base AS production
 
-WORKDIR /app
-COPY --from=build /code/app/dist/ ./dist/
-COPY db/migrations/ db/migrations/
-COPY projects/server/CHECKS .
-
-COPY projects/server/Procfile .
-COPY projects/server/script script
-COPY .sentryclirc .
-RUN curl -sL https://sentry.io/get-cli/ | bash
+CMD ["src/index.ts"]

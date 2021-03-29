@@ -12,11 +12,18 @@ services:
       SERVER_URL:
 
   server:
-    container_name: server
     init: true
+    container_name: server
     build:
-      context: .
       dockerfile: projects/server/Dockerfile
+      context: .
+
+#  server_nodejs:
+#    container_name: server
+#    init: true
+#    build:
+#      context: .
+#      dockerfile: projects/server_nodejs/Dockerfile
 
   nginx:
     depends_on:

@@ -14,3 +14,7 @@ services:
   server:
     build:
       target: production
+
+#  server_nodejs:
+#    build:
+#      target: production

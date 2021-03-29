@@ -35,4 +35,4 @@ projects/nginx/mmdb/**/*
 
 # Deno dependency/build cache
 # TODO look into vendoring instead, for good measure.
-projects/server_deno/.deno-cache
+projects/server/.deno-cache
