@@ -23,7 +23,7 @@ COPY --chown=deno projects/server/lock.json .
 COPY --chown=deno projects/server/.deno-cache ${DENO_DIR}
 COPY --chown=deno projects/server .
 
-ENTRYPOINT ["deno", "run", "--allow-net", "--lock=lock.json", "--cached-only"]
+ENTRYPOINT ["deno", "run", "--allow-net", "--allow-env", "--lock=lock.json", "--cached-only"]
 
 FROM run-base AS development
 

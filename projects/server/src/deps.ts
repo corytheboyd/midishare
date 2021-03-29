@@ -1,5 +1,11 @@
 // https://deno.land/std@0.91.0/http
-export { serve } from "https://deno.land/std@0.91.0/http/server.ts";
+import {
+  serve,
+  ServerRequest,
+  Response,
+} from "https://deno.land/std@0.91.0/http/server.ts";
+export { serve };
+export type { ServerRequest, Response };
 
 // https://deno.land/std@0.91.0/ws
 import {

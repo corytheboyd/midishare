@@ -62,6 +62,9 @@ services:
       - "3000"
     volumes:
       - "./projects/server/src:/home/deno/src:ro"
+    environment:
+      NODE_ENV: development
+      CLIENT_URL: https://www.midishare.local:3000
 
 #  server_nodejs:
 #    build:

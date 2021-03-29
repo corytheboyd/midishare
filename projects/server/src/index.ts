@@ -1,4 +1,5 @@
-import { serve } from "./deps.ts";
+import { serve, Response } from "./deps.ts";
+import { cors } from "./middleware/cors.ts";
 
 /**
  * TODO
@@ -18,5 +19,11 @@ const server = serve({ port: 3000 });
 console.log("Listening on http://localhost:3000");
 
 for await (const request of server) {
-  request.respond({ status: 200, body: "yeet" });
+  const response = {
+    headers: new Headers(),
+  };
+
+  cors(request, response);
+
+  request.respond(response);
 }
