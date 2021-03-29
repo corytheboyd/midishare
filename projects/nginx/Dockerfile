@@ -32,5 +32,5 @@ RUN ./script/replace-variables /etc/nginx /etc/nginx
 # https://wiki.debian.org/Nginx/DirectoryStructure
 RUN mkdir -p /etc/nginx/sites-enabled
 RUN ln -s /etc/nginx/sites-available/api.midishare /etc/nginx/sites-enabled/
-#RUN ln -s /etc/nginx/sites-available/www.midishare /etc/nginx/sites-enabled/
-#RUN ln -s /etc/nginx/sites-available/inspector.midishare /etc/nginx/sites-enabled/
+RUN ln -s /etc/nginx/sites-available/www.midishare /etc/nginx/sites-enabled/
+RUN ln -s /etc/nginx/sites-available/inspector.midishare /etc/nginx/sites-enabled/
