@@ -7,3 +7,5 @@ app.use((context) => {
 });
 
 app.listen({ port: 3000 });
+
+console.log("Server listening");
