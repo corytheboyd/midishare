@@ -4,7 +4,7 @@ ENV DENO_INSTALL=/usr/local
 ENV DENO_DIR=/home/deno/.cache
 
 # Create deno user:group before installation so that the home directory exits
-RUN addgroup deno && useradd --gid deno --create-home deno
+RUN addgroup deno && useradd --gid deno --groups deno --create-home deno
 
 RUN apt-get update && apt-get install unzip curl -y
 RUN curl -fsSL https://deno.land/x/install/install.sh | sh
@@ -23,7 +23,9 @@ COPY --chown=deno projects/server/lock.json .
 COPY --chown=deno projects/server/.deno-cache ${DENO_DIR}
 COPY --chown=deno projects/server .
 
-ENTRYPOINT ["deno", "run", "--allow-net", "--allow-env", "--lock=lock.json", "--cached-only"]
+# TODO could lock down net to the midishare domain
+# TODO could lock down read/write to the database.db file
+ENTRYPOINT ["deno", "run", "--allow-net", "--allow-env", "--allow-read", "--allow-write", "--lock=lock.json", "--cached-only"]
 
 FROM run-base AS development
 

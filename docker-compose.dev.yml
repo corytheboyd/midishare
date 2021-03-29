@@ -61,10 +61,12 @@ services:
     expose:
       - "3000"
     volumes:
+      - "./db:/db"
       - "./projects/server/src:/home/deno/src:ro"
     environment:
       NODE_ENV: development
       CLIENT_URL: https://www.midishare.local:3000
+      SQLITE_DATABASE_PATH: /db/database.db
 
 #  server_nodejs:
 #    build:

@@ -7,6 +7,8 @@ import {
 export { Application, Router };
 export type { Middleware };
 
+export { DB } from "https://deno.land/x/sqlite/mod.ts";
+
 // // https://deno.land/std@0.91.0/ws
 // import {
 //   acceptWebSocket,
