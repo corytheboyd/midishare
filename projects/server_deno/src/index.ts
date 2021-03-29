@@ -1,8 +1,9 @@
-import { serve } from "./deps.ts";
+import { Application } from "./deps.ts";
 
-const server = serve({ port: 3000 });
-console.log("Server running");
+const app = new Application();
 
-for await (const request of server) {
-  request.respond({ status: 200, body: "A-OK" });
-}
+app.use((context) => {
+  context.response.body = "yeet";
+});
+
+app.listen({ port: 3000 });
