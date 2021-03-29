@@ -1,6 +1,10 @@
 // https://github.com/oakserver/oak
-import { Application, Middleware } from "https://deno.land/x/oak/mod.ts";
-export { Application };
+import {
+  Application,
+  Router,
+  Middleware,
+} from "https://deno.land/x/oak/mod.ts";
+export { Application, Router };
 export type { Middleware };
 
 // // https://deno.land/std@0.91.0/ws
