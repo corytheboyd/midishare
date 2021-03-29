@@ -1,4 +1,4 @@
-import { serve, Response } from "./deps.ts";
+import { Application } from "./deps.ts";
 import { cors } from "./middleware/cors.ts";
 
 /**
@@ -15,15 +15,12 @@ import { cors } from "./middleware/cors.ts";
  * -[ ] sentry integration
  * -[ ] sentry X-Sentry-Error-ID middleware at end of chain
  * */
-const server = serve({ port: 3000 });
+const app = new Application();
+
+app.use(cors());
+
 console.log("Listening on http://localhost:3000");
 
-for await (const request of server) {
-  const response = {
-    headers: new Headers(),
-  };
+await app.listen({ port: 3000 });
 
-  cors(request, response);
-
-  request.respond(response);
-}
+console.log("Server closed");
