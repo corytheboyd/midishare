@@ -139,7 +139,12 @@ export const SessionShowPage: React.FC = () => {
               {context.isHost && (
                 <div className="bg-gray-200 w-full p-3 rounded-lg shadow-inner text-gray-700">
                   <div className="flex justify-between">
-                    <h3 className="font-bold">Session Settings</h3>
+                    <div className="flex items-baseline space-x-2">
+                      <h3 className="font-bold">Session Settings</h3>
+                      <span className="text-xs text-gray-500">
+                        Only you can see this section
+                      </span>
+                    </div>
 
                     <div className="text-sm flex flex-row items-center space-x-1">
                       <div className="h-6 w-6 flex">
