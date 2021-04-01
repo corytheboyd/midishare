@@ -141,16 +141,19 @@ app.use("/api/v1", api());
 // The error handler must be before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());
 
+// TODO not sure what to do with this, it was just copy/pasta from the sentry
+//  docs anyway.
 // Optional fallthrough error handler
-app.use(function onError(req, res) {
-  // The error id is attached to `res.sentry` to be returned
-  // and optionally displayed to the user for support.
-  res.statusCode = 500;
-  res.header(
-    "X-Sentry-Error-ID",
-    (res as typeof res & { sentry: string }).sentry
-  );
-});
+// app.use(function onError(req, res, next) {
+//   // The error id is attached to `res.sentry` to be returned
+//   // and optionally displayed to the user for support.
+//   res.statusCode = 500;
+//   res.header(
+//     "X-Sentry-Error-ID",
+//     (res as typeof res & { sentry: string }).sentry
+//   );
+//   next();
+// });
 
 const httpServer = createServer(app);
 
