@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Chrome } from "../../../Chrome";
 import { Helmet } from "react-helmet";
 import { store, useStore } from "../../../../lib/store";
@@ -25,6 +25,10 @@ import {
   buildSessionShowContext,
   SessionShowContext,
 } from "./SessionShowContext";
+import { Routes } from "../../../routes";
+import { CopyTextInput } from "../../../common/CopyTextInput";
+import { CopyTextButton } from "../../../common/CopyTextButton";
+import { UserAdd } from "../../../common/icons/sm/UserAdd";
 
 export const SessionShowPage: React.FC = () => {
   const urlParams = useParams<{ id: string }>();
@@ -111,6 +115,12 @@ export const SessionShowPage: React.FC = () => {
     return <NotFound message="Session does not exist" />;
   }
 
+  const joinUrl = useMemo(() => {
+    const url = new URL(process.env.PUBLIC_URL as string);
+    url.pathname = Routes.SESSION_JOIN.replace(/:id/, urlParams.id);
+    return url.toString();
+  }, [urlParams.id]);
+
   return (
     <SessionShowContext.Provider value={context}>
       <Chrome hideFooter={true}>
@@ -121,7 +131,28 @@ export const SessionShowPage: React.FC = () => {
         {sessionQuery.isLoading && <span>Loading...</span>}
 
         {!sessionQuery.isLoading && (
-          <PeerLaneController session={sessionQuery.data!} />
+          <div className="w-full h-full flex justify-center w-full py-3">
+            <div className="flex flex-col w-full max-w-6xl space-y-3">
+              <PeerLaneController session={sessionQuery.data!} />
+
+              {/*Host session controls*/}
+              {context.isHost && (
+                <div className="bg-gray-200 w-full p-3 rounded-lg shadow-inner text-gray-700">
+                  <div className="flex justify-between">
+                    <h3 className="font-bold">Session Settings</h3>
+
+                    <div className="text-sm flex flex-row items-center space-x-1">
+                      <div className="h-6 w-6 flex">
+                        <UserAdd />
+                      </div>
+                      <CopyTextInput source={joinUrl} clipboardId="joinUrl" />
+                      <CopyTextButton clipboardId="joinUrl" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </Chrome>
     </SessionShowContext.Provider>

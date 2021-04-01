@@ -11,7 +11,7 @@ export type PeerLaneProps = {
 
 export const PeerLane: React.FC<PeerLaneProps> = (props) => {
   return (
-    <div className="w-full h-full flex space-x-2 max-w-6xl">
+    <>
       <KeyboardWell {...props} />
       {/*<div className="w-80 flex-grow-0 flex flex-col space-y-2">*/}
       {/*  <VideoWell {...props} />*/}
@@ -19,6 +19,6 @@ export const PeerLane: React.FC<PeerLaneProps> = (props) => {
       {/*    <span>stats and stuff</span>*/}
       {/*  </div>*/}
       {/*</div>*/}
-    </div>
+    </>
   );
 };
