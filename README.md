@@ -1,5 +1,11 @@
 # Midishare
 
+## Project is Dead 
+
+rip. turns out I'd rather explore other interests in life than writing software for no people and no money lol.
+
+---
+
 https://www.midishare.app
 
 Peer-to-peer MIDI keyboard input streaming service connecting music teachers and students in near real-time.
